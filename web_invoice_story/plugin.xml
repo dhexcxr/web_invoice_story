@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="mailapp.entrypoints"
+         point="org.eclipse.rap.ui.entrypoint">
+      <entrypoint
+            id="mailapp.entrypoint"
+            path="/mail"
+            
+            class="web_invoice_story.Application">
+            <!--applicationId="rap_mail_template.mailapp"-->
+      </entrypoint>
+   </extension>
+   <extension
+         id="rap_mail_template.mailapp"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true"
+            cardinality="singleton-global"
+            thread="main">
+         <run
+               class="web_invoice_story.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="web_invoice_story.Perspective"
+            name="RAP Perspective"
+            id="rap_mail_template.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="web_invoice_story.View"
+            name="Message"
+            id="rap_mail_template.view"
+            allowMultiple="true"
+            icon="icons/sample2.gif">
+      </view>
+      <view
+            class="web_invoice_story.NavigationView"
+            name="Mailboxes"
+            id="rap_mail_template.navigationView"
+            icon="icons/sample3.gif">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Mail"
+            id="rap_mail_template.category">
+      </category>
+      <command
+            name="Open Mailbox"
+            description="Opens a mailbox"
+            categoryId="rap_mail_template.category"
+            id="rap_mail_template.open">
+      </command>
+      <command
+            name="Open Message Dialog"
+            description="Opens a message dialog"
+            categoryId="rap_mail_template.category"
+            id="rap_mail_template.openMessage">
+      </command>
+   </extension>
+
+</plugin>
