@@ -70,6 +70,9 @@ public class Application /* implements IApplication */ implements EntryPoint {
 		
 		
 		// TODO get size of display (browser window), if less than 1024x768 display dialog telling user to increase browser window size
+		
+		// TODO also, get the streamlined object save style objects from that other project I did
+		
 		if (DbServices.isConnected()) {
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch())

@@ -38,8 +38,8 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable{
 				email, customerId FROM cis2901c.customer WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? 
 				OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ? OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND customerId IN (";
-		super.querySubStringIndecies[0] = 7;
-		super.querySubStringIndecies[1] = 99;
+		super.querySubStringIndices[0] = 7;
+		super.querySubStringIndices[1] = 99;
 	}
 	
 	public Customer(long customerId) {
@@ -48,8 +48,8 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable{
 				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, 
 				email, customerId FROM cis2901c.customer WHERE customerId = ?;""";
 		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndecies[0] = 0;
-		super.querySubStringIndecies[1] = 0;
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
 	}
 	
 	public long getDbPk() {

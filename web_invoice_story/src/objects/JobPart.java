@@ -55,8 +55,8 @@ public class JobPart extends InvoicePart {
 		super.searchString = Long.toString(jobId);
 		super.searchQuery = "SELECT jobpartid, jobid, partid, partnumber, description, quantity, soldprice FROM cis2901c.jobpart WHERE jobid = ?;";
 		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndecies[0] = 0;
-		super.querySubStringIndecies[1] = 0;
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
 	}
 	
 	public long getJobPartId() {

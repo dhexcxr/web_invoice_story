@@ -34,8 +34,8 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable{
 				JOIN (SELECT invoicenum, COUNT(partid) AS count, SUM(quantity * soldprice) AS total FROM cis2901c.invoicepart GROUP BY invoicenum) AS ip 
 				ON i.invoicenum = ip.invoicenum WHERE c.lastname LIKE ? OR c.firstname LIKE ? OR i.invoicenum LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND i.invoicenum IN (";
-		super.querySubStringIndecies[0] = 19;
-		super.querySubStringIndecies[1] = 207;
+		super.querySubStringIndices[0] = 19;
+		super.querySubStringIndices[1] = 207;
 	}
 
 	public long getInvoiceNum() {

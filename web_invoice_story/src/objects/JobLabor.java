@@ -33,8 +33,8 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 		super.searchString = Long.toString(jobId);
 		super.searchQuery = "SELECT joblaborid, jobid, description, hours, hourrate, technician FROM cis2901c.joblabor WHERE jobid = ?;";
 		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndecies[0] = 0;
-		super.querySubStringIndecies[1] = 0;
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
 	}
 
 	public long getJobLaborId() {

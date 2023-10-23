@@ -24,8 +24,8 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
 				WHERE partNumber LIKE ? OR supplier LIKE ? OR category LIKE ? OR description LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND partId IN (";
-		super.querySubStringIndecies[0] = 13;
-		super.querySubStringIndecies[1] = 87;
+		super.querySubStringIndices[0] = 13;
+		super.querySubStringIndices[1] = 87;
 	}
 	
 	public Part(long partId) {
@@ -34,8 +34,8 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
 				WHERE partId = ?;""";
 		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndecies[0] = 0;
-		super.querySubStringIndecies[1] = 0;
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
 	}
 	
 	public long getDbPk() {

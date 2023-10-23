@@ -29,8 +29,8 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		super.searchString = Long.toString(roId);
 		super.searchQuery = "SELECT jobid, roid, name, complaint, resolution, recommendations FROM cis2901c.job WHERE roid = ?;";
 		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndecies[0] = 0;
-		super.querySubStringIndecies[1] = 0;
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
 	}
 
 	public Job(String jobName, String complaints, String resolution, String reccomendations, List<Part> parts,

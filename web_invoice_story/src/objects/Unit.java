@@ -29,8 +29,8 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId 
 				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.vin LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.year LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND u.unitId IN (";
-		super.querySubStringIndecies[0] = 15;
-		super.querySubStringIndecies[1] = 128;
+		super.querySubStringIndices[0] = 15;
+		super.querySubStringIndices[1] = 128;
 	}
 	
 	public Unit(Long unitId) {
@@ -40,8 +40,8 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId
 				WHERE unitid = ?;""";
 		super.outerSearchQueryAppendix = " AND u.unitId IN (";
-		super.querySubStringIndecies[0] = 15;
-		super.querySubStringIndecies[1] = 128;
+		super.querySubStringIndices[0] = 15;
+		super.querySubStringIndices[1] = 128;
 	}
 	
 	public long getDbPk() {

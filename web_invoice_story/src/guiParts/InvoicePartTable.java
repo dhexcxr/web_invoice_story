@@ -12,7 +12,7 @@ import web_invoice_story.Application;
 
 public class InvoicePartTable extends MyTable{
 	
-	// TODO find out where these are being used and see if I want to move them somewhere else, these are table indecies for Invoice Table columns
+	// TODO find out where these are being used and see if I want to move them somewhere else, these are table indices for Invoice Table columns
 	public static final int PART_NUMBER_COLUMN = 0;
 	public static final int QUANTITY_COLUMN = 2;
 	public static final int PART_PRICE_COLUMN = 5;
