@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
+
 	private long repairOrderId = -1;
 	private long customerId;
 	private Customer customer;
@@ -39,10 +40,9 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 				r.createdTime, r.closedTime, r.cashiered
 				FROM cis2901c.ro AS r JOIN cis2901c.customer AS c ON r.customerid = c.customerid
 				JOIN cis2901c.unit AS u ON r.unitId = u.unitId
-				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;
-				""";
+				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
 		super.outerSearchQueryAppendix = " AND roId IN (";
-		super.querySubStringIndecies[0] = 11;
+		super.querySubStringIndecies[0] = 13;
 		super.querySubStringIndecies[1] = 210;
 	}
 	
