@@ -59,6 +59,9 @@ import guiParts.UnitTable;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class Gui extends Composite {
 
@@ -77,10 +80,17 @@ public class Gui extends Composite {
 		super(parent, style);
 		
 		this.shell = (Shell) parent;
+		setLayout(new FormLayout());
 
 		// Tab control widget
 		TabFolder tabFolderGui = new TabFolder(this, SWT.NONE);
-		tabFolderGui.setBounds(10, 10, 1004, 748);
+		FormData fd_tabFolderGui = new FormData();
+		fd_tabFolderGui.bottom = new FormAttachment(100);
+		fd_tabFolderGui.right = new FormAttachment(100);
+		fd_tabFolderGui.top = new FormAttachment(0);
+		fd_tabFolderGui.left = new FormAttachment(0);
+		tabFolderGui.setLayoutData(fd_tabFolderGui);
+//		tabFolderGui.setBounds(10, 10, 1004, 748);
 
 		rosTab(tabFolderGui);
 		partsTab(tabFolderGui);
@@ -96,10 +106,17 @@ public class Gui extends Composite {
 
 		Composite repairOrdersComposite = new Composite(tabFolder, SWT.NONE);
 		tbtmRepairOrders.setControl(repairOrdersComposite);
+		repairOrdersComposite.setLayout(new FormLayout());
 
 		// Table for RO search results
 		RepairOrderTable roTable = new RepairOrderTable(repairOrdersComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		roTable.setBounds(10, 74, 976, 631);
+		FormData fd_roTable = new FormData();
+		fd_roTable.right = new FormAttachment(100, -10);
+		fd_roTable.bottom = new FormAttachment(100, -10);
+//		fd_roTable.right = new FormAttachment(100, -10);
+		fd_roTable.top = new FormAttachment(0, 74);
+		fd_roTable.left = new FormAttachment(0, 10);
+		roTable.setLayoutData(fd_roTable);
 		roTable.setHeaderVisible(true);
 		roTable.setLinesVisible(true);
 		roTable.addMouseListener(new OpenExistingObjectMouseListener(roTable, shell));
@@ -145,23 +162,44 @@ public class Gui extends Composite {
 		
 		// RO controls
 		MyText roSearchBox = new MyText(repairOrdersComposite, SWT.BORDER);
+		FormData fd_roSearchBox = new FormData();
+		fd_roSearchBox.bottom = new FormAttachment(0, 33);
+		fd_roSearchBox.left = new FormAttachment(0, 10);
+		fd_roSearchBox.top = new FormAttachment(0, 10);
+		roSearchBox.setLayoutData(fd_roSearchBox);
 		roSearchBox.setText("Search...");
-		roSearchBox.setBounds(10, 10, 830, 26);
 		roSearchBox.addModifyListener(new SearchTextBoxListeners(roSearchBox, roTable, new RepairOrder()));
 		roSearchBox.addFocusListener(new TextBoxFocusListener(roSearchBox));
 
 		Button btnNewRepairOrder = new Button(repairOrdersComposite, SWT.NONE);
-		btnNewRepairOrder.setBounds(846, 10, 140, 26);
+		fd_roSearchBox.right = new FormAttachment(btnNewRepairOrder, -10);
+		FormData fd_btnNewRepairOrder = new FormData();
+		fd_btnNewRepairOrder.left = new FormAttachment(100, -161);
+		fd_btnNewRepairOrder.bottom = new FormAttachment(0, 33);
+		fd_btnNewRepairOrder.right = new FormAttachment(100, -10);
+		fd_btnNewRepairOrder.top = new FormAttachment(0, 10);
+		btnNewRepairOrder.setLayoutData(fd_btnNewRepairOrder);
 		btnNewRepairOrder.setText("New Repair Order");
 		btnNewRepairOrder.addMouseListener(new CreateNewObjectListener(roTable, roSearchBox, shell));
 
 		Button btnNewEstimate = new Button(repairOrdersComposite, SWT.NONE);
+		FormData fd_btnNewEstimate = new FormData();
+		fd_btnNewEstimate.top = new FormAttachment(0, 43);
+		fd_btnNewEstimate.bottom = new FormAttachment(0, 65);
+		fd_btnNewEstimate.left = new FormAttachment(100, -161);
+		fd_btnNewEstimate.right = new FormAttachment(100, -10);
+		
+		btnNewEstimate.setLayoutData(fd_btnNewEstimate);
 		btnNewEstimate.setText("New Estimate");
-		btnNewEstimate.setBounds(846, 42, 140, 26);
 
 		Button btnDeleteRepairOrder = new Button(repairOrdersComposite, SWT.NONE);
+		FormData fd_btnDeleteRepairOrder = new FormData();
+		fd_btnDeleteRepairOrder.bottom = new FormAttachment(0, 65);
+		fd_btnDeleteRepairOrder.left = new FormAttachment(100, -322);
+		fd_btnDeleteRepairOrder.right = new FormAttachment(100, -171);
+		fd_btnDeleteRepairOrder.top = new FormAttachment(0, 43);
+		btnDeleteRepairOrder.setLayoutData(fd_btnDeleteRepairOrder);
 		btnDeleteRepairOrder.setText("Delete Repair Order");
-		btnDeleteRepairOrder.setBounds(700, 42, 140, 26);
 		btnDeleteRepairOrder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -170,12 +208,20 @@ public class Gui extends Composite {
 		});
 
 		Button btnShowCashiered = new Button(repairOrdersComposite, SWT.CHECK);
+		FormData fd_btnShowCashiered = new FormData();
+		fd_btnShowCashiered.bottom = new FormAttachment(0, 65);
+		fd_btnShowCashiered.top = new FormAttachment(0, 43);
+		fd_btnShowCashiered.left = new FormAttachment(0, 10);
+		btnShowCashiered.setLayoutData(fd_btnShowCashiered);
 		btnShowCashiered.setText("Show Cashiered");
-		btnShowCashiered.setBounds(10, 42, 129, 20);
 
 		Button btnShowEstimates = new Button(repairOrdersComposite, SWT.CHECK);
+		FormData fd_btnShowEstimates = new FormData();
+		fd_btnShowEstimates.left = new FormAttachment(btnShowCashiered, 10);
+		fd_btnShowEstimates.bottom = new FormAttachment(0, 65);
+		fd_btnShowEstimates.top = new FormAttachment(0, 43);
+		btnShowEstimates.setLayoutData(fd_btnShowEstimates);
 		btnShowEstimates.setText("Show Estimates");
-		btnShowEstimates.setBounds(145, 42, 127, 20);
 	}
 	
 	private void partsTab(TabFolder tabFolder) {
