@@ -1,32 +1,32 @@
 package gui;
 
+import java.util.logging.Level;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+import guiParts.MyText;
 import listeners.CustomerSearchListener;
 import listeners.InfoTextBoxModifyListener;
 import listeners.RequiredTextBoxModifyListener;
 import listeners.VinModifyListener;
 import objects.Customer;
-import guiParts.MyText;
 import objects.Unit;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
-import java.util.logging.Level;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Label;
-
 public class NewUnitDialog extends Dialog {
 
-	protected Object result;
+	protected transient Object result;
 	protected Shell shlNewUnit;
 	private MyText txtOwner;
 	private MyText txtMake;
@@ -43,7 +43,7 @@ public class NewUnitDialog extends Dialog {
 		// to determine if we need to call addNew... or saveExisting....
 	private long unitId = -1;
 	private long customerId = -1;
-	private Unit unit;
+	private transient Unit unit;
 
 	public NewUnitDialog(Shell parent, int style) {
 		super(parent, style);

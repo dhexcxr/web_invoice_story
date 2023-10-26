@@ -1,10 +1,42 @@
 package gui;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+import guiParts.InvoicePartTable;
+import guiParts.JobLaborTable;
+import guiParts.MyText;
+import guiParts.RepairOrderJobTable;
+import guiParts.RepairOrderJobTableItem;
 import listeners.CustomerSearchListener;
 import listeners.InvoicePartTableListener;
 import listeners.JobDetailsModifiedListener;
@@ -21,52 +53,19 @@ import listeners.RepairOrderPartDeleteLineItemListener;
 import listeners.RequiredTextBoxModifyListener;
 import listeners.TextBoxFocusListener;
 import listeners.UnitSearchListener;
+import objects.Customer;
+import objects.DbObjectSearchable;
 import objects.Job;
 import objects.JobLabor;
-import guiParts.JobLaborTable;
-import guiParts.MyText;
+import objects.JobPart;
 import objects.RepairOrder;
-import guiParts.RepairOrderJobTable;
-import guiParts.RepairOrderJobTableItem;
 import objects.Unit;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
-import objects.JobPart;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.eclipse.swt.widgets.Composite;
-
-import objects.Customer;
-import guiParts.InvoicePartTable;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class RepairOrderDialog extends Dialog {
 
-	protected Object result;
+	protected transient Object result;
 	protected Shell shlRepairOrder;
 	
 	private RepairOrderJobTable tableJobsRepairOrder;
@@ -102,7 +101,7 @@ public class RepairOrderDialog extends Dialog {
 	
 	private Map<String, List<Long>> detailsToDelete = new HashMap<>();
 	
-	private RepairOrder currentRepairOrder;
+	private transient RepairOrder currentRepairOrder;
 	private boolean cashiered = false;
 	
 	private CustomerSearchListener customerSearchListener;

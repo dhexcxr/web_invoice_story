@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 
 import objects.Customer;
 import objects.DbObjectSavable;
@@ -59,6 +57,7 @@ public class DbServices {
 	}
 	
 	public static Connection getDbConnection() {
+		// global database connection
 		return mainDbConnection;		
 	}
 	
@@ -79,7 +78,7 @@ public class DbServices {
 		connectingToDb.open();
 		
 		int i = 0;
-		while (!isConnected() && i < 3) {
+		while (!isConnected() && i < 3) {		// try to connect 3 times
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
 				mainDbConnection = DriverManager.getConnection(url, user, pass);
@@ -105,7 +104,7 @@ public class DbServices {
 	}
 	
 	public static void disconnectFromDb() {
-		// clean up, close connection
+		// clean up, close database connection
 		try {
 			mainDbConnection.close();
 		} catch (SQLException e) {
@@ -116,7 +115,9 @@ public class DbServices {
 			e.printStackTrace();
 		}
 	}
+	// END General DB methods
 	
+	// START Object Save/Update DB methods
 	public static int deleteObject(DbObjectSavable dbObject) {
 		if (!isConnected()) {
 			connectToDb();
@@ -154,17 +155,16 @@ public class DbServices {
 		
 		if (creatingNewObject) {
 			// get latest dbObject.Table.dbPk, set dbObject.setPk
-			dbObject.setDbPk(getLastSavedDbObject(dbObject));
+			dbObject.setDbPk(getLastSavedDbObjectPk(dbObject));
 		}
 		
 		if (dbObject instanceof Invoice) {		// TODO turn off auto commit until all invoice queries have completed
 			saveInvoiceLineItems(dbObject);
-		} else if (dbObject instanceof RepairOrder) {
-			if (dbObject.getDbPk() == -1 ) {
-				dbObject.setDbPk(getLastRoNum());
+		} else if (dbObject instanceof RepairOrder thisRo) {
+			if (thisRo.getDbPk() == -1 ) {
+				thisRo.setDbPk(getLastRoNum());
 			}
-			saveRoJobs(dbObject);
-			RepairOrder thisRo = (RepairOrder) dbObject;
+			saveRoJobs(thisRo);
 			if (thisRo.getClosedDate() != null) {
 				sellRoPartsOutOfInventory(thisRo.getRepairOrderId());
 			}
@@ -177,34 +177,38 @@ public class DbServices {
 		}
 	}
 	
-	private static long getLastSavedDbObject(DbObjectSavable dbObject) {
+	private static long getLastSavedDbObjectPk(DbObjectSavable dbObject) {
+		// get primary key of last object saved into dbObject's database table
 		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement(
+		try (PreparedStatement lastDbObjectPkStatement = DbServices.getDbConnection().prepareStatement(
 									"SELECT MAX(" + dbObject.getPkName() + ") FROM cis2901c." + dbObject.getTableName() + ";")) {
-			results = lastInvoiceNumStatement.executeQuery();
+			results = lastDbObjectPkStatement.executeQuery();
 			while (results.next()) {
 				return results.getLong(1);		// we should always return here
 			}
 		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastSavedDbObject");
+			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastSavedDbObjectPk");
 			e.printStackTrace();
 		}
 		// if we get here something went wrong
 		return SQL_FAILURE;
 	}
-	
-	private static void saveRoJobs(DbObjectSavable dbObject ) {
-		long roNum = dbObject.getDbPk();
-		if (roNum == -1) {
-			roNum = getLastRoNum();
+
+	private static int getLastInvoiceNum() {
+		ResultSet results = null;
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(invoicenum) FROM cis2901c.invoice;")) {
+			results = lastInvoiceNumStatement.executeQuery();
+			while (results.next()) {
+				return results.getInt(1);		// we should always return here
+			}
+		} catch (SQLException e) {
+			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastInvoiceNum");
+			e.printStackTrace();
 		}
-		List<Job> roJobs = ((RepairOrder) dbObject).getJobs();
-		for (Job job : roJobs) {
-			job.getDataMap().put("roid", Long.toString(roNum));
-			DbServices.saveObject(job);
-		}
+		// if we get here something went wrong
+		return SQL_FAILURE;
 	}
-	
+
 	private static int getLastRoNum() {
 		ResultSet results = null;
 		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(roid) FROM cis2901c.ro;")) {
@@ -218,6 +222,49 @@ public class DbServices {
 		}
 		// if we get here something went wrong
 		return SQL_FAILURE;
+	}
+
+	private static int getLastJobId() {
+		ResultSet results = null;
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(jobid) FROM cis2901c.job;")) {
+			results = lastInvoiceNumStatement.executeQuery();
+			while (results.next()) {
+				return results.getInt(1);		// we should always return here
+			}
+		} catch (SQLException e) {
+			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastJobId");
+			e.printStackTrace();
+		}
+		// if we get here something went wrong
+		return SQL_FAILURE;
+	}
+
+	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
+		long invoiceNumber = getLastSavedDbObjectPk(dbObject);
+		// insert individual part invoice line items into invoicepart table
+		// update onHand of part table
+		Part[] invoiceLineParts = ((Invoice) dbObject).getParts();
+		for (Part invoiceLinePart : invoiceLineParts) {
+			if (invoiceLinePart == null) {
+				break;
+			}
+			InvoicePart invoicePart = new InvoicePart(invoiceLinePart);
+			invoicePart.getDataMap().put("invoicenum", Long.toString(invoiceNumber));
+			saveObject(invoicePart);
+		}
+		sellInvoicePartsOutOfInventory(invoiceNumber);
+	}
+	
+	private static void saveRoJobs(DbObjectSavable dbObject ) {
+		long roNum = dbObject.getDbPk();
+		if (roNum == -1) {
+			roNum = getLastRoNum();
+		}
+		List<Job> roJobs = ((RepairOrder) dbObject).getJobs();
+		for (Job job : roJobs) {
+			job.getDataMap().put("roid", Long.toString(roNum));
+			DbServices.saveObject(job);
+		}
 	}
 	
 	private static void saveJobParts(DbObjectSavable dbObject) {
@@ -244,56 +291,13 @@ public class DbServices {
 		}
 	}
 	
-	private static int getLastJobId() {
-		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(jobid) FROM cis2901c.job;")) {
-			results = lastInvoiceNumStatement.executeQuery();
-			while (results.next()) {
-				return results.getInt(1);		// we should always return here
-			}
-		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastJobId");
-			e.printStackTrace();
-		}
-		// if we get here something went wrong
-		return SQL_FAILURE;
-	}
-	
-	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
-		int invoiceNumber = getLastInvoiceNum();
-		// insert individual part invoice line items into invoicepart table
-		// in invoicepart section, update onHand of part table
-		TableItem[] invoiceLineItems = ((Invoice) dbObject).getTableLineItems();
-		for (TableItem invoiceLineItem : invoiceLineItems) {
-			if (invoiceLineItem.getData() == null) {
-				break;
-			}
-			InvoicePart invoicePart = (InvoicePart) invoiceLineItem.getData();
-			invoicePart.getDataMap().put("invoicenum", Integer.toString(invoiceNumber));
-			saveObject(invoicePart);
-		}
-		sellInvoicePartsOutOfInventory(invoiceNumber);
-	}
-	
-	private static int getLastInvoiceNum() {
-		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(invoicenum) FROM cis2901c.invoice;")) {
-			results = lastInvoiceNumStatement.executeQuery();
-			while (results.next()) {
-				return results.getInt(1);		// we should always return here
-			}
-		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastInvoiceNum");
-			e.printStackTrace();
-		}
-		// if we get here something went wrong
-		return SQL_FAILURE;
-	}
-	
-	private static void sellInvoicePartsOutOfInventory(int invoiceNumber) {
+	private static void sellInvoicePartsOutOfInventory(long invoiceNumber) {
+		// update onHand of each part on invoice [invoiceNumber]
+			// TODO add prefix to these database fields, see if I can combine with sellRoPartsOutOfInventory() below
+		// update onHand of each part on invoice [invoiceNumber]
 		StringBuilder query = new StringBuilder("UPDATE part p JOIN invoicepart ip ON p.partid = ip.partid "
 				+ "SET p.onhand = p.onhand - ip.quantity WHERE ip.invoicenum = ?;");
-		sendQueryToDb(query, new ArrayList<>(List.of(Integer.toString(invoiceNumber))));
+		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(invoiceNumber))));
 	}
 	
 	private static void sellRoPartsOutOfInventory(long roNumber) {
@@ -308,24 +312,26 @@ public class DbServices {
 	}
 
 	private static int sendQueryToDb(StringBuilder queryString, List<String> dbFields) {
+		// used when saving new objects or updating existing objects
 		int updateCount = 0;
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString.toString())) {
 			int parameterIndex = 1;
-			for(String fieldData : dbFields) {
+			for(String fieldData : dbFields) {		// set query values
 				statement.setString(parameterIndex, fieldData);
 				parameterIndex++;
 			}
-			statement.execute();
+			statement.execute();		// execute save or update statement 
 			updateCount = statement.getUpdateCount();
 			Application.getLogger().log(Level.INFO, "Update Count: {0}", updateCount);
 		} catch (SQLException e) {
 			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", queryString);
 			e.printStackTrace();
 		}
-		return updateCount;
+		return updateCount;		// return number of database table rows that were saved or updated
 	}
 	
 	private static List<String> insertFieldsIntoQuery(StringBuilder queryString, DbObjectSavable dbObject, boolean creatingNewObject) {
+		// insert into the SQL query only the fields where we have data we need to save 
 		List<String> results = new ArrayList<>();
 		for (Map.Entry<String, String> entry : dbObject.getDataMap().entrySet()) {
 			if (entry.getValue() != null) {
@@ -353,32 +359,22 @@ public class DbServices {
 	private static void insertQueryHelper(StringBuilder queryString, String columnName, String data) {
 		StringBuilder column = new StringBuilder();
 		int columnInsertionPoint = queryString.indexOf(")");		// find where to insert field
-		if (queryString.charAt(columnInsertionPoint - 1) != '(') {
-			column.append(", ");
+		if (queryString.charAt(columnInsertionPoint - 1) != '(') {		// see if there are already other data
+			column.append(", ");											// and we need to add a comma
 		}
 		column.append(columnName);
 		queryString.insert(columnInsertionPoint, column);
 		
 		StringBuilder field = new StringBuilder();		// find where to insert data
 		int fieldInsertionPoint = queryString.lastIndexOf(")");
-		if (queryString.charAt(fieldInsertionPoint - 1) != '(') {
-			field.append(", ");
+		if (queryString.charAt(fieldInsertionPoint - 1) != '(') {		// see if there are already other data
+			field.append(", ");												// and we need to add a comma
 		}
 		field.append(data);
 		queryString.insert(fieldInsertionPoint, field);
 	}
-	
-	public static int deleteDetailsFromRo(Map<String, List<Long>> detailsToDelete) {
-		int updateCount = 0;
-		for (Map.Entry<String, List<Long>> entry : detailsToDelete.entrySet()) {
-			for (Long primaryKey : entry.getValue()) {
-				updateCount += deleteObjectsByPk(entry.getKey(), entry.getKey() + "id", primaryKey);
-			}
-		}
-		
-		return updateCount;
-	}
-	
+	// END Object Save/Update DB methods
+
 	private static int deleteObjectsByPk(String tableName, String primaryKeyName, Long primaryKey) {
 		int updateCount = 0;
 		if (!isConnected()) {
@@ -395,6 +391,17 @@ public class DbServices {
 			// TODO print deleteQuery or statement
 			e.printStackTrace();
 		}
+		return updateCount;
+	}
+
+	public static int deleteDetailsFromRo(Map<String, List<Long>> detailsToDelete) {
+		int updateCount = 0;
+		for (Map.Entry<String, List<Long>> entry : detailsToDelete.entrySet()) {
+			for (Long primaryKey : entry.getValue()) {
+				updateCount += deleteObjectsByPk(entry.getKey(), entry.getKey() + "id", primaryKey);
+			}
+		}
+		
 		return updateCount;
 	}
 	
@@ -440,6 +447,7 @@ public class DbServices {
 			statement.setMaxRows(MAX_RESULTS);
 			fillStatementParameters(statement, object);
 			ResultSet queryResultSet = statement.executeQuery();
+				// TODO make buildFoundObjects return a List<DbObjectSearchable>
 			results = buildFoundObjects(queryResultSet, object);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -449,11 +457,12 @@ public class DbServices {
 	}
 	
 	private static void fillStatementParameters(PreparedStatement statement, DbObjectSearchable object) throws SQLException {
+		// fill search fields in queryString
 		ParameterMetaData parameterMetaData = statement.getParameterMetaData();
 		int parameterCount = parameterMetaData.getParameterCount();
 		int queryWord = object.getWordsFromSearchString().length - 1;
 		for (int j = 1; j <= parameterCount; j++) {
-			// fill search fields in queryString
+			// each word in searchString is surrounded by % SQL wildcard so that we match on any substring that user entered
 			statement.setString(j, "%" + object.getWordsFromSearchString()[queryWord] + "%");
 			int parametersPerQuery = parameterCount / object.getWordsFromSearchString().length; 
 			if (j % parametersPerQuery == 0) {

@@ -3,20 +3,22 @@ package listeners;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 
+import guiParts.MyTable;
+import guiParts.MyText;
 import objects.Customer;
 import objects.DbObjectSearchable;
 import objects.Invoice;
-import guiParts.MyTable;
-import guiParts.MyText;
 import objects.Part;
 import objects.RepairOrder;
 import objects.Unit;
 
 public class SearchTextBoxListeners implements ModifyListener {
 	
+	// TODO see if i can disable right-click browser menu in the SearchTextBox, and the Mac autocomplete
+	
 	private MyText searchBox;
 	private MyTable table;
-	private DbObjectSearchable searchObject;
+	private transient DbObjectSearchable searchObject;
 	private String textBoxStartingText;
 	
 	public SearchTextBoxListeners(MyText textBox, MyTable table) {
