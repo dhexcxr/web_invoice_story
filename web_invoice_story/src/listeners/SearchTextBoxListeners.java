@@ -11,7 +11,6 @@ import guiParts.MyText;
 import objects.Part;
 import objects.RepairOrder;
 import objects.Unit;
-import web_invoice_story.DbServices;
 
 public class SearchTextBoxListeners implements ModifyListener {
 	
@@ -39,8 +38,10 @@ public class SearchTextBoxListeners implements ModifyListener {
 		int queryLength = searchBox.getText().trim().length();
 		if (queryLength > 0 && !searchBox.getText().equals(textBoxStartingText)) {
 			table.removeAll();
+			
+			// TODO i think I can remove all of these
 			if (searchObject instanceof Customer) {
-				searchObject = new Customer(searchBox.getText());
+				searchObject = new Customer();
 			} else if (searchObject instanceof Part) {
 				searchObject = new Part(searchBox.getText());
 			} else if (searchObject instanceof Unit) {
@@ -50,7 +51,8 @@ public class SearchTextBoxListeners implements ModifyListener {
 			} else if (searchObject instanceof RepairOrder) {
 				searchObject = new RepairOrder(searchBox.getText());
 			}
-			table.paint(DbServices.searchForObject(searchObject));
+//			table.paint(DbServices.searchForObject(searchObject));
+			table.paint(searchObject.search(searchBox.getText()));
 		} else if (queryLength == 0) {
 			table.removeAll();
 		}

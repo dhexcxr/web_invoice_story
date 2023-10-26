@@ -639,7 +639,8 @@ public class RepairOrderDialog extends Dialog {
 			}
 			
 			if (repairOrder.getCustomerId() != 0) {
-				txtCustomerRepairOrder.setData(DbServices.searchForObjectByPk(new Customer(repairOrder.getCustomerId())));
+						// NOTE another instance of replacing DbServices.search() with DbObjectSearchable().search()
+				txtCustomerRepairOrder.setData(new Customer().search(repairOrder.getCustomerId()).get(0));
 				txtCustomerRepairOrder.setText(repairOrder.getCustomerName() + "\n" + repairOrder.getCustomerData());
 			}
 

@@ -1,7 +1,11 @@
 package objects;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import web_invoice_story.DbServices;
 
 public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	
@@ -23,14 +27,14 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	}
 	
 	public Unit(String searchString) {
-		super.searchString = searchString;
-		super.searchQuery = """
-				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
-				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId 
-				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.vin LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.year LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND u.unitId IN (";
-		super.querySubStringIndices[0] = 15;
-		super.querySubStringIndices[1] = 128;
+//		super.searchString = searchString;
+//		super.searchQuery = """
+//				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
+//				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId 
+//				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.vin LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.year LIKE ?;""";
+//		super.outerSearchQueryAppendix = " AND u.unitId IN (";
+//		super.querySubStringIndices[0] = 15;
+//		super.querySubStringIndices[1] = 128;
 	}
 	
 	public Unit(Long unitId) {
@@ -168,5 +172,46 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 		dataMap.put("notes", notes);
 		
 		return dataMap;
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(String searchString) {
+		super.searchString = searchString;
+		super.searchQuery = """
+				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
+				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId 
+				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.vin LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.year LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND u.unitId IN (";
+		super.querySubStringIndices[0] = 15;
+		super.querySubStringIndices[1] = 128;
+		
+		return packObjects(DbServices.searchForObject(this));
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
+		super.searchString = Long.toString(unitId);				// all the super. declarations in the constructor, maybe make a separate var for the searchByPk query,
+		super.searchQuery = """
+				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
+				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId
+				WHERE unitId = ?;""";
+		super.outerSearchQueryAppendix = " AND u.unitId IN (";
+		super.querySubStringIndices[0] = 15;					// and move these 2 search() function implementations into the DbObjectSearchable too
+		super.querySubStringIndices[1] = 128;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
+																	// and where can we give it the generic ? extends DbObjectSearchable
+		return packObjects(DbServices.searchForObject(this));		// I thought of this because if this function here returns a List<? extends DbObjectSearchable instead
+	}																// of a List<Unit> nothing seems to complain, though I didn't actually test anything
+	
+	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {		// TODO NOTE look at how all of these are implemented
+		// helper to cast List of DbObjectSearchable to List of Customer				// this could probably go into DbObjectSearchable
+		List<DbObjectSearchable> unitSearchResults = new ArrayList<>();
+		
+		for (DbObjectSearchable object : searchResults) {
+			if (object instanceof Unit unit) {
+				unitSearchResults.add(unit);
+			}
+		}
+		
+		return unitSearchResults;
 	}
 }

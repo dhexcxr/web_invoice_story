@@ -2,6 +2,7 @@ package objects;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
@@ -117,6 +118,18 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 			dataMap.put("technician", technician);
 		}
 		return dataMap;
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(String searchString) {
+		// TODO copy format from Customer
+		return null;
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(long primaryKey) {
+		// TODO copy format from Customer
+		return null;
 	}
 
 }

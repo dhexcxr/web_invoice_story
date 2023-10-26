@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import web_invoice_story.DbServices;
+
 public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	
 	private long repairOrderId = -1;
@@ -32,18 +34,18 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 	
 	public RepairOrder(String searchString) {
-		super.searchString = searchString;
-		super.searchQuery = """
-				SELECT r.roId, r.customerId,
-				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
-				r.unitId, u.year, u.make, u.model, u.vin,
-				r.createdTime, r.closedTime, r.cashiered
-				FROM cis2901c.ro AS r JOIN cis2901c.customer AS c ON r.customerid = c.customerid
-				JOIN cis2901c.unit AS u ON r.unitId = u.unitId
-				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
-		super.outerSearchQueryAppendix = " AND roId IN (";
-		super.querySubStringIndices[0] = 13;
-		super.querySubStringIndices[1] = 210;
+//		super.searchString = searchString;
+//		super.searchQuery = """
+//				SELECT r.roId, r.customerId,
+//				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
+//				r.unitId, u.year, u.make, u.model, u.vin,
+//				r.createdTime, r.closedTime, r.cashiered
+//				FROM cis2901c.ro AS r JOIN cis2901c.customer AS c ON r.customerid = c.customerid
+//				JOIN cis2901c.unit AS u ON r.unitId = u.unitId
+//				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
+//		super.outerSearchQueryAppendix = " AND roId IN (";
+//		super.querySubStringIndices[0] = 13;
+//		super.querySubStringIndices[1] = 210;
 	}
 	
 	public long getRepairOrderId() {
@@ -249,5 +251,54 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 		dataMap.put("tax", tax.toString());
 		dataMap.put("total", total.toString());
 		return dataMap;
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(String searchString) {
+		super.searchString = searchString;
+		super.searchQuery = """
+				SELECT r.roId, r.customerId,
+				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
+				r.unitId, u.year, u.make, u.model, u.vin,
+				r.createdTime, r.closedTime, r.cashiered
+				FROM cis2901c.ro AS r JOIN cis2901c.customer AS c ON r.customerid = c.customerid
+				JOIN cis2901c.unit AS u ON r.unitId = u.unitId
+				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
+		super.outerSearchQueryAppendix = " AND roId IN (";
+		super.querySubStringIndices[0] = 13;
+		super.querySubStringIndices[1] = 210;
+		
+		return packObjects(DbServices.searchForObject(this));
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(long primaryKey) {		// NOTE not used anywhere
+		super.searchString = Long.toString(customerId);
+		super.searchQuery = """
+				SELECT r.roId, r.customerId,
+				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
+				r.unitId, u.year, u.make, u.model, u.vin,
+				r.createdTime, r.closedTime, r.cashiered
+				FROM cis2901c.ro WHERE r.roId = ?;""";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+		
+		return packObjects(DbServices.searchForObject(this));
+	}
+	
+	// TODO make this an abstract method in DbObjectSearchable
+	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
+		// helper to cast List of DbObjectSearchable to List of Customer
+		List<DbObjectSearchable> repairOrderSearchResults = new ArrayList<>();
+		
+		for (Object object : searchResults) {
+					// TODO use this shortened form of instanceof casting in the Tables
+			if (object instanceof RepairOrder repairOrder) {
+				repairOrderSearchResults.add(repairOrder);
+			}
+		}
+		
+		return repairOrderSearchResults;
 	}
 }

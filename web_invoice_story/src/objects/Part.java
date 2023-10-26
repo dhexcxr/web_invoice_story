@@ -1,8 +1,12 @@
 package objects;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import web_invoice_story.DbServices;
 
 public class Part extends DbObjectSearchable implements DbObjectSavable{
 	private long partId = -1;
@@ -16,42 +20,48 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 	private int onHand = -1;
 	
 	public Part() {
+		// empty default constructor
 	}
 	
 	public Part(String searchString) {
 		super.searchString = searchString;
-		super.searchQuery = """
-				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
-				WHERE partNumber LIKE ? OR supplier LIKE ? OR category LIKE ? OR description LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND partId IN (";
-		super.querySubStringIndices[0] = 13;
-		super.querySubStringIndices[1] = 87;
+//		super.searchQuery = """
+//				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
+//				WHERE partNumber LIKE ? OR supplier LIKE ? OR category LIKE ? OR description LIKE ?;""";
+//		super.outerSearchQueryAppendix = " AND partId IN (";
+//		super.querySubStringIndices[0] = 13;
+//		super.querySubStringIndices[1] = 87;
 	}
 	
+	// TODO turn this into an abstract constructor
 	public Part(long partId) {
 		super.searchString = Long.toString(partId);
-		super.searchQuery = """
-				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
-				WHERE partId = ?;""";
-		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndices[0] = 0;
-		super.querySubStringIndices[1] = 0;
+//		super.searchQuery = """
+//				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
+//				WHERE partId = ?;""";
+//		super.outerSearchQueryAppendix = "";
+//		super.querySubStringIndices[0] = 0;
+//		super.querySubStringIndices[1] = 0;
 	}
 	
 	public long getDbPk() {
+		// return Part object's primary key
 		return getPartId();
 	}
 	
 	@Override
 	public void setDbPk(long dbPk) {
+		// set Part object's primary key
 		partId = dbPk;
 	}
 	
 	public String getPkName() {
+		// get Part table's primary key field name
 		return "partId";
 	}
 	
 	public String getTableName() {
+		// get Part table's name
 		return "part";
 	}
 	
@@ -130,6 +140,8 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 	public Map<String, String> getDataMap() {
 		// TODO we might need to make these Maps into <String, Object>, then instanceof on the Object value
 			// to see how to treat it when building PreparedStatements with setParameter
+		
+		// return helper data for saving and updating Part objects
 		Map<String, String> dataMap = new HashMap<>();
 		
 		if (partId != -1) {
@@ -145,5 +157,53 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		dataMap.put("onHand", Integer.toString(onHand));
 		
 		return dataMap;
+	}
+
+	@Override
+	public List<DbObjectSearchable> search(String searchString) {
+		// search for a Part from the database using a search string
+		super.searchString = searchString;
+		super.searchQuery = """
+				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
+				WHERE partNumber LIKE ? OR supplier LIKE ? OR category LIKE ? OR description LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND partId IN (";
+		super.querySubStringIndices[0] = 13;
+		super.querySubStringIndices[1] = 87;
+
+		return packObjects(DbServices.searchForObject(this));
+	}
+	
+	@Override
+	public List<DbObjectSearchable> search(long partNum) {
+		// search for a Part from the database using a primary key
+		super.searchString = Long.toString(partId);
+		super.searchQuery = """
+				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
+				WHERE partId = ?;""";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+
+		return packObjects(DbServices.searchForObject(this));
+	}
+	
+	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> list) {
+		// helper to cast List of DbObjectSearchable to List of Part
+		List<DbObjectSearchable> partSearchResults = new ArrayList<>();
+		
+		for (Object object : list) {
+			if (object instanceof Part part) {
+				partSearchResults.add(part);
+			}
+		}
+		
+		return partSearchResults;
+	}
+
+	@Override
+	public String toString() {
+		return "Part [partId=" + partId + ", partNumber=" + partNumber + ", supplier=" + supplier + ", category="
+				+ category + ", description=" + description + ", notes=" + notes + ", cost=" + cost + ", retail="
+				+ retail + ", onHand=" + onHand + "]";
 	}
 }
