@@ -1,6 +1,7 @@
 package guiParts;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
@@ -8,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TableItem;
 
+import objects.DbObjectSearchable;
 import web_invoice_story.Application;
 
 public class JobLaborTable extends MyTable {
@@ -23,25 +25,25 @@ public class JobLaborTable extends MyTable {
 	}
 
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(Object object, int selectedItemIndex) {
+	public void paint(DbObjectSearchable object, int selectedItemIndex) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(Object[] objects) {
-		// TODO Auto-generated method stub
+	public void paint(List<? extends DbObjectSearchable> objects) {		// NOTE similar to ROJobTable, this is not technically used anywhere
+		// TODO Auto-generated method stub							// probably add a 'throw UnsupportedOperation'
 
 	}
 
 	@Override
-	public void sort(int i) {
+	public void sort(int i) {		// NOTE probably add a throw UnsupportedOperation here too
 		// TODO Auto-generated method stub
 
 	}

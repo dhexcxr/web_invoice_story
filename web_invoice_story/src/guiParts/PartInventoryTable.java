@@ -1,10 +1,13 @@
 package guiParts;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import objects.DbObjectSearchable;
 import objects.Part;
 
 public class PartInventoryTable extends MyTable{
@@ -25,23 +28,23 @@ public class PartInventoryTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {		// NOTE not used
 		// build each TableItem to fill Unit Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(Object part, int selectedTableItemIndex) {
+	public void paint(DbObjectSearchable part, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 			// e.g. where is this method called and does it matter that I'm ignoring selectedTableItemIndex
-		this.paint(new Object[] {part});
+//		this.paint(new Object[] {part});
 	}
 	
 	@Override
-	public void paint(Object[] partResults) {
+	public void paint(List<? extends DbObjectSearchable> partResults) {
 		// build each TableItem to fill Unit Table
-		for (Part part : (Part[]) partResults) {
-			if (part == null) {
+		for (DbObjectSearchable object : partResults) {
+			if (object == null || !(object instanceof Part part)) {
 				break;
 			}
 			TableItem tableItem = new TableItem(this, SWT.NONE);

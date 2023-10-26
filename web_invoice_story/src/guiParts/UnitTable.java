@@ -1,10 +1,13 @@
 package guiParts;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import objects.DbObjectSearchable;
 import objects.Unit;
 
 public class UnitTable extends MyTable{
@@ -27,29 +30,30 @@ public class UnitTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {		// NOTE not used
 		// build each TableItem to fill Unit Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(Object customer, int selectedTableItemIndex) {
+	public void paint(DbObjectSearchable customer, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
-		this.paint(new Object[] {customer});
+//		this.paint(new Object[] {customer});
 	}
 	
 	@Override
-	public void paint(Object[] unitResults) {
+	public void paint(List<? extends DbObjectSearchable> objectResults) {
 		// build each TableItem to fill Unit Table
-		for (Unit unit : (Unit[]) unitResults) {
-			if (unit == null) {
+		for (DbObjectSearchable object : objectResults) {
+			if (object instanceof Unit unit) {		// TODO remove all null chekcs with an instanceof
+				TableItem tableItem = new TableItem(this, SWT.NONE);
+				tableItem.setText(new String[] {unit.getOwner(), unit.getMake(), unit.getModel(),
+						unit.getModelName(), unit.getYear() == 0 ? "" : Integer.toString(unit.getYear()),
+								Integer.toString(unit.getMileage()), unit.getColor(), unit.getVin(), unit.getNotes()});
+				tableItem.setData(unit);
+			} else {
 				break;
 			}
-			TableItem tableItem = new TableItem(this, SWT.NONE);
-			tableItem.setText(new String[] {unit.getOwner(), unit.getMake(), unit.getModel(),
-				unit.getModelName(), unit.getYear() == 0 ? "" : Integer.toString(unit.getYear()),
-						Integer.toString(unit.getMileage()), unit.getColor(), unit.getVin(), unit.getNotes()});
-			tableItem.setData(unit);
 		}
 		initialSortOnPaint(currentSortedColumn, currentSortDirection);
 	}

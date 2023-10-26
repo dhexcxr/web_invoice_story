@@ -1,6 +1,10 @@
 package guiParts;
 
+import java.util.List;
+
 import org.eclipse.swt.widgets.Composite;
+
+import objects.DbObjectSearchable;
 
 public class RepairOrderJobTable extends MyTable {
 	
@@ -15,20 +19,20 @@ public class RepairOrderJobTable extends MyTable {
 	}
 
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(Object object, int selectedItemIndex) {
+	public void paint(DbObjectSearchable object, int selectedItemIndex) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(Object[] objects) {
-		// TODO Auto-generated method stub
+	public void paint(List<? extends DbObjectSearchable> objects) {		// NOTE this is technically not used, but is kinda linked via SearchTextBoxListeners
+		// TODO Auto-generated method stub							// but there is no TextSearchBox for RO Jobs, probably need to do a 'throw UnsupportedOperation' or whatever
 
 	}
 

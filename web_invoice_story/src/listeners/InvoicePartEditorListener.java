@@ -14,14 +14,14 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import gui.PartSearchDialog;
-import objects.InvoicePart;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
-import objects.JobPart;
 import guiParts.MyText;
+import objects.DbObjectSearchable;
+import objects.InvoicePart;
+import objects.JobPart;
 import objects.Part;
 import web_invoice_story.Application;
-import web_invoice_story.DbServices;
 
 public class InvoicePartEditorListener implements Listener {
 
@@ -120,7 +120,9 @@ public class InvoicePartEditorListener implements Listener {
 		Application.getLogger().log(Level.INFO, "findPartNumber called");
 		// search for part, populate selected TableItem fields, add new TableItem, calculate total
 		if (editorTxtBox.getText().length() > 0) {
-			Part[] partResults = (Part[]) DbServices.searchForObject(new Part(editorTxtBox.getText()));
+					// NOTE the change here is how we drop a DbServices.search() call for an DbObjectSearchable().search() call
+						// now we don't have to perform a hacky cast
+			List<DbObjectSearchable> partResults = new Part().search(editorTxtBox.getText());
 			InvoicePart editedLineItem = (InvoicePart) selectedTableItem.getData();
 			if (editedLineItem == null) {
 				editedLineItem = new InvoicePart();
@@ -129,8 +131,8 @@ public class InvoicePartEditorListener implements Listener {
 					// another new blank line in paintInvoiceLines(InvoicePart editedLineItem)  
 				selectedTableItem.setData(null);
 			}
-			if (partResults[1] == null && partResults[0] != null) {		// if there's only 1 result
-					editedLineItem.setPart(partResults[0]);
+			if (partResults.get(1) == null && partResults.get(0) != null && partResults.get(0) instanceof Part part) {		// if there's only 1 result
+					editedLineItem.setPart(part);
 			} else {
 				// if there's more than 1 result, or no results returned, call Item Search Box and show result
 				PartSearchDialog partSearchDialog = new PartSearchDialog(parent,SWT.NONE);

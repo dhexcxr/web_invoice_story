@@ -1,11 +1,14 @@
 package guiParts;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import objects.Customer;
+import objects.DbObjectSearchable;
 
 public class CustomerTable extends MyTable{
 	
@@ -26,22 +29,22 @@ public class CustomerTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {		// NOTE not used
 		// build each TableItem to fill Unit Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(Object customer, int selectedTableItemIndex) {
+	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
-		this.paint(new Object[] {customer});
+//		this.paint(new Object[] {customer});
 	}
 	
 	@Override
-	public void paint(Object[] customerResults) {
+	public void paint(List<? extends DbObjectSearchable> objectResults) {
 		// build each TableItem to fill Customer Table
-		for (Customer customer : (Customer[]) customerResults) {
-			if (customer == null) {
+		for (DbObjectSearchable object : objectResults) {
+			if (object == null || !(object instanceof Customer customer)) {
 				break;
 			}
 			TableItem tableItem = new TableItem(this, SWT.NONE);

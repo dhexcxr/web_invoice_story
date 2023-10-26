@@ -1,5 +1,7 @@
 package listeners;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
@@ -13,8 +15,9 @@ import gui.NewCustomerDialog;
 import gui.NewPartDialog;
 import gui.NewUnitDialog;
 import gui.RepairOrderDialog;
-import objects.Customer;
 import guiParts.MyTable;
+import objects.Customer;
+import objects.DbObjectSearchable;
 import objects.Part;
 import objects.RepairOrder;
 import objects.Unit;
@@ -42,28 +45,25 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 	public void mouseDoubleClick(MouseEvent e) {
 		// open saved object for editing
 		Application.getLogger().log(Level.INFO, "Double clicked to open an existing object");
-		Object[] tableObjects = new Object[0];
+		List<DbObjectSearchable> tableObjects = new ArrayList<>();
 		// TODO there might be a better way to check what type we're searching
 			// just like in DbServices.searchForObject
+		// LATER NOTE probably doing an instanceof on the table object we saved up there
 		if (table.getColumn(0).getText().equals("First Name") && table.getSelection().length > 0) {
 			openCustomer(table);
-			tableObjects = new Customer[table.getItems().length];
 		} else if (table.getColumn(0).getText().equals("Owner") && table.getSelection().length > 0) {
 			openUnit(table);
-			tableObjects = new Unit[table.getItems().length];
 		} else if (table.getColumn(0).getText().equals("Part Number") && table.getSelection().length > 0) {
 			openPart(table);
-			tableObjects = new Part[table.getItems().length];
 		} else if (table.getColumn(0).getText().equals("RO #") && table.getSelection().length > 0) {
 			openRo(table);
-			tableObjects = new RepairOrder[table.getItems().length];
 		} else {		// if nothing is selected, return TODO i'd like to find a better way to do this than
 			return;			// checking for all other conditions first, like if (selection == null)
 		}
 
 		// here, we repaint table with objects that are currently in it so we don't have to go out to the DB
 		for (int i = 0; i < table.getItems().length; i++) {
-			tableObjects[i] = table.getItems()[i].getData();
+			tableObjects.add((DbObjectSearchable) table.getItems()[i].getData());
 		}
 		// TODO paint just at the selectedTableIndex, this will require us to implement paint(Object object, int selectedTableItemIndex)
 			// in all MyTable objects as it is implemented in InvoicePartTable

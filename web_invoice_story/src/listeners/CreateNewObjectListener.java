@@ -1,5 +1,7 @@
 package listeners;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
@@ -11,12 +13,9 @@ import gui.NewCustomerDialog;
 import gui.NewPartDialog;
 import gui.NewUnitDialog;
 import gui.RepairOrderDialog;
-import objects.Customer;
 import guiParts.MyTable;
 import guiParts.MyText;
-import objects.Part;
-import objects.RepairOrder;
-import objects.Unit;
+import objects.DbObjectSearchable;
 import web_invoice_story.Application;
 
 // TODO rename this something better (or refactor more), 'cause we're not just creating objects here
@@ -40,30 +39,26 @@ public class CreateNewObjectListener extends MouseAdapter{
 		Application.getLogger().log(Level.INFO, "Mouse down event on a table, first column: {0}", table.getColumn(0).getText());
 		
 		Object newObject = null;
-		Object[] newTableContents =  new Object[0];
+		List<DbObjectSearchable> newTableContents = new ArrayList<>();
 		if (table.getColumn(0).getText().equals("First Name")) {
 			NewCustomerDialog addNewCustomerDialog = new NewCustomerDialog(shell, SWT.NONE);
 			newObject = addNewCustomerDialog.open();
-			newTableContents = new Customer[table.getItems().length + 1];
 		} else if (table.getColumn(0).getText().equals("Owner")) {
 			NewUnitDialog addNewUnitDialog = new NewUnitDialog(shell, SWT.NONE);
 			newObject = addNewUnitDialog.open();
-			newTableContents = new Unit[table.getItems().length + 1];
 		} else if (table.getColumn(0).getText().equals("Part Number")) {
 			NewPartDialog addNewPartDialog = new NewPartDialog(shell, SWT.NONE);
 			newObject = addNewPartDialog.open();
-			newTableContents = new Part[table.getItems().length + 1];
 		} else if (table.getColumn(0).getText().equals("RO #")) {
 			RepairOrderDialog addNewRepairOrderDialog = new RepairOrderDialog(shell, SWT.NONE);
 			newObject = addNewRepairOrderDialog.open();
-			newTableContents = new RepairOrder[table.getItems().length + 1];
 		}
 		
 		// repaint table - get current data in TableItems, insert the new data at the end, then call table.paint
 		for (int i = 0; i < table.getItems().length; i++) {
-			newTableContents[i] = table.getItems()[i].getData();
+			newTableContents.add((DbObjectSearchable) table.getItems()[i].getData());
 		}
-		newTableContents[table.getItems().length] = newObject;
+		newTableContents.add(table.getItems().length, (DbObjectSearchable) newObject);
 		table.removeAll();
 		table.paint(newTableContents);
 	}	

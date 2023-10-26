@@ -404,17 +404,17 @@ public class DbServices {
 		return searchQuery.replaceAll("[^a-zA-Z0-9 %'-]", "").split(" ");
 	}
 	
-	public static Object searchForObjectByPk(DbObjectSearchable object) {
-		return searchForObjectsByPk(object)[0];
+	public static DbObjectSearchable searchForObjectByPk(DbObjectSearchable object) {
+		return searchForObjectsByPk(object).get(0);
 	}
 	
 	// TODO rename to searchForManyObjectsByPk
-	public static Object[] searchForObjectsByPk(DbObjectSearchable object) {
+	public static List<DbObjectSearchable> searchForObjectsByPk(DbObjectSearchable object) {
 		if (!isConnected()) {
 			connectToDb();
 		}
 		
-		Object[] results = new Object[1];		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
+		List<DbObjectSearchable> results = new ArrayList<>(1);		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
 											// this will allow us to make a polymorphic select by Primary Key search - MOSTLY DONE
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(object.getSearchQuery())) {
 			statement.setLong(1, Long.parseLong(object.getSearchString()));
@@ -426,13 +426,16 @@ public class DbServices {
 		return results;	
 	}
 	
-	// TODO rename to searchByQueryString
-	public static Object[] searchForObject(DbObjectSearchable object) {
+	// START Object Search/Build DB methods
+	public static List<DbObjectSearchable> searchForObject(DbObjectSearchable object) {			// TODO rename to searchByQueryString
+		if (object.getWordsFromSearchString().length <= 0) {		// if there is no searchString set in object
+			throw new IllegalArgumentException("ERROR - DbServices.searchForObject(object): no search string in object");
+		}
 		if (!isConnected()) {
 			connectToDb();
 		}
 		
-		Object[] results = new Object[1];
+		List<DbObjectSearchable> results = new ArrayList<>(1);
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(object.getSearchQuery())) {
 			statement.setMaxRows(MAX_RESULTS);
 			fillStatementParameters(statement, object);
@@ -441,7 +444,8 @@ public class DbServices {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return results;		// TODO make sure everything that calls this handles the null return condition
+//		return results;		// TODO make sure everything that calls this handles the null return condition
+		return results;
 	}
 	
 	private static void fillStatementParameters(PreparedStatement statement, DbObjectSearchable object) throws SQLException {
@@ -458,8 +462,9 @@ public class DbServices {
 		}
 	}
 	
-	private static Object[] buildFoundObjects(ResultSet queryResultSet, DbObjectSearchable object) throws SQLException {
-		Object[] results = new Object[1];
+	private static List<DbObjectSearchable> buildFoundObjects(ResultSet queryResultSet, DbObjectSearchable object) throws SQLException {
+		// build correct object out of the SQL query ResultSet
+		List<DbObjectSearchable> results = new ArrayList<>();
 		if (object instanceof Customer) {
 			results = buildCustomers(queryResultSet);
 		} else if (object instanceof Part) {
@@ -480,8 +485,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static Customer[] buildCustomers(ResultSet queryResultSet) throws SQLException {
-		Customer[] results = new Customer[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildCustomers(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Customer customer = new Customer();
@@ -497,14 +502,14 @@ public class DbServices {
 			customer.setEmail(queryResultSet.getString(10));
 			customer.setCustomerId(queryResultSet.getLong(11));
 
-			results[i] = customer;
+			results.add(i, customer);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Part[] buildParts(ResultSet queryResultSet) throws SQLException {
-		Part[] results = new Part[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildParts(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			
@@ -519,14 +524,14 @@ public class DbServices {
 			part.setRetail(queryResultSet.getBigDecimal(8));
 			part.setOnHand(queryResultSet.getInt(9));
 			
-			results[i] = part;
+			results.add(i,part);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Unit[] buildUnits(ResultSet queryResultSet) throws SQLException {
-		Unit[] results = new Unit[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildUnits(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			
@@ -550,14 +555,14 @@ public class DbServices {
 			}
 			unit.setOwner(owner);
 			
-			results[i] = unit;
+			results.add(i, unit);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Invoice[] buildInvoices(ResultSet queryResultSet) throws SQLException {
-		Invoice[] results = new Invoice[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildInvoices(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Invoice invoice = new Invoice();
@@ -583,14 +588,15 @@ public class DbServices {
 			invoice.setParts(new Part[lineItemCount]);
 			
 			invoice.setTotal(queryResultSet.getBigDecimal(17)); 
-			results[i] = invoice;
+
+			results.add(i, invoice);
 			i++;
 		}
 		return results;
 	}
 	
-	private static RepairOrder[] buildRepairOrders(ResultSet queryResultSet) throws SQLException {
-		RepairOrder[] results = new RepairOrder[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildRepairOrders(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			RepairOrder repairOrder = new RepairOrder();
@@ -616,18 +622,27 @@ public class DbServices {
 			repairOrder.setCreatedDate(queryResultSet.getTimestamp(17));
 			repairOrder.setClosedDate(queryResultSet.getTimestamp(18));
 			
-			List<Job> roJobs =  new ArrayList<>(Arrays.asList((Job[]) DbServices.searchForObjectsByPk(new Job(repairOrder.getRepairOrderId()))));
-			roJobs.removeAll(Collections.singleton(null));
+			List<DbObjectSearchable> roJobResults =  DbServices.searchForObjectsByPk(new Job(repairOrder.getRepairOrderId()));
+			roJobResults.removeAll(Collections.singleton(null));
+			
+			List<Job> roJobs = new ArrayList<>();
+			for (Object roJobResult : roJobResults) {
+				// TODO use this shortened form of instanceof casting in the Tables
+				if (roJobResult instanceof Job roJob) {
+					roJobs.add(roJob);
+				}
+			}
+			
 			repairOrder.setJobs(roJobs);
 						
-			results[i] = repairOrder;
+			results.add(i, repairOrder);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Job[] buildJobs(ResultSet queryResultSet) throws SQLException {
-		Job[] results = new Job[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildJobs(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Job job = new Job();
@@ -638,14 +653,14 @@ public class DbServices {
 			job.setResolution(queryResultSet.getString(5));
 			job.setReccomendations(queryResultSet.getString(6));
 			
-			results[i] = job;
+			results.add(i, job);
 			i++;
 		}
 		return results;
 	}
 	
-	private static JobLabor[] buildJobLabors(ResultSet queryResultSet) throws SQLException {
-		JobLabor[] results = new JobLabor[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildJobLabors(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			JobLabor jobLabor = new JobLabor();
@@ -656,14 +671,14 @@ public class DbServices {
 			jobLabor.setLaborRate(queryResultSet.getBigDecimal(5));
 			jobLabor.setTechnician(queryResultSet.getString(6));
 						
-			results[i] = jobLabor;
+			results.add(i, jobLabor);
 			i++;
 		}
 		return results;
 	}
 	
-	private static JobPart[] buildJobParts(ResultSet queryResultSet) throws SQLException {
-		JobPart[] results = new JobPart[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildJobParts(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			JobPart jobPart = new JobPart();
@@ -676,7 +691,7 @@ public class DbServices {
 			jobPart.setSoldPrice(queryResultSet.getBigDecimal(7));
 			jobPart.setPart((Part) DbServices.searchForObjectByPk(new Part(jobPart.getPartId())));
 			
-			results[i] = jobPart;
+			results.add(i, jobPart);
 			i++;
 		}
 		return results;
