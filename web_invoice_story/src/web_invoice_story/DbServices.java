@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 
 import objects.Customer;
 import objects.DbObjectSavable;
@@ -59,6 +57,7 @@ public class DbServices {
 	}
 	
 	public static Connection getDbConnection() {
+		// global database connection
 		return mainDbConnection;		
 	}
 	
@@ -79,7 +78,7 @@ public class DbServices {
 		connectingToDb.open();
 		
 		int i = 0;
-		while (!isConnected() && i < 3) {
+		while (!isConnected() && i < 3) {		// try to connect 3 times
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
 				mainDbConnection = DriverManager.getConnection(url, user, pass);
@@ -105,7 +104,7 @@ public class DbServices {
 	}
 	
 	public static void disconnectFromDb() {
-		// clean up, close connection
+		// clean up, close database connection
 		try {
 			mainDbConnection.close();
 		} catch (SQLException e) {
@@ -116,7 +115,9 @@ public class DbServices {
 			e.printStackTrace();
 		}
 	}
+	// END General DB methods
 	
+	// START Object Save/Update DB methods
 	public static int deleteObject(DbObjectSavable dbObject) {
 		if (!isConnected()) {
 			connectToDb();
@@ -154,17 +155,16 @@ public class DbServices {
 		
 		if (creatingNewObject) {
 			// get latest dbObject.Table.dbPk, set dbObject.setPk
-			dbObject.setDbPk(getLastSavedDbObject(dbObject));
+			dbObject.setDbPk(getLastSavedDbObjectPk(dbObject));
 		}
 		
 		if (dbObject instanceof Invoice) {		// TODO turn off auto commit until all invoice queries have completed
 			saveInvoiceLineItems(dbObject);
-		} else if (dbObject instanceof RepairOrder) {
-			if (dbObject.getDbPk() == -1 ) {
-				dbObject.setDbPk(getLastRoNum());
+		} else if (dbObject instanceof RepairOrder thisRo) {
+			if (thisRo.getDbPk() == -1 ) {
+				thisRo.setDbPk(getLastRoNum());
 			}
-			saveRoJobs(dbObject);
-			RepairOrder thisRo = (RepairOrder) dbObject;
+			saveRoJobs(thisRo);
 			if (thisRo.getClosedDate() != null) {
 				sellRoPartsOutOfInventory(thisRo.getRepairOrderId());
 			}
@@ -177,34 +177,38 @@ public class DbServices {
 		}
 	}
 	
-	private static long getLastSavedDbObject(DbObjectSavable dbObject) {
+	private static long getLastSavedDbObjectPk(DbObjectSavable dbObject) {
+		// get primary key of last object saved into dbObject's database table
 		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement(
+		try (PreparedStatement lastDbObjectPkStatement = DbServices.getDbConnection().prepareStatement(
 									"SELECT MAX(" + dbObject.getPkName() + ") FROM cis2901c." + dbObject.getTableName() + ";")) {
-			results = lastInvoiceNumStatement.executeQuery();
+			results = lastDbObjectPkStatement.executeQuery();
 			while (results.next()) {
 				return results.getLong(1);		// we should always return here
 			}
 		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastSavedDbObject");
+			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastSavedDbObjectPk");
 			e.printStackTrace();
 		}
 		// if we get here something went wrong
 		return SQL_FAILURE;
 	}
-	
-	private static void saveRoJobs(DbObjectSavable dbObject ) {
-		long roNum = dbObject.getDbPk();
-		if (roNum == -1) {
-			roNum = getLastRoNum();
+
+	private static int getLastInvoiceNum() {
+		ResultSet results = null;
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(invoicenum) FROM cis2901c.invoice;")) {
+			results = lastInvoiceNumStatement.executeQuery();
+			while (results.next()) {
+				return results.getInt(1);		// we should always return here
+			}
+		} catch (SQLException e) {
+			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastInvoiceNum");
+			e.printStackTrace();
 		}
-		List<Job> roJobs = ((RepairOrder) dbObject).getJobs();
-		for (Job job : roJobs) {
-			job.getDataMap().put("roid", Long.toString(roNum));
-			DbServices.saveObject(job);
-		}
+		// if we get here something went wrong
+		return SQL_FAILURE;
 	}
-	
+
 	private static int getLastRoNum() {
 		ResultSet results = null;
 		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(roid) FROM cis2901c.ro;")) {
@@ -218,6 +222,49 @@ public class DbServices {
 		}
 		// if we get here something went wrong
 		return SQL_FAILURE;
+	}
+
+	private static int getLastJobId() {
+		ResultSet results = null;
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(jobid) FROM cis2901c.job;")) {
+			results = lastInvoiceNumStatement.executeQuery();
+			while (results.next()) {
+				return results.getInt(1);		// we should always return here
+			}
+		} catch (SQLException e) {
+			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastJobId");
+			e.printStackTrace();
+		}
+		// if we get here something went wrong
+		return SQL_FAILURE;
+	}
+
+	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
+		long invoiceNumber = getLastSavedDbObjectPk(dbObject);
+		// insert individual part invoice line items into invoicepart table
+		// update onHand of part table
+		Part[] invoiceLineParts = ((Invoice) dbObject).getParts();
+		for (Part invoiceLinePart : invoiceLineParts) {
+			if (invoiceLinePart == null) {
+				break;
+			}
+			InvoicePart invoicePart = new InvoicePart(invoiceLinePart);
+			invoicePart.getDataMap().put("invoicenum", Long.toString(invoiceNumber));
+			saveObject(invoicePart);
+		}
+		sellInvoicePartsOutOfInventory(invoiceNumber);
+	}
+	
+	private static void saveRoJobs(DbObjectSavable dbObject ) {
+		long roNum = dbObject.getDbPk();
+		if (roNum == -1) {
+			roNum = getLastRoNum();
+		}
+		List<Job> roJobs = ((RepairOrder) dbObject).getJobs();
+		for (Job job : roJobs) {
+			job.getDataMap().put("roid", Long.toString(roNum));
+			DbServices.saveObject(job);
+		}
 	}
 	
 	private static void saveJobParts(DbObjectSavable dbObject) {
@@ -244,56 +291,13 @@ public class DbServices {
 		}
 	}
 	
-	private static int getLastJobId() {
-		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(jobid) FROM cis2901c.job;")) {
-			results = lastInvoiceNumStatement.executeQuery();
-			while (results.next()) {
-				return results.getInt(1);		// we should always return here
-			}
-		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastJobId");
-			e.printStackTrace();
-		}
-		// if we get here something went wrong
-		return SQL_FAILURE;
-	}
-	
-	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
-		int invoiceNumber = getLastInvoiceNum();
-		// insert individual part invoice line items into invoicepart table
-		// in invoicepart section, update onHand of part table
-		TableItem[] invoiceLineItems = ((Invoice) dbObject).getTableLineItems();
-		for (TableItem invoiceLineItem : invoiceLineItems) {
-			if (invoiceLineItem.getData() == null) {
-				break;
-			}
-			InvoicePart invoicePart = (InvoicePart) invoiceLineItem.getData();
-			invoicePart.getDataMap().put("invoicenum", Integer.toString(invoiceNumber));
-			saveObject(invoicePart);
-		}
-		sellInvoicePartsOutOfInventory(invoiceNumber);
-	}
-	
-	private static int getLastInvoiceNum() {
-		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(invoicenum) FROM cis2901c.invoice;")) {
-			results = lastInvoiceNumStatement.executeQuery();
-			while (results.next()) {
-				return results.getInt(1);		// we should always return here
-			}
-		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: getLastInvoiceNum");
-			e.printStackTrace();
-		}
-		// if we get here something went wrong
-		return SQL_FAILURE;
-	}
-	
-	private static void sellInvoicePartsOutOfInventory(int invoiceNumber) {
+	private static void sellInvoicePartsOutOfInventory(long invoiceNumber) {
+		// update onHand of each part on invoice [invoiceNumber]
+			// TODO add prefix to these database fields, see if I can combine with sellRoPartsOutOfInventory() below
+		// update onHand of each part on invoice [invoiceNumber]
 		StringBuilder query = new StringBuilder("UPDATE part p JOIN invoicepart ip ON p.partid = ip.partid "
 				+ "SET p.onhand = p.onhand - ip.quantity WHERE ip.invoicenum = ?;");
-		sendQueryToDb(query, new ArrayList<>(List.of(Integer.toString(invoiceNumber))));
+		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(invoiceNumber))));
 	}
 	
 	private static void sellRoPartsOutOfInventory(long roNumber) {
@@ -308,24 +312,26 @@ public class DbServices {
 	}
 
 	private static int sendQueryToDb(StringBuilder queryString, List<String> dbFields) {
+		// used when saving new objects or updating existing objects
 		int updateCount = 0;
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString.toString())) {
 			int parameterIndex = 1;
-			for(String fieldData : dbFields) {
+			for(String fieldData : dbFields) {		// set query values
 				statement.setString(parameterIndex, fieldData);
 				parameterIndex++;
 			}
-			statement.execute();
+			statement.execute();		// execute save or update statement 
 			updateCount = statement.getUpdateCount();
 			Application.getLogger().log(Level.INFO, "Update Count: {0}", updateCount);
 		} catch (SQLException e) {
 			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", queryString);
 			e.printStackTrace();
 		}
-		return updateCount;
+		return updateCount;		// return number of database table rows that were saved or updated
 	}
 	
 	private static List<String> insertFieldsIntoQuery(StringBuilder queryString, DbObjectSavable dbObject, boolean creatingNewObject) {
+		// insert into the SQL query only the fields where we have data we need to save 
 		List<String> results = new ArrayList<>();
 		for (Map.Entry<String, String> entry : dbObject.getDataMap().entrySet()) {
 			if (entry.getValue() != null) {
@@ -353,32 +359,22 @@ public class DbServices {
 	private static void insertQueryHelper(StringBuilder queryString, String columnName, String data) {
 		StringBuilder column = new StringBuilder();
 		int columnInsertionPoint = queryString.indexOf(")");		// find where to insert field
-		if (queryString.charAt(columnInsertionPoint - 1) != '(') {
-			column.append(", ");
+		if (queryString.charAt(columnInsertionPoint - 1) != '(') {		// see if there are already other data
+			column.append(", ");											// and we need to add a comma
 		}
 		column.append(columnName);
 		queryString.insert(columnInsertionPoint, column);
 		
 		StringBuilder field = new StringBuilder();		// find where to insert data
 		int fieldInsertionPoint = queryString.lastIndexOf(")");
-		if (queryString.charAt(fieldInsertionPoint - 1) != '(') {
-			field.append(", ");
+		if (queryString.charAt(fieldInsertionPoint - 1) != '(') {		// see if there are already other data
+			field.append(", ");												// and we need to add a comma
 		}
 		field.append(data);
 		queryString.insert(fieldInsertionPoint, field);
 	}
-	
-	public static int deleteDetailsFromRo(Map<String, List<Long>> detailsToDelete) {
-		int updateCount = 0;
-		for (Map.Entry<String, List<Long>> entry : detailsToDelete.entrySet()) {
-			for (Long primaryKey : entry.getValue()) {
-				updateCount += deleteObjectsByPk(entry.getKey(), entry.getKey() + "id", primaryKey);
-			}
-		}
-		
-		return updateCount;
-	}
-	
+	// END Object Save/Update DB methods
+
 	private static int deleteObjectsByPk(String tableName, String primaryKeyName, Long primaryKey) {
 		int updateCount = 0;
 		if (!isConnected()) {
@@ -397,6 +393,17 @@ public class DbServices {
 		}
 		return updateCount;
 	}
+
+	public static int deleteDetailsFromRo(Map<String, List<Long>> detailsToDelete) {
+		int updateCount = 0;
+		for (Map.Entry<String, List<Long>> entry : detailsToDelete.entrySet()) {
+			for (Long primaryKey : entry.getValue()) {
+				updateCount += deleteObjectsByPk(entry.getKey(), entry.getKey() + "id", primaryKey);
+			}
+		}
+		
+		return updateCount;
+	}
 	
 	public static String[] sanitizer(String searchQuery) {
 		// simple regex to remove chars i don't want to search for
@@ -404,17 +411,17 @@ public class DbServices {
 		return searchQuery.replaceAll("[^a-zA-Z0-9 %'-]", "").split(" ");
 	}
 	
-	public static Object searchForObjectByPk(DbObjectSearchable object) {
-		return searchForObjectsByPk(object)[0];
+	public static DbObjectSearchable searchForObjectByPk(DbObjectSearchable object) {
+		return searchForObjectsByPk(object).get(0);
 	}
 	
 	// TODO rename to searchForManyObjectsByPk
-	public static Object[] searchForObjectsByPk(DbObjectSearchable object) {
+	public static List<DbObjectSearchable> searchForObjectsByPk(DbObjectSearchable object) {
 		if (!isConnected()) {
 			connectToDb();
 		}
 		
-		Object[] results = new Object[1];		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
+		List<DbObjectSearchable> results = new ArrayList<>(1);		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
 											// this will allow us to make a polymorphic select by Primary Key search - MOSTLY DONE
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(object.getSearchQuery())) {
 			statement.setLong(1, Long.parseLong(object.getSearchString()));
@@ -426,30 +433,36 @@ public class DbServices {
 		return results;	
 	}
 	
-	// TODO rename to searchByQueryString
-	public static Object[] searchForObject(DbObjectSearchable object) {
+	// START Object Search/Build DB methods
+	public static List<DbObjectSearchable> searchForObject(DbObjectSearchable object) {			// TODO rename to searchByQueryString
+		if (object.getWordsFromSearchString().length <= 0) {		// if there is no searchString set in object
+			throw new IllegalArgumentException("ERROR - DbServices.searchForObject(object): no search string in object");
+		}
 		if (!isConnected()) {
 			connectToDb();
 		}
 		
-		Object[] results = new Object[1];
+		List<DbObjectSearchable> results = new ArrayList<>(1);
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(object.getSearchQuery())) {
 			statement.setMaxRows(MAX_RESULTS);
 			fillStatementParameters(statement, object);
 			ResultSet queryResultSet = statement.executeQuery();
+				// TODO make buildFoundObjects return a List<DbObjectSearchable>
 			results = buildFoundObjects(queryResultSet, object);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return results;		// TODO make sure everything that calls this handles the null return condition
+//		return results;		// TODO make sure everything that calls this handles the null return condition
+		return results;
 	}
 	
 	private static void fillStatementParameters(PreparedStatement statement, DbObjectSearchable object) throws SQLException {
+		// fill search fields in queryString
 		ParameterMetaData parameterMetaData = statement.getParameterMetaData();
 		int parameterCount = parameterMetaData.getParameterCount();
 		int queryWord = object.getWordsFromSearchString().length - 1;
 		for (int j = 1; j <= parameterCount; j++) {
-			// fill search fields in queryString
+			// each word in searchString is surrounded by % SQL wildcard so that we match on any substring that user entered
 			statement.setString(j, "%" + object.getWordsFromSearchString()[queryWord] + "%");
 			int parametersPerQuery = parameterCount / object.getWordsFromSearchString().length; 
 			if (j % parametersPerQuery == 0) {
@@ -458,8 +471,9 @@ public class DbServices {
 		}
 	}
 	
-	private static Object[] buildFoundObjects(ResultSet queryResultSet, DbObjectSearchable object) throws SQLException {
-		Object[] results = new Object[1];
+	private static List<DbObjectSearchable> buildFoundObjects(ResultSet queryResultSet, DbObjectSearchable object) throws SQLException {
+		// build correct object out of the SQL query ResultSet
+		List<DbObjectSearchable> results = new ArrayList<>();
 		if (object instanceof Customer) {
 			results = buildCustomers(queryResultSet);
 		} else if (object instanceof Part) {
@@ -480,8 +494,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static Customer[] buildCustomers(ResultSet queryResultSet) throws SQLException {
-		Customer[] results = new Customer[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildCustomers(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Customer customer = new Customer();
@@ -497,14 +511,14 @@ public class DbServices {
 			customer.setEmail(queryResultSet.getString(10));
 			customer.setCustomerId(queryResultSet.getLong(11));
 
-			results[i] = customer;
+			results.add(i, customer);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Part[] buildParts(ResultSet queryResultSet) throws SQLException {
-		Part[] results = new Part[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildParts(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			
@@ -519,14 +533,14 @@ public class DbServices {
 			part.setRetail(queryResultSet.getBigDecimal(8));
 			part.setOnHand(queryResultSet.getInt(9));
 			
-			results[i] = part;
+			results.add(i,part);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Unit[] buildUnits(ResultSet queryResultSet) throws SQLException {
-		Unit[] results = new Unit[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildUnits(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			
@@ -550,14 +564,14 @@ public class DbServices {
 			}
 			unit.setOwner(owner);
 			
-			results[i] = unit;
+			results.add(i, unit);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Invoice[] buildInvoices(ResultSet queryResultSet) throws SQLException {
-		Invoice[] results = new Invoice[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildInvoices(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Invoice invoice = new Invoice();
@@ -583,14 +597,15 @@ public class DbServices {
 			invoice.setParts(new Part[lineItemCount]);
 			
 			invoice.setTotal(queryResultSet.getBigDecimal(17)); 
-			results[i] = invoice;
+
+			results.add(i, invoice);
 			i++;
 		}
 		return results;
 	}
 	
-	private static RepairOrder[] buildRepairOrders(ResultSet queryResultSet) throws SQLException {
-		RepairOrder[] results = new RepairOrder[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildRepairOrders(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			RepairOrder repairOrder = new RepairOrder();
@@ -616,18 +631,27 @@ public class DbServices {
 			repairOrder.setCreatedDate(queryResultSet.getTimestamp(17));
 			repairOrder.setClosedDate(queryResultSet.getTimestamp(18));
 			
-			List<Job> roJobs =  new ArrayList<>(Arrays.asList((Job[]) DbServices.searchForObjectsByPk(new Job(repairOrder.getRepairOrderId()))));
-			roJobs.removeAll(Collections.singleton(null));
+			List<DbObjectSearchable> roJobResults =  DbServices.searchForObjectsByPk(new Job(repairOrder.getRepairOrderId()));
+			roJobResults.removeAll(Collections.singleton(null));
+			
+			List<Job> roJobs = new ArrayList<>();
+			for (Object roJobResult : roJobResults) {
+				// TODO use this shortened form of instanceof casting in the Tables
+				if (roJobResult instanceof Job roJob) {
+					roJobs.add(roJob);
+				}
+			}
+			
 			repairOrder.setJobs(roJobs);
 						
-			results[i] = repairOrder;
+			results.add(i, repairOrder);
 			i++;
 		}
 		return results;
 	}
 	
-	private static Job[] buildJobs(ResultSet queryResultSet) throws SQLException {
-		Job[] results = new Job[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildJobs(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Job job = new Job();
@@ -638,14 +662,14 @@ public class DbServices {
 			job.setResolution(queryResultSet.getString(5));
 			job.setReccomendations(queryResultSet.getString(6));
 			
-			results[i] = job;
+			results.add(i, job);
 			i++;
 		}
 		return results;
 	}
 	
-	private static JobLabor[] buildJobLabors(ResultSet queryResultSet) throws SQLException {
-		JobLabor[] results = new JobLabor[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildJobLabors(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			JobLabor jobLabor = new JobLabor();
@@ -656,14 +680,14 @@ public class DbServices {
 			jobLabor.setLaborRate(queryResultSet.getBigDecimal(5));
 			jobLabor.setTechnician(queryResultSet.getString(6));
 						
-			results[i] = jobLabor;
+			results.add(i, jobLabor);
 			i++;
 		}
 		return results;
 	}
 	
-	private static JobPart[] buildJobParts(ResultSet queryResultSet) throws SQLException {
-		JobPart[] results = new JobPart[MAX_RESULTS];
+	private static List<DbObjectSearchable> buildJobParts(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			JobPart jobPart = new JobPart();
@@ -676,7 +700,7 @@ public class DbServices {
 			jobPart.setSoldPrice(queryResultSet.getBigDecimal(7));
 			jobPart.setPart((Part) DbServices.searchForObjectByPk(new Part(jobPart.getPartId())));
 			
-			results[i] = jobPart;
+			results.add(i, jobPart);
 			i++;
 		}
 		return results;

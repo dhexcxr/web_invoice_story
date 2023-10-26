@@ -2,6 +2,7 @@ package objects;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InvoicePart extends DbObjectSearchable implements DbObjectSavable {
@@ -130,5 +131,26 @@ public class InvoicePart extends DbObjectSearchable implements DbObjectSavable {
 		dataMap.put("quantity", Integer.toString(quantity));
 		dataMap.put("soldprice", soldPrice.toString());
 		return dataMap;
+	}
+	
+	@Override
+	public List<DbObjectSearchable> search(String searchString) throws UnsupportedOperationException {
+//		this.setSearchString(searchString);
+//		return this.search();
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public List<DbObjectSearchable> search(long invoicePartPrimaryKey) throws UnsupportedOperationException {
+//		this.setSearchString(searchString);
+//		return this.search();
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String toString() {
+		return "InvoicePart [dataMap=" + dataMap + ", invoicePartId=" + invoicePartId + ", partId=" + partId
+				+ ", partNumber=" + partNumber + ", description=" + description + ", quantity=" + quantity
+				+ ", soldPrice=" + soldPrice + ", part=" + part + "]";
 	}
 }

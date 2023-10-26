@@ -1,10 +1,13 @@
 package guiParts;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import objects.DbObjectSearchable;
 import objects.RepairOrder;
 
 public class RepairOrderTable extends MyTable {
@@ -25,13 +28,13 @@ public class RepairOrderTable extends MyTable {
 	}
 
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {
 		// build each TableItem to fill Unit Table
 			paint(object, this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(Object object, int selectedTableItemIndex) {
+	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {
 		// TODO compare this with PartInventoryTable.paint(part, slectedTableItemIndex)
 		if (object == null) {
 			return;
@@ -44,15 +47,17 @@ public class RepairOrderTable extends MyTable {
 	}
 
 	@Override
-	public void paint(Object[] repairOrderResults) {
-		for (RepairOrder repairOrder : (RepairOrder[]) repairOrderResults) {
-			if (repairOrder == null) {
+	public void paint(List<? extends DbObjectSearchable> objectResults) {
+		for (DbObjectSearchable object : objectResults) {
+			if (object  instanceof RepairOrder repairOrder) {
+				TableItem tableItem =  new TableItem(this, SWT.NONE);	
+				tableItem.setText(new String[] {Long.toString(repairOrder.getRepairOrderId()), repairOrder.getCustomerName(),
+						repairOrder.getUnitYear(), repairOrder.getUnitMake(), repairOrder.getUnitModel(), repairOrder.getUnitVin(), repairOrder.getJobNames()});
+				tableItem.setData(repairOrder);
+
+			} else {
 				break;
 			}
-			TableItem tableItem =  new TableItem(this, SWT.NONE);	
-			tableItem.setText(new String[] {Long.toString(repairOrder.getRepairOrderId()), repairOrder.getCustomerName(),
-					repairOrder.getUnitYear(), repairOrder.getUnitMake(), repairOrder.getUnitModel(), repairOrder.getUnitVin(), repairOrder.getJobNames()});
-			tableItem.setData(repairOrder);
 		}
 		initialSortOnPaint(currentSortedColumn, currentSortDirection);
 	}

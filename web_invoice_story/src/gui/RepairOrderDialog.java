@@ -1,10 +1,42 @@
 package gui;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+import guiParts.InvoicePartTable;
+import guiParts.JobLaborTable;
+import guiParts.MyText;
+import guiParts.RepairOrderJobTable;
+import guiParts.RepairOrderJobTableItem;
 import listeners.CustomerSearchListener;
 import listeners.InvoicePartTableListener;
 import listeners.JobDetailsModifiedListener;
@@ -21,52 +53,19 @@ import listeners.RepairOrderPartDeleteLineItemListener;
 import listeners.RequiredTextBoxModifyListener;
 import listeners.TextBoxFocusListener;
 import listeners.UnitSearchListener;
+import objects.Customer;
+import objects.DbObjectSearchable;
 import objects.Job;
 import objects.JobLabor;
-import guiParts.JobLaborTable;
-import guiParts.MyText;
+import objects.JobPart;
 import objects.RepairOrder;
-import guiParts.RepairOrderJobTable;
-import guiParts.RepairOrderJobTableItem;
 import objects.Unit;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
-import objects.JobPart;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.eclipse.swt.widgets.Composite;
-
-import objects.Customer;
-import guiParts.InvoicePartTable;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class RepairOrderDialog extends Dialog {
 
-	protected Object result;
+	protected transient Object result;
 	protected Shell shlRepairOrder;
 	
 	private RepairOrderJobTable tableJobsRepairOrder;
@@ -102,7 +101,7 @@ public class RepairOrderDialog extends Dialog {
 	
 	private Map<String, List<Long>> detailsToDelete = new HashMap<>();
 	
-	private RepairOrder currentRepairOrder;
+	private transient RepairOrder currentRepairOrder;
 	private boolean cashiered = false;
 	
 	private CustomerSearchListener customerSearchListener;
@@ -639,7 +638,8 @@ public class RepairOrderDialog extends Dialog {
 			}
 			
 			if (repairOrder.getCustomerId() != 0) {
-				txtCustomerRepairOrder.setData(DbServices.searchForObjectByPk(new Customer(repairOrder.getCustomerId())));
+						// NOTE another instance of replacing DbServices.search() with DbObjectSearchable().search()
+				txtCustomerRepairOrder.setData(new Customer().search(repairOrder.getCustomerId()).get(0));
 				txtCustomerRepairOrder.setText(repairOrder.getCustomerName() + "\n" + repairOrder.getCustomerData());
 			}
 
@@ -690,24 +690,42 @@ public class RepairOrderDialog extends Dialog {
 	
 	private List<Job> loadRoJobsFromDb() {
 		List<Job> roJobs = new ArrayList<>();
-		for (Job job : (Job[]) DbServices.searchForObjectsByPk(new Job(roId))) {
-			if (job == null) {
+		for (DbObjectSearchable dbObjectSearchable : DbServices.searchForObjectsByPk(new Job(roId))) {
+			if (dbObjectSearchable == null || !(dbObjectSearchable instanceof Job job)) {
 				break;
 			}
+			
+			long jobId = job.getJobId();
 			RepairOrderJobTableItem jobTableItem = new RepairOrderJobTableItem(tableJobsRepairOrder, getStyle());
 
 			// find and build labor
-			List<JobLabor> jobLabor = new ArrayList<>(Arrays.asList((JobLabor[]) DbServices.searchForObjectsByPk(new JobLabor(job.getJobId()))));
-			jobLabor.removeAll(Collections.singleton(null));
+			List<JobLabor> jobLabor = new ArrayList<>();
+			for (DbObjectSearchable jobLaborObjectSearchable : DbServices.searchForObjectsByPk(new JobLabor(jobId))) {
+				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobLabor jobLaborObject)) {
+					break;
+				} else {
+					jobLabor.add(jobLaborObject);
+				}
+			
+			}
+			jobLabor.removeAll(Collections.singleton(null));		// NOTE probably not needed
 			job.setLabor(jobLabor);
 
 			// find and build Parts
-			List<JobPart> listOfJobParts = new ArrayList<>(Arrays.asList((JobPart[]) DbServices.searchForObjectsByPk(new JobPart(job.getJobId()))));
-			listOfJobParts.removeAll(Collections.singleton(null));
+			List<JobPart> listOfJobParts = new ArrayList<>();
+			for (DbObjectSearchable jobLaborObjectSearchable : DbServices.searchForObjectsByPk(new JobPart(jobId))) {
+				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobPart jobPartObject)) {
+					break;										// NOTE perhaps this and the above 'find and build labor' should be a part of the Job object
+				} else {										// getJobParts() if this.jobParts is null, check DB for valid jobparts else return new ArrayList()
+					listOfJobParts.add(jobPartObject);			// hell, loadRoJobsFromDb() should probably be a part of the RO object
+				}
+			
+			}
+			listOfJobParts.removeAll(Collections.singleton(null));		// NOTE probably not needed
 			if (!cashiered) {
 				checkPartsOnHand(job, listOfJobParts);
 			}
-			
+
 			job.setJobParts(listOfJobParts);
 			roJobs.add(job);
 			jobTableItem.setData(job);

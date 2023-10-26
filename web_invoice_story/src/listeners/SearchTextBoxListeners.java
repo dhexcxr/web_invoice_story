@@ -3,21 +3,22 @@ package listeners;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 
+import guiParts.MyTable;
+import guiParts.MyText;
 import objects.Customer;
 import objects.DbObjectSearchable;
 import objects.Invoice;
-import guiParts.MyTable;
-import guiParts.MyText;
 import objects.Part;
 import objects.RepairOrder;
 import objects.Unit;
-import web_invoice_story.DbServices;
 
 public class SearchTextBoxListeners implements ModifyListener {
 	
+	// TODO see if i can disable right-click browser menu in the SearchTextBox, and the Mac autocomplete
+	
 	private MyText searchBox;
 	private MyTable table;
-	private DbObjectSearchable searchObject;
+	private transient DbObjectSearchable searchObject;
 	private String textBoxStartingText;
 	
 	public SearchTextBoxListeners(MyText textBox, MyTable table) {
@@ -39,8 +40,10 @@ public class SearchTextBoxListeners implements ModifyListener {
 		int queryLength = searchBox.getText().trim().length();
 		if (queryLength > 0 && !searchBox.getText().equals(textBoxStartingText)) {
 			table.removeAll();
+			
+			// TODO i think I can remove all of these
 			if (searchObject instanceof Customer) {
-				searchObject = new Customer(searchBox.getText());
+				searchObject = new Customer();
 			} else if (searchObject instanceof Part) {
 				searchObject = new Part(searchBox.getText());
 			} else if (searchObject instanceof Unit) {
@@ -50,7 +53,8 @@ public class SearchTextBoxListeners implements ModifyListener {
 			} else if (searchObject instanceof RepairOrder) {
 				searchObject = new RepairOrder(searchBox.getText());
 			}
-			table.paint(DbServices.searchForObject(searchObject));
+//			table.paint(DbServices.searchForObject(searchObject));
+			table.paint(searchObject.search(searchBox.getText()));
 		} else if (queryLength == 0) {
 			table.removeAll();
 		}

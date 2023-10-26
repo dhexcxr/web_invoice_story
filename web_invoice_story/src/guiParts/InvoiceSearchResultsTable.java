@@ -1,10 +1,13 @@
 package guiParts;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import objects.DbObjectSearchable;
 import objects.Invoice;
 
 public class InvoiceSearchResultsTable extends MyTable {
@@ -23,22 +26,22 @@ public class InvoiceSearchResultsTable extends MyTable {
 		// TODO Auto-generated constructor stub
 	}
 	@Override
-	public void paint(Object object) {
+	public void paint(DbObjectSearchable object) {		// NOTE not used
 		// build each TableItem to fill Unit Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(Object part, int selectedTableItemIndex) {
+	public void paint(DbObjectSearchable part, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
-		this.paint(new Object[] {part});
+//		this.paint(new ArrayList<DbObjectSearchable>() {{add(part);}});	// this is messy, could also use List.of() or Arrays.asList()
 	}
 	
 	@Override
-	public void paint(Object[] invoiceResults) {
+	public void paint(List<? extends DbObjectSearchable> invoiceResults) {
 		// build each TableItem to fill Invoice Table
-		for (Invoice invoice: (Invoice[]) invoiceResults) {
-			if (invoice == null) {
+		for (DbObjectSearchable object : invoiceResults) {
+			if (object == null || !(object instanceof Invoice invoice)) {
 				break;
 			}
 			TableItem tableItem = new TableItem(this, SWT.NONE);

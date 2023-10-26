@@ -1,13 +1,15 @@
 package objects;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class Customer extends DbObjectSearchable implements DbObjectSavable{
+public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	
 	// might not need this
 	private long customerId = -1;
@@ -29,43 +31,41 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable{
 	private static final String INTERNATIONAL_PHONE = "$1-$2-$3-$4";
 	
 	public Customer() {
+		// empty default constructor
 	}
 	
+	// TODO turn this into an abstract constructor
 	public Customer(String searchString) {
 		super.searchString = searchString;
-		super.searchQuery = """
-				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, 
-				email, customerId FROM cis2901c.customer WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? 
-				OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ? OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND customerId IN (";
-		super.querySubStringIndices[0] = 7;
-		super.querySubStringIndices[1] = 99;
-	}
-	
-	public Customer(long customerId) {
-		super.searchString = Long.toString(customerId);
-		super.searchQuery = """
-				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, 
-				email, customerId FROM cis2901c.customer WHERE customerId = ?;""";
-		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndices[0] = 0;
-		super.querySubStringIndices[1] = 0;
+//		super.searchQuery = """
+//				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, 
+//				email, customerId FROM cis2901c.customer WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? 
+//				OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ? OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
+//		super.outerSearchQueryAppendix = " AND customerId IN (";
+//		super.querySubStringIndices[0] = 7;
+//		super.querySubStringIndices[1] = 99;
 	}
 	
 	public long getDbPk() {
+		// return Customer object's primary key
 		return getCustomerId();
 	}
 	
 	@Override
 	public void setDbPk(long dbPk) {
+		// set Customer object's primary key
 		customerId = dbPk;
 	}
 	
+	@Override
 	public String getPkName() {
+		// get Customer table's primary key field name
 		return "customerId";
 	}
 	
+	@Override
 	public String getTableName() {
+		// get Customer table's name
 		return "customer";
 	}
 	
@@ -160,6 +160,8 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable{
 	public Map<String, String> getDataMap() {
 		// TODO we might need to make these Maps into <String, Object>, then instanceof on the Object value
 			// to see how to treat it when building PreparedStatements with setParameter (of course I already changed all Customer fields to String)
+		
+		// return helper data for saving and updating Customer objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (customerId != -1) {
 			dataMap.put("customerId", Long.toString(customerId));
@@ -184,6 +186,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable{
 	}
 	
 	public String setPhoneNumberFormat(String inputNumber) {
+		// automatically add dashes to phone numbers in the correct places
 		if (inputNumber != null) {
 			inputNumber = (inputNumber.replaceAll(NOT_NUMBERS, ""));
 			if (inputNumber.length() >= 7 && inputNumber.length() < 10) {
@@ -199,5 +202,55 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable{
 			}
 		}
 		return inputNumber;
+	}
+	
+	@Override
+	public List<DbObjectSearchable> search(String searchString) {
+		// search for a Customer from the database using a search string
+		super.searchString = searchString;
+		super.searchQuery = """
+				SELECT firstName, lastName, address, city, state, zipcode,
+				homePhone, workPhone, cellPhone, email, customerId
+				FROM cis2901c.customer
+				WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ?
+				OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND customerId IN (";
+		super.querySubStringIndices[0] = 7;
+		super.querySubStringIndices[1] = 99;
+		
+		return packObjects(DbServices.searchForObject(this));
+	}
+	
+	@Override
+	public List<DbObjectSearchable> search(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
+		// search for a Customer from the database using a primary key
+		super.searchString = Long.toString(customerId);
+		super.searchQuery = """
+				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, email, customerId
+				FROM cis2901c.customer WHERE customerId = ?;""";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+		
+		return packObjects(DbServices.searchForObject(this));		// NOTE this needs to be changed to searchForObjectsByPk to fix a bug
+	}
+	
+	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
+		// helper to cast List of DbObjectSearchable to List of Customer
+		List<DbObjectSearchable> customerSearchResults = new ArrayList<>();
+		
+		for (DbObjectSearchable object : searchResults) {
+			if (object instanceof Customer customer) {
+				customerSearchResults.add(customer);
+			}
+		}
+		
+		return customerSearchResults;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [customerId=" + customerId + ", firstName=" + firstName + ", lastName=" + lastName + ", address=" + address + ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + ", homePhone=" + homePhone + ", workPhone=" + workPhone + ", cellPhone=" + cellPhone + ", email="
+		+ email + "]";
 	}
 }

@@ -2,6 +2,9 @@ package objects;
 
 import java.util.Map;
 
+import web_invoice_story.DbServices;
+
+
 public interface DbObjectSavable {
 	
 	public long getDbPk();
@@ -13,4 +16,12 @@ public interface DbObjectSavable {
 	public String getTableName();
 	
 	public Map<String, String> getDataMap();
+	
+	public default int delete() {
+		return DbServices.deleteObject(this);
+	}
+
+	public default void save() {
+		DbServices.saveObject(this);
+	}
 }

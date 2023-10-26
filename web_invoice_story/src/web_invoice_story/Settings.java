@@ -16,7 +16,11 @@ public class Settings {
 	private boolean skipCancelConfirm = false;
 	private boolean skipCloseConfirm = false;
 	
+	// To add and save new Settings, add a private field to class
+		// use prop object to load property from file into field and create
+		// public getters and setters to change Settings field from app code 
 
+	// open settings file on instantiation, load file key/value pairs into Settings prop and fields
 	public Settings() {
 		try {
 			prop = new Properties();
@@ -35,7 +39,8 @@ public class Settings {
 			Application.getLogger().log(Level.SEVERE, "Exception {0}", e.toString());
 		}
 	}
-	
+
+	// return database url
 	public String getDatabase() {
 		return database;
 	}
@@ -57,7 +62,8 @@ public class Settings {
 		skipCloseConfirm = newSetting;
 		prop.setProperty("skipCloseConfirm", Boolean.toString(skipCloseConfirm));
 	}
-	
+
+	// save current Settings.prop into file
 	public void save() {
 		try (FileOutputStream settingsFileOuput = new FileOutputStream(propFileName)) {
 			prop.store(settingsFileOuput, "Service Salamander Settings");
@@ -65,5 +71,4 @@ public class Settings {
 			Application.getLogger().log(Level.SEVERE, e.toString());
 		}
 	}
-
 }

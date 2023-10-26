@@ -24,7 +24,7 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 	public Job() {
 		// TODO Auto-generated constructor stub
 	}
-	
+		// TODO make a search with roId so we don;t hafta construct new jobs just to search properly
 	public Job(long roId) {
 		super.searchString = Long.toString(roId);
 		super.searchQuery = "SELECT jobid, roid, name, complaint, resolution, recommendations FROM cis2901c.job WHERE roid = ?;";
@@ -194,5 +194,17 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		}
 		return dataMap;
 	}
+	
+	@Override
+	public List<DbObjectSearchable> search(String searchString) {
+		// TODO copy format from Customer
+		return null;
+	}
 
+	@Override
+	public List<DbObjectSearchable> search(long primaryKey) {
+		// TODO copy format from Customer
+		return null;
+	}
+	
 }
