@@ -131,7 +131,7 @@ public class InvoicePartEditorListener implements Listener {
 					// another new blank line in paintInvoiceLines(InvoicePart editedLineItem)  
 				selectedTableItem.setData(null);
 			}
-			if (partResults.get(1) == null && partResults.get(0) != null && partResults.get(0) instanceof Part part) {		// if there's only 1 result
+			if (partResults.size() == 1 && partResults.get(0) instanceof Part part) {		// if there's only 1 result
 					editedLineItem.setPart(part);
 			} else {
 				// if there's more than 1 result, or no results returned, call Item Search Box and show result
