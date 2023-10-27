@@ -688,7 +688,7 @@ public class RepairOrderDialog extends Dialog {
 	
 	private List<Job> loadRoJobsFromDb() {
 		List<Job> roJobs = new ArrayList<>();
-		for (DbObjectSearchable dbObjectSearchable : DbServices.searchForObjectsByPk(new Job(roId))) {
+		for (DbObjectSearchable dbObjectSearchable : new Job().searchForJobsByRoId(roId)) {
 			if (dbObjectSearchable == null || !(dbObjectSearchable instanceof Job job)) {
 				break;
 			}
@@ -698,8 +698,8 @@ public class RepairOrderDialog extends Dialog {
 
 			// find and build labor
 			List<JobLabor> jobLabor = new ArrayList<>();
-			for (DbObjectSearchable jobLaborObjectSearchable : DbServices.searchForObjectsByPk(new JobLabor(jobId))) {
-				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobLabor jobLaborObject)) {
+			for (DbObjectSearchable jobLaborObjectSearchable : new JobLabor().searchJobLaborByRoId(jobId)) {
+				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobLabor jobLaborObject)) {	// NOTE we can probably remove this
 					break;
 				} else {
 					jobLabor.add(jobLaborObject);

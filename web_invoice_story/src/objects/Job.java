@@ -204,6 +204,28 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 
 		return DbServices.searchForObjectByPk(this);
 	}
+	
+	public List<Job> searchForJobsByRoId(long roId) {
+		super.searchString = Long.toString(roId);
+		super.searchQuery = "SELECT jobid, roid, name, complaint, resolution, recommendations FROM cis2901c.job WHERE roid = ?;";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+		
+		return packObjects(DbServices.searchForObjectsByPk(this));
+	}
+	
+	private List<Job> packObjects(List<DbObjectSearchable> searchResults) {
+		// helper to cast List of DbObjectSearchable to List of Customer
+		List<Job> jobSearchResults = new ArrayList<>();
+		
+		for (DbObjectSearchable object : searchResults) {
+			if (object instanceof Job job) {
+				jobSearchResults.add(job);
+			}
+		}
+		
+		return jobSearchResults;
 	}
 	
 }

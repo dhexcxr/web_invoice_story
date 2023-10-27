@@ -631,16 +631,8 @@ public class DbServices {
 			repairOrder.setCreatedDate(queryResultSet.getTimestamp(17));
 			repairOrder.setClosedDate(queryResultSet.getTimestamp(18));
 			
-			List<DbObjectSearchable> roJobResults =  DbServices.searchForObjectsByPk(new Job(repairOrder.getRepairOrderId()));
-			roJobResults.removeAll(Collections.singleton(null));
-			
-			List<Job> roJobs = new ArrayList<>();
-			for (Object roJobResult : roJobResults) {
-				// TODO use this shortened form of instanceof casting in the Tables
-				if (roJobResult instanceof Job roJob) {
-					roJobs.add(roJob);
-				}
-			}
+			List<Job> roJobs =  new Job().searchForJobsByRoId(repairOrder.getRepairOrderId());
+			roJobs.removeAll(Collections.singleton(null));		// NOTE i don;t think we need this anymore
 			
 			repairOrder.setJobs(roJobs);
 						
