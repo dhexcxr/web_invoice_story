@@ -193,7 +193,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(String searchString) {
+	public List<Customer> search(String searchString) {
 		// search for a Customer from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
@@ -206,11 +206,11 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.querySubStringIndices[0] = 7;
 		super.querySubStringIndices[1] = 99;
 
-		return DbServices.searchForObject(this);
+		return packObjects(DbServices.searchForObject(this));
 	}
 	
 	@Override
-	public DbObjectSearchable searchByPk(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
+	public Customer searchByPk(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
@@ -220,15 +220,15 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
 
-		return DbServices.searchForObjectByPk(this);
+		return packObject(DbServices.searchForObjectByPk(this));
 	}
 	
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on
-	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
+	private List<Customer> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Customer
-		List<DbObjectSearchable> customerSearchResults = new ArrayList<>();
+		List<Customer> customerSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
 			customerSearchResults.add(packObject(object));
@@ -237,12 +237,12 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		return customerSearchResults;
 	}
 	
-	private DbObjectSearchable packObject(DbObjectSearchable dbObjectSearchable) {
+	private Customer packObject(DbObjectSearchable dbObjectSearchable) {
 		// helper to cast List of DbObjectSearchable to List of Customer
 			if (dbObjectSearchable instanceof Customer customer) {
 				return customer;
 			}
-			return dbObjectSearchable;
+			throw new IllegalArgumentException("objects.Customer.packObject(): dbObjectSearchable is not a Customer");
 	}
 
 	@Override

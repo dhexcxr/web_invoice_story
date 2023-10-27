@@ -172,7 +172,7 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(String searchString) {
+	public List<Invoice> search(String searchString) {
 		// search for a Invoice from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
@@ -194,13 +194,13 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override		// NOTE not used anywhere
-	public DbObjectSearchable searchByPk(long invoiceNum) throws UnsupportedOperationException {
+	public Invoice searchByPk(long invoiceNum) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 	
-	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
+	private List<Invoice> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Invoice
-		List<DbObjectSearchable> invoiceSearchResults = new ArrayList<>();
+		List<Invoice> invoiceSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
 			if (object instanceof Invoice invoice) {

@@ -139,7 +139,7 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public List<DbObjectSearchable> search(String searchString) {
+	public List<Part> search(String searchString) {
 		// search for a Part from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
@@ -150,11 +150,11 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[1] = 87;
 
 //		return packObjects(DbServices.searchForObject(this));
-		return DbServices.searchForObject(this);
+		return packObjects(DbServices.searchForObject(this));
 	}
 	
 	@Override
-	public DbObjectSearchable searchByPk(long partNum) {
+	public Part searchByPk(long partNum) {
 		// search for a Part from the database using a primary key
 		super.searchString = Long.toString(partNum);
 		super.searchQuery = """
@@ -164,20 +164,25 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
 
-		return DbServices.searchForObjectByPk(this);
+		return packObject(DbServices.searchForObjectByPk(this));
 	}
 	
-	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> list) {
+	private List<Part> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Part
-		List<DbObjectSearchable> partSearchResults = new ArrayList<>();
-		
-		for (Object object : list) {
-			if (object instanceof Part part) {
-				partSearchResults.add(part);
-			}
+		List<Part> partSearchResults = new ArrayList<>();
+
+		for (DbObjectSearchable object : searchResults) {
+			partSearchResults.add(packObject(object));
 		}
-		
 		return partSearchResults;
+	}
+	
+	private Part packObject(DbObjectSearchable dbObjectSearchable) {
+		// helper to cast DbObjectSearchable to Part
+			if (dbObjectSearchable instanceof Part part) {
+				return part;
+			}
+			throw new IllegalArgumentException("objects.Part.packObject(): dbObjectSearchable is not a Part");
 	}
 
 	@Override

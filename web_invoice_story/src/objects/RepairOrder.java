@@ -239,7 +239,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public List<DbObjectSearchable> search(String searchString) {
+	public List<RepairOrder> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
 				SELECT r.roId, r.customerId,
@@ -257,7 +257,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public DbObjectSearchable searchByPk(long primaryKey) {		// NOTE not used anywhere
+	public RepairOrder searchByPk(long primaryKey) {		// NOTE not used anywhere
 		super.searchString = Long.toString(primaryKey);
 		super.searchQuery = """
 				SELECT r.roId, r.customerId,
@@ -269,21 +269,26 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
 		
-		return DbServices.searchForObjectByPk(this);
+		return packObject(DbServices.searchForObjectByPk(this));
 	}
 	
 	// TODO make this an abstract method in DbObjectSearchable
-	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
+	private List<RepairOrder> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Customer
-		List<DbObjectSearchable> repairOrderSearchResults = new ArrayList<>();
+		List<RepairOrder> repairOrderSearchResults = new ArrayList<>();
 		
-		for (Object object : searchResults) {
+		for (DbObjectSearchable object : searchResults) {
 					// TODO use this shortened form of instanceof casting in the Tables
-			if (object instanceof RepairOrder repairOrder) {
-				repairOrderSearchResults.add(repairOrder);
-			}
+			repairOrderSearchResults.add(packObject(object));
 		}
 		
 		return repairOrderSearchResults;
+	}
+	
+	private RepairOrder packObject(DbObjectSearchable searchResult) {
+		if (searchResult instanceof RepairOrder repairOrder) {
+			return repairOrder;
+		}
+		throw new IllegalArgumentException("objects.RepairOrder.packObject(): dbObjectSearchable is not a RepairOrder");
 	}
 }

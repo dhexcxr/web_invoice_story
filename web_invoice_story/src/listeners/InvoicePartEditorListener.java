@@ -122,7 +122,7 @@ public class InvoicePartEditorListener implements Listener {
 		if (editorTxtBox.getText().length() > 0) {
 					// NOTE the change here is how we drop a DbServices.search() call for an DbObjectSearchable().search() call
 						// now we don't have to perform a hacky cast
-			List<DbObjectSearchable> partResults = new Part().search(editorTxtBox.getText());
+			List<Part> partResults = new Part().search(editorTxtBox.getText());
 			InvoicePart editedLineItem = (InvoicePart) selectedTableItem.getData();
 			if (editedLineItem == null) {
 				editedLineItem = new InvoicePart();

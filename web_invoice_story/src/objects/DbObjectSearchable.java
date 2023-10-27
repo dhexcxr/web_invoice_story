@@ -43,7 +43,8 @@ public abstract class DbObjectSearchable {
 	
 	// TODO see about making a castDown() function that automatically casts a DbObjectSaveable to its true subtype
 	
-	public abstract List<DbObjectSearchable> search(String searchString);
+	public abstract List<? extends DbObjectSearchable> search(String searchString);
 	
 	public abstract DbObjectSearchable searchByPk(long primaryKey);
+
 }

@@ -190,19 +190,13 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(String searchString) throws UnsupportedOperationException {
+	public List<Job> search(String searchString) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override	// also NOTE this may need to return a DbObjectSearchable, not a list, although searchForObjectsByPk is only used to get a Unit in RepairOrderDialog
-	public DbObjectSearchable searchByPk(long primaryKey) {
-		super.searchString = Long.toString(roId);
-		super.searchQuery = "SELECT jobid, roid, name, complaint, resolution, recommendations FROM cis2901c.job WHERE roid = ?;";
-		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndices[0] = 0;
-		super.querySubStringIndices[1] = 0;
-
-		return DbServices.searchForObjectByPk(this);
+	@Override
+	public Job searchByPk(long primaryKey) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
 	}
 	
 	public List<Job> searchForJobsByRoId(long roId) {
@@ -216,7 +210,7 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	private List<Job> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+		// helper to cast List of DbObjectSearchable to List of Job
 		List<Job> jobSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {

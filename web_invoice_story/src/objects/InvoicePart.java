@@ -134,12 +134,12 @@ public class InvoicePart extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(String searchString) throws UnsupportedOperationException {
+	public List<? extends InvoicePart> search(String searchString) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public DbObjectSearchable searchByPk(long invoicePartPrimaryKey) throws UnsupportedOperationException {
+	public InvoicePart searchByPk(long invoicePartPrimaryKey) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 
