@@ -647,9 +647,6 @@ public class RepairOrderDialog extends Dialog {
 				txtUnitRepairOrder.setText(roUnit.getYear() + " " + roUnit.getMake() + "\n" +
 						roUnit.getModel() + "\nVin: " + roUnit.getVin() + "\nColor: " +
 						roUnit.getColor() + "\n" + "Mileage: " + roUnit.getMileage());
-//				txtUnitRepairOrder.setText(repairOrder.getUnitYear() + " " + repairOrder.getUnitMake() + "\n" +
-//						repairOrder.getUnitModel() + "\n" + repairOrder.getUnitVin());
-//				txtUnitRepairOrder.setData(DbServices.searchForObjectByPk(new Unit(repairOrder.getUnitId())));
 			}
 
 			List<Job> roJobs = loadRoJobsFromDb();

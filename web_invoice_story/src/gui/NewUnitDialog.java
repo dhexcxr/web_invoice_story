@@ -259,9 +259,7 @@ public class NewUnitDialog extends Dialog {
 			return;
 		}
 		
-//		if (txtModelName.isModified()) {
-			unit.setModelName(txtModelName.getText());
-//		}
+		unit.setModelName(txtModelName.getText());
 		
 		if (txtMileage.isModified()) {
 			try {
@@ -270,14 +268,10 @@ public class NewUnitDialog extends Dialog {
 				Application.getLogger().log(Level.FINER, e.getMessage(), e);
 			}
 		}
-		
-//		if (txtVinNumber.isModified()) {
-			unit.setVin(txtVinNumber.getText());
-//		}
 
-//		if (txtModel.isModified()) {
-			unit.setModel(txtModel.getText());
-//		}
+		unit.setVin(txtVinNumber.getText());
+
+		unit.setModel(txtModel.getText());
 
 		if (txtYear.isModified()) {
 			try {
@@ -286,11 +280,9 @@ public class NewUnitDialog extends Dialog {
 				Application.getLogger().log(Level.FINER, e.getMessage(), e);
 			}
 		}
-		
-//		if (txtColor.isModified()) {
-			unit.setColor(txtColor.getText());
-//		}
-		
+
+		unit.setColor(txtColor.getText());
+
 		if (txtNotes.isModified()) {
 			unit.setNotes(txtNotes.getText());
 		}

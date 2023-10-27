@@ -132,15 +132,12 @@ public class JobPart extends InvoicePart {
 
 	@Override
 	public void setPart(Part part) {
-//		if (this.part != null && this.getPartId() != part.getPartId()) { // OLD
-//		if (part != null && this.getPartId() != part.getPartId()) {	// nEWER
 		if (this.part == null && part != null) {
 			this.partId = part.getPartId();
 			this.partNumber = part.getPartNumber();
 			this.description = part.getDescription();
 			this.quantity = 1;
 			this.soldPrice = part.getRetail();
-//			this.part = part;	//nEWER
 		}
 		this.part = part;
 	}

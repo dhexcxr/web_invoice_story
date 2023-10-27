@@ -5,12 +5,7 @@ import org.eclipse.swt.events.ModifyListener;
 
 import guiParts.MyTable;
 import guiParts.MyText;
-import objects.Customer;
 import objects.DbObjectSearchable;
-import objects.Invoice;
-import objects.Part;
-import objects.RepairOrder;
-import objects.Unit;
 
 public class SearchTextBoxListeners implements ModifyListener {
 	
@@ -20,11 +15,6 @@ public class SearchTextBoxListeners implements ModifyListener {
 	private MyTable table;
 	private transient DbObjectSearchable searchObject;
 	private String textBoxStartingText;
-	
-	public SearchTextBoxListeners(MyText textBox, MyTable table) {
-		this.searchBox = textBox;
-		this.table = table;
-	}
 	
 	public SearchTextBoxListeners(MyText textBox, MyTable table, DbObjectSearchable searchObject) {
 		this.searchBox = textBox;
@@ -40,20 +30,6 @@ public class SearchTextBoxListeners implements ModifyListener {
 		int queryLength = searchBox.getText().trim().length();
 		if (queryLength > 0 && !searchBox.getText().equals(textBoxStartingText)) {
 			table.removeAll();
-			
-			// TODO i think I can remove all of these
-			if (searchObject instanceof Customer) {
-				searchObject = new Customer();
-			} else if (searchObject instanceof Part) {
-				searchObject = new Part(searchBox.getText());
-			} else if (searchObject instanceof Unit) {
-				searchObject = new Unit(searchBox.getText());
-			} else if (searchObject instanceof Invoice) {
-				searchObject = new Invoice(searchBox.getText());
-			} else if (searchObject instanceof RepairOrder) {
-				searchObject = new RepairOrder(searchBox.getText());
-			}
-//			table.paint(DbServices.searchForObject(searchObject));
 			table.paint(searchObject.search(searchBox.getText()));
 		} else if (queryLength == 0) {
 			table.removeAll();
