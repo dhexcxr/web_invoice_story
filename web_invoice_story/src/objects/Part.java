@@ -149,7 +149,8 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[0] = 13;
 		super.querySubStringIndices[1] = 87;
 
-		return packObjects(DbServices.searchForObject(this));
+//		return packObjects(DbServices.searchForObject(this));
+		return DbServices.searchForObject(this);
 	}
 	
 	@Override
@@ -163,7 +164,7 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
 
-		return packObjects(DbServices.searchForObject(this));
+		return DbServices.searchForObjectByPk(this);
 	}
 	
 	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> list) {

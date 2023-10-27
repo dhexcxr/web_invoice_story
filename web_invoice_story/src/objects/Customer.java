@@ -205,8 +205,8 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.outerSearchQueryAppendix = " AND customerId IN (";
 		super.querySubStringIndices[0] = 7;
 		super.querySubStringIndices[1] = 99;
-		
-		return packObjects(DbServices.searchForObject(this));
+
+		return DbServices.searchForObject(this);
 	}
 	
 	@Override
@@ -219,22 +219,30 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
-		
-		return packObjects(DbServices.searchForObject(this));		// NOTE this needs to be changed to searchForObjectsByPk to fix a bug
+
+		return DbServices.searchForObjectByPk(this);
 	}
 	
 	// TODO make these methods of superclass
+		// another NOTE these are not used now but may be useful if I remove the two search methods
+			// from the super class and make them return objects of the Class they're called on
 	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Customer
 		List<DbObjectSearchable> customerSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
-			if (object instanceof Customer customer) {
-				customerSearchResults.add(customer);
-			}
+			customerSearchResults.add(packObject(object));
 		}
 		
 		return customerSearchResults;
+	}
+	
+	private DbObjectSearchable packObject(DbObjectSearchable dbObjectSearchable) {
+		// helper to cast List of DbObjectSearchable to List of Customer
+			if (dbObjectSearchable instanceof Customer customer) {
+				return customer;
+			}
+			return dbObjectSearchable;
 	}
 
 	@Override

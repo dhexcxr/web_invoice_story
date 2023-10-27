@@ -269,7 +269,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
 		
-		return packObjects(DbServices.searchForObject(this));
+		return DbServices.searchForObjectByPk(this);
 	}
 	
 	// TODO make this an abstract method in DbObjectSearchable

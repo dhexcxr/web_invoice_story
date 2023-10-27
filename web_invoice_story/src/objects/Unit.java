@@ -177,8 +177,9 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[0] = 15;					// and move these 2 search() function implementations into the DbObjectSearchable too
 		super.querySubStringIndices[1] = 128;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
 																	// and where can we give it the generic ? extends DbObjectSearchable
-		return packObjects(DbServices.searchForObject(this));		// I thought of this because if this function here returns a List<? extends DbObjectSearchable instead
-	}																// of a List<Unit> nothing seems to complain, though I didn't actually test anything
+																	// I thought of this because if this function here returns a List<? extends DbObjectSearchable instead
+		return DbServices.searchForObjectByPk(this);				// of a List<Unit> nothing seems to complain, though I didn't actually test anything
+	}
 	
 	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {		// TODO NOTE look at how all of these are implemented
 		// helper to cast List of DbObjectSearchable to List of Customer				// this could probably go into DbObjectSearchable
