@@ -26,28 +26,6 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	public Unit() {
 	}
 	
-	public Unit(String searchString) {
-//		super.searchString = searchString;
-//		super.searchQuery = """
-//				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
-//				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId 
-//				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.vin LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.year LIKE ?;""";
-//		super.outerSearchQueryAppendix = " AND u.unitId IN (";
-//		super.querySubStringIndices[0] = 15;
-//		super.querySubStringIndices[1] = 128;
-	}
-	
-	public Unit(Long unitId) {
-		super.searchString = Long.toString(unitId);
-		super.searchQuery = """
-				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
-				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId
-				WHERE unitid = ?;""";
-		super.outerSearchQueryAppendix = " AND u.unitId IN (";
-		super.querySubStringIndices[0] = 15;
-		super.querySubStringIndices[1] = 128;
-	}
-	
 	public long getDbPk() {
 		return getUnitId();
 	}
@@ -189,8 +167,8 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public List<DbObjectSearchable> search(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
-		super.searchString = Long.toString(unitId);				// all the super. declarations in the constructor, maybe make a separate var for the searchByPk query,
+	public DbObjectSearchable searchByPk(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
+		super.searchString = Long.toString(primaryKey);				// all the super. declarations in the constructor, maybe make a separate var for the searchByPk query,
 		super.searchQuery = """
 				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
 				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId

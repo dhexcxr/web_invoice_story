@@ -698,7 +698,7 @@ public class DbServices {
 			jobPart.setDescription(queryResultSet.getString(5));
 			jobPart.setQuantity(queryResultSet.getInt(6));
 			jobPart.setSoldPrice(queryResultSet.getBigDecimal(7));
-			jobPart.setPart((Part) DbServices.searchForObjectByPk(new Part(jobPart.getPartId())));
+			jobPart.setPart((Part) new Part().searchByPk(jobPart.getPartId()));
 			
 			results.add(i, jobPart);
 			i++;

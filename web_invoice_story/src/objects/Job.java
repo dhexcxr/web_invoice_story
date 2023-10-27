@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import web_invoice_story.DbServices;
+
 public class Job extends DbObjectSearchable implements DbObjectSavable {
 	
 	private long jobId = -1;
@@ -23,14 +25,6 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 
 	public Job() {
 		// TODO Auto-generated constructor stub
-	}
-		// TODO make a search with roId so we don;t hafta construct new jobs just to search properly
-	public Job(long roId) {
-		super.searchString = Long.toString(roId);
-		super.searchQuery = "SELECT jobid, roid, name, complaint, resolution, recommendations FROM cis2901c.job WHERE roid = ?;";
-		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndices[0] = 0;
-		super.querySubStringIndices[1] = 0;
 	}
 
 	public Job(String jobName, String complaints, String resolution, String reccomendations, List<Part> parts,
@@ -196,15 +190,20 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(String searchString) {
-		// TODO copy format from Customer
-		return null;
+	public List<DbObjectSearchable> search(String searchString) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public List<DbObjectSearchable> search(long primaryKey) {
-		// TODO copy format from Customer
-		return null;
+	@Override	// also NOTE this may need to return a DbObjectSearchable, not a list, although searchForObjectsByPk is only used to get a Unit in RepairOrderDialog
+	public DbObjectSearchable searchByPk(long primaryKey) {
+		super.searchString = Long.toString(roId);
+		super.searchQuery = "SELECT jobid, roid, name, complaint, resolution, recommendations FROM cis2901c.job WHERE roid = ?;";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+
+		return DbServices.searchForObjectByPk(this);
+	}
 	}
 	
 }

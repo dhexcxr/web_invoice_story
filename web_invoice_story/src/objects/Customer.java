@@ -34,18 +34,6 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		// empty default constructor
 	}
 	
-	// TODO turn this into an abstract constructor
-	public Customer(String searchString) {
-		super.searchString = searchString;
-//		super.searchQuery = """
-//				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, 
-//				email, customerId FROM cis2901c.customer WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? 
-//				OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ? OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
-//		super.outerSearchQueryAppendix = " AND customerId IN (";
-//		super.querySubStringIndices[0] = 7;
-//		super.querySubStringIndices[1] = 99;
-	}
-	
 	public long getDbPk() {
 		// return Customer object's primary key
 		return getCustomerId();
@@ -182,7 +170,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 
 	protected static void populateCustomerTable(Table table) {
 		// not yet used, could populate "" in searchForObject call with current txtSearchBox.getText()
-		DbServices.searchForObject(new Customer(""));
+		new Customer().search("");
 	}
 	
 	public String setPhoneNumberFormat(String inputNumber) {
@@ -222,7 +210,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
+	public DbObjectSearchable searchByPk(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
@@ -235,6 +223,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		return packObjects(DbServices.searchForObject(this));		// NOTE this needs to be changed to searchForObjectsByPk to fix a bug
 	}
 	
+	// TODO make these methods of superclass
 	private List<DbObjectSearchable> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Customer
 		List<DbObjectSearchable> customerSearchResults = new ArrayList<>();

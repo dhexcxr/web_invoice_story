@@ -97,7 +97,7 @@ public class NewUnitDialog extends Dialog {
 			customerId = unit.getCustomerId();
 		this.unit = unit;
 		
-		txtOwner.setData(new Customer().search(customerId));
+		txtOwner.setData(new Customer().searchByPk(customerId));
 		
 		setupListeners();
 		// open Edit Unit dialog, customized for editing a current Unit

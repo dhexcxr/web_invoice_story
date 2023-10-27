@@ -637,14 +637,12 @@ public class RepairOrderDialog extends Dialog {
 				disableRoControls();
 			}
 			
-			if (repairOrder.getCustomerId() != 0) {
-						// NOTE another instance of replacing DbServices.search() with DbObjectSearchable().search()
-				txtCustomerRepairOrder.setData(new Customer().search(repairOrder.getCustomerId()).get(0));
+			if (repairOrder.getCustomerId() != 0 && new Customer().searchByPk(repairOrder.getCustomerId()) instanceof Customer roCustomer) {
+				txtCustomerRepairOrder.setData(roCustomer);
 				txtCustomerRepairOrder.setText(repairOrder.getCustomerName() + "\n" + repairOrder.getCustomerData());
 			}
 
-			if (repairOrder.getUnitId() != 0) {
-				Unit roUnit = (Unit) DbServices.searchForObjectByPk(new Unit(repairOrder.getUnitId()));
+			if (repairOrder.getUnitId() != 0 && new Unit().searchByPk(repairOrder.getUnitId()) instanceof Unit roUnit) {
 				txtUnitRepairOrder.setData(roUnit);
 				txtUnitRepairOrder.setText(roUnit.getYear() + " " + roUnit.getMake() + "\n" +
 						roUnit.getModel() + "\nVin: " + roUnit.getVin() + "\nColor: " +

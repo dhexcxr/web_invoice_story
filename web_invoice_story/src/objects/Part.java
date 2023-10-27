@@ -23,27 +23,6 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		// empty default constructor
 	}
 	
-	public Part(String searchString) {
-		super.searchString = searchString;
-//		super.searchQuery = """
-//				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
-//				WHERE partNumber LIKE ? OR supplier LIKE ? OR category LIKE ? OR description LIKE ?;""";
-//		super.outerSearchQueryAppendix = " AND partId IN (";
-//		super.querySubStringIndices[0] = 13;
-//		super.querySubStringIndices[1] = 87;
-	}
-	
-	// TODO turn this into an abstract constructor
-	public Part(long partId) {
-		super.searchString = Long.toString(partId);
-//		super.searchQuery = """
-//				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
-//				WHERE partId = ?;""";
-//		super.outerSearchQueryAppendix = "";
-//		super.querySubStringIndices[0] = 0;
-//		super.querySubStringIndices[1] = 0;
-	}
-	
 	public long getDbPk() {
 		// return Part object's primary key
 		return getPartId();
@@ -174,9 +153,9 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 	}
 	
 	@Override
-	public List<DbObjectSearchable> search(long partNum) {
+	public DbObjectSearchable searchByPk(long partNum) {
 		// search for a Part from the database using a primary key
-		super.searchString = Long.toString(partId);
+		super.searchString = Long.toString(partNum);
 		super.searchQuery = """
 				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM cis2901c.part  
 				WHERE partId = ?;""";

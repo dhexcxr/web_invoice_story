@@ -45,5 +45,5 @@ public abstract class DbObjectSearchable {
 	
 	public abstract List<DbObjectSearchable> search(String searchString);
 	
-	public abstract List<DbObjectSearchable> search(long primaryKey);
+	public abstract DbObjectSearchable searchByPk(long primaryKey);
 }

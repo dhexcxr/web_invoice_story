@@ -1,9 +1,12 @@
 package objects;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import web_invoice_story.DbServices;
 
 public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 	
@@ -28,14 +31,6 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 		this.description = description;
 		this.hours = hours;
 		this.laborRate = laborRate;
-	}
-	
-	public JobLabor(long jobId) {
-		super.searchString = Long.toString(jobId);
-		super.searchQuery = "SELECT joblaborid, jobid, description, hours, hourrate, technician FROM cis2901c.joblabor WHERE jobid = ?;";
-		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndices[0] = 0;
-		super.querySubStringIndices[1] = 0;
 	}
 
 	public long getJobLaborId() {
@@ -121,15 +116,20 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 	}
 
 	@Override
-	public List<DbObjectSearchable> search(String searchString) {
-		// TODO copy format from Customer
-		return null;
+	public List<DbObjectSearchable> search(String searchString) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<DbObjectSearchable> search(long primaryKey) {
-		// TODO copy format from Customer
-		return null;
+	public DbObjectSearchable searchByPk(long primaryKey) {
+		super.searchString = Long.toString(primaryKey);
+		super.searchQuery = "SELECT joblaborid, jobid, description, hours, hourrate, technician FROM cis2901c.joblabor WHERE jobid = ?;";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+
+		return DbServices.searchForObjectByPk(this);
+	}
 	}
 
 }

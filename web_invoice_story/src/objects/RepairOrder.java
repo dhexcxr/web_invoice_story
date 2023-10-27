@@ -32,22 +32,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	
 	public RepairOrder() {
 	}
-	
-	public RepairOrder(String searchString) {
-//		super.searchString = searchString;
-//		super.searchQuery = """
-//				SELECT r.roId, r.customerId,
-//				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
-//				r.unitId, u.year, u.make, u.model, u.vin,
-//				r.createdTime, r.closedTime, r.cashiered
-//				FROM cis2901c.ro AS r JOIN cis2901c.customer AS c ON r.customerid = c.customerid
-//				JOIN cis2901c.unit AS u ON r.unitId = u.unitId
-//				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
-//		super.outerSearchQueryAppendix = " AND roId IN (";
-//		super.querySubStringIndices[0] = 13;
-//		super.querySubStringIndices[1] = 210;
-	}
-	
+
 	public long getRepairOrderId() {
 		return repairOrderId;
 	}
@@ -272,8 +257,8 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public List<DbObjectSearchable> search(long primaryKey) {		// NOTE not used anywhere
-		super.searchString = Long.toString(customerId);
+	public DbObjectSearchable searchByPk(long primaryKey) {		// NOTE not used anywhere
+		super.searchString = Long.toString(primaryKey);
 		super.searchQuery = """
 				SELECT r.roId, r.customerId,
 				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
