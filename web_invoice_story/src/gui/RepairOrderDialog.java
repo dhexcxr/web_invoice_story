@@ -708,7 +708,7 @@ public class RepairOrderDialog extends Dialog {
 
 			// find and build Parts
 			List<JobPart> listOfJobParts = new ArrayList<>();
-			for (DbObjectSearchable jobLaborObjectSearchable : DbServices.searchForObjectsByPk(new JobPart(jobId))) {
+			for (DbObjectSearchable jobLaborObjectSearchable : new JobPart().searchJobLaborByJobId(jobId)) {
 				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobPart jobPartObject)) {
 					break;										// NOTE perhaps this and the above 'find and build labor' should be a part of the Job object
 				} else {										// getJobParts() if this.jobParts is null, check DB for valid jobparts else return new ArrayList()

@@ -1,8 +1,12 @@
 package objects;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import web_invoice_story.DbServices;
 
 public class JobPart extends InvoicePart {
 
@@ -49,14 +53,6 @@ public class JobPart extends InvoicePart {
 		this.description = description;
 		this.quantity = quantity;
 		this.soldPrice = soldPrice;
-	}
-
-	public JobPart(long jobId) {
-		super.searchString = Long.toString(jobId);
-		super.searchQuery = "SELECT jobpartid, jobid, partid, partnumber, description, quantity, soldprice FROM cis2901c.jobpart WHERE jobid = ?;";
-		super.outerSearchQueryAppendix = "";
-		super.querySubStringIndices[0] = 0;
-		super.querySubStringIndices[1] = 0;
 	}
 	
 	public long getJobPartId() {
@@ -170,6 +166,39 @@ public class JobPart extends InvoicePart {
 		dataMap.put("quantity", Integer.toString(quantity));
 		dataMap.put("soldprice", soldPrice.toString());
 		return dataMap;
+	}
+	
+	@Override
+	public List<JobPart> search(String searchString) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public JobPart searchByPk(long primaryKey) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+	
+	public List<JobPart> searchJobLaborByJobId(long jobId) {
+		super.searchString = Long.toString(jobId);
+		super.searchQuery = "SELECT jobpartid, jobid, partid, partnumber, description, quantity, soldprice FROM cis2901c.jobpart WHERE jobid = ?;";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+
+		return packObjects(DbServices.searchForObjectsByPk(this));
+	}
+	
+	private List<JobPart> packObjects(List<DbObjectSearchable> searchResults) {
+		// helper to cast List of DbObjectSearchable to List of JobLabor
+		List<JobPart> jobPartSearchResults = new ArrayList<>();
+		
+		for (DbObjectSearchable object : searchResults) {
+			if (object instanceof JobPart jobPart) {
+				jobPartSearchResults.add(jobPart);
+			}
+		}
+		
+		return jobPartSearchResults;
 	}
 
 }
