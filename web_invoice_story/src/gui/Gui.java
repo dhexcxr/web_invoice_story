@@ -90,7 +90,6 @@ public class Gui extends Composite {
 		fd_tabFolderGui.top = new FormAttachment(0);
 		fd_tabFolderGui.left = new FormAttachment(0);
 		tabFolderGui.setLayoutData(fd_tabFolderGui);
-//		tabFolderGui.setBounds(10, 10, 1004, 748);
 
 		rosTab(tabFolderGui);
 		partsTab(tabFolderGui);
@@ -113,7 +112,6 @@ public class Gui extends Composite {
 		FormData fd_roTable = new FormData();
 		fd_roTable.right = new FormAttachment(100, -10);
 		fd_roTable.bottom = new FormAttachment(100, -10);
-//		fd_roTable.right = new FormAttachment(100, -10);
 		fd_roTable.top = new FormAttachment(0, 74);
 		fd_roTable.left = new FormAttachment(0, 10);
 		roTable.setLayoutData(fd_roTable);
@@ -339,8 +337,8 @@ public class Gui extends Composite {
 		
 		txtCustomerInvoice = new MyText(invoiceComposite, SWT.BORDER | SWT.WRAP);
 		FormData fd_txtCustomerInvoice = new FormData();
+		fd_txtCustomerInvoice.height = 96;
 		fd_txtCustomerInvoice.right = new FormAttachment(51, -2);
-		fd_txtCustomerInvoice.bottom = new FormAttachment(30);
 		fd_txtCustomerInvoice.top = new FormAttachment(0);
 		fd_txtCustomerInvoice.left = new FormAttachment(0);
 		txtCustomerInvoice.setLayoutData(fd_txtCustomerInvoice);
@@ -350,11 +348,11 @@ public class Gui extends Composite {
 		txtCustomerInvoice.addModifyListener(new RequiredTextBoxModifyListener(txtCustomerInvoice));
 		txtCustomerInvoice.addMouseListener(new CustomerSearchListener(txtCustomerInvoice));
 		
-		txtInvoiceNotes = new MyText(invoiceComposite, SWT.BORDER);
+		txtInvoiceNotes = new MyText(invoiceComposite, SWT.BORDER | SWT.WRAP);
 		FormData fd_txtInvoiceNotes = new FormData();
+		fd_txtInvoiceNotes.height = 96;
 		fd_txtInvoiceNotes.right = new FormAttachment(100);
 		fd_txtInvoiceNotes.left = new FormAttachment(51, 2);
-		fd_txtInvoiceNotes.bottom = new FormAttachment(30);
 		fd_txtInvoiceNotes.top = new FormAttachment(0);
 		txtInvoiceNotes.setLayoutData(fd_txtInvoiceNotes);
 		txtInvoiceNotes.setText("Invoice Notes...");
@@ -363,7 +361,7 @@ public class Gui extends Composite {
 		
 		Group grpTotals = new Group(invoiceComposite, SWT.NONE);
 		FormData fd_grpTotals = new FormData();
-		fd_grpTotals.top = new FormAttachment(70);
+		fd_grpTotals.height = 100;
 		fd_grpTotals.bottom = new FormAttachment(100);
 		fd_grpTotals.right = new FormAttachment(100);
 		grpTotals.setLayoutData(fd_grpTotals);
@@ -400,9 +398,9 @@ public class Gui extends Composite {
 		fl_grpSelectedPart.marginHeight = 5;
 		grpSelectedPart.setLayout(fl_grpSelectedPart);
 		FormData fd_grpSelectedPart = new FormData();
+		fd_grpSelectedPart.height = 100;
 		fd_grpSelectedPart.bottom = new FormAttachment(100);
 		fd_grpSelectedPart.right = new FormAttachment(40);
-		fd_grpSelectedPart.top = new FormAttachment(70);
 		fd_grpSelectedPart.left = new FormAttachment(0);
 		grpSelectedPart.setLayoutData(fd_grpSelectedPart);
 		grpSelectedPart.setText("Selected Part");
@@ -457,8 +455,8 @@ public class Gui extends Composite {
 		
 		textPartNotesInvoice = new MyText(grpSelectedPart, SWT.BORDER);
 		FormData fd_textPartNotesInvoice = new FormData();
+		fd_textPartNotesInvoice.right = new FormAttachment(lblCategory, -10);
 		fd_textPartNotesInvoice.top = new FormAttachment(lblNotes);
-		fd_textPartNotesInvoice.right = new FormAttachment(lblCategory);
 		fd_textPartNotesInvoice.bottom = new FormAttachment(100);
 		fd_textPartNotesInvoice.left = new FormAttachment(0);
 		textPartNotesInvoice.setLayoutData(fd_textPartNotesInvoice);
@@ -539,13 +537,28 @@ public class Gui extends Composite {
 		TableColumn tblclmnExtendedPriceInvoice = new TableColumn(invoicePartsTable, SWT.NONE);
 		tblclmnExtendedPriceInvoice.setWidth(114);
 		tblclmnExtendedPriceInvoice.setText("Extended Price");
-		
+
+		Button btnCancel = new Button(invoiceComposite, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.height = 48;
+		fd_btnCancel.width = 128;
+		fd_btnCancel.right = new FormAttachment(grpTotals);
+		fd_btnCancel.bottom = new FormAttachment(100);
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				clearInvoiceGui();
+			}
+		});
+		btnCancel.setText("Cancel");
+
 		Button btnCashier = new Button(invoiceComposite, SWT.NONE);
 		FormData fd_btnCashier = new FormData();
-		fd_btnCashier.bottom = new FormAttachment(0, 601);
-		fd_btnCashier.right = new FormAttachment(0, 722);
-		fd_btnCashier.top = new FormAttachment(0, 501);
-		fd_btnCashier.left = new FormAttachment(0, 596);
+		fd_btnCashier.width = 128;
+		fd_btnCashier.top = new FormAttachment(grpTotals, 0, SWT.TOP);
+		fd_btnCashier.right = new FormAttachment(grpTotals);
+		fd_btnCashier.bottom = new FormAttachment(btnCancel);
 		btnCashier.setLayoutData(fd_btnCashier);
 		btnCashier.addMouseListener(new MouseAdapter() {
 			@Override
@@ -586,29 +599,15 @@ public class Gui extends Composite {
 		});
 		btnCashier.setText("Cashier");
 		
-		Button btnCancel = new Button(invoiceComposite, SWT.NONE);
-		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.bottom = new FormAttachment(0, 652);
-		fd_btnCancel.right = new FormAttachment(0, 722);
-		fd_btnCancel.top = new FormAttachment(0, 607);
-		fd_btnCancel.left = new FormAttachment(0, 596);
-		btnCancel.setLayoutData(fd_btnCancel);
-		btnCancel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				clearInvoiceGui();
-			}
-		});
-		btnCancel.setText("Cancel");
-		
 		btnDeleteLineItem.addMouseListener(new InvoicePartDeleteLineItemListener(
 				invoicePartsTable, txtPartsTotalInvoice, txtTaxInvoice, txtFinalTotal));
 		
 		Button btnSearchForInvoice = new Button(invoiceComposite, SWT.NONE);
 		FormData fd_btnSearchForInvoice = new FormData();
-		fd_btnSearchForInvoice.bottom = new FormAttachment(0, 652);
-		fd_btnSearchForInvoice.top = new FormAttachment(0, 607);
-		fd_btnSearchForInvoice.left = new FormAttachment(0, 485);
+		fd_btnSearchForInvoice.width = 128;
+		fd_btnSearchForInvoice.top = new FormAttachment(btnCancel, 0, SWT.TOP);
+		fd_btnSearchForInvoice.right = new FormAttachment(btnCancel);
+		fd_btnSearchForInvoice.bottom = new FormAttachment(100);
 		btnSearchForInvoice.setLayoutData(fd_btnSearchForInvoice);
 		btnSearchForInvoice.addMouseListener(new MouseAdapter() {
 			@Override
