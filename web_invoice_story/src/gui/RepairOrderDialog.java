@@ -637,12 +637,13 @@ public class RepairOrderDialog extends Dialog {
 				disableRoControls();
 			}
 			
-			if (repairOrder.getCustomerId() != 0 && new Customer().searchByPk(repairOrder.getCustomerId()) instanceof Customer roCustomer) {
-				txtCustomerRepairOrder.setData(roCustomer);
+			if (repairOrder.getCustomerId() != 0) {
+				txtCustomerRepairOrder.setData(new Customer().searchByPk(repairOrder.getCustomerId()));
 				txtCustomerRepairOrder.setText(repairOrder.getCustomerName() + "\n" + repairOrder.getCustomerData());
 			}
 
-			if (repairOrder.getUnitId() != 0 && new Unit().searchByPk(repairOrder.getUnitId()) instanceof Unit roUnit) {
+			if (repairOrder.getUnitId() != 0) {
+				Unit roUnit = new Unit().searchByPk(repairOrder.getUnitId());
 				txtUnitRepairOrder.setData(roUnit);
 				txtUnitRepairOrder.setText(roUnit.getYear() + " " + roUnit.getMake() + "\n" +
 						roUnit.getModel() + "\nVin: " + roUnit.getVin() + "\nColor: " +
@@ -685,38 +686,20 @@ public class RepairOrderDialog extends Dialog {
 	
 	private List<Job> loadRoJobsFromDb() {
 		List<Job> roJobs = new ArrayList<>();
-		for (DbObjectSearchable dbObjectSearchable : new Job().searchForJobsByRoId(roId)) {
-			if (dbObjectSearchable == null || !(dbObjectSearchable instanceof Job job)) {
-				break;
-			}
+		
+		for (Job job : new Job().searchForJobsByRoId(roId)) {
 			
 			long jobId = job.getJobId();
+		
+			// setup table item to hold RO Job
 			RepairOrderJobTableItem jobTableItem = new RepairOrderJobTableItem(tableJobsRepairOrder, getStyle());
 
 			// find and build labor
-			List<JobLabor> jobLabor = new ArrayList<>();
-			for (DbObjectSearchable jobLaborObjectSearchable : new JobLabor().searchJobLaborByRoId(jobId)) {
-				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobLabor jobLaborObject)) {	// NOTE we can probably remove this
-					break;
-				} else {
-					jobLabor.add(jobLaborObject);
-				}
-			
-			}
-			jobLabor.removeAll(Collections.singleton(null));		// NOTE probably not needed
-			job.setLabor(jobLabor);
+			job.setLabor(new JobLabor().searchJobLaborByRoId(jobId));
 
 			// find and build Parts
-			List<JobPart> listOfJobParts = new ArrayList<>();
-			for (DbObjectSearchable jobLaborObjectSearchable : new JobPart().searchJobLaborByJobId(jobId)) {
-				if (jobLaborObjectSearchable == null || !(jobLaborObjectSearchable instanceof JobPart jobPartObject)) {
-					break;										// NOTE perhaps this and the above 'find and build labor' should be a part of the Job object
-				} else {										// getJobParts() if this.jobParts is null, check DB for valid jobparts else return new ArrayList()
-					listOfJobParts.add(jobPartObject);			// hell, loadRoJobsFromDb() should probably be a part of the RO object
-				}
+			List<JobPart> listOfJobParts = new JobPart().searchJobLaborByJobId(jobId);
 			
-			}
-			listOfJobParts.removeAll(Collections.singleton(null));		// NOTE probably not needed
 			if (!cashiered) {
 				checkPartsOnHand(job, listOfJobParts);
 			}
