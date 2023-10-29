@@ -58,8 +58,8 @@ import objects.DbObjectSearchable;
 import objects.Job;
 import objects.JobLabor;
 import objects.JobPart;
-import objects.RepairOrder;
-import objects.Unit;
+import objects.Project;
+import objects.ProjectSite;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -101,7 +101,7 @@ public class RepairOrderDialog extends Dialog {
 	
 	private Map<String, List<Long>> detailsToDelete = new HashMap<>();
 	
-	private transient RepairOrder currentRepairOrder;
+	private transient Project currentRepairOrder;
 	private boolean cashiered = false;
 	
 	private CustomerSearchListener customerSearchListener;
@@ -206,11 +206,11 @@ public class RepairOrderDialog extends Dialog {
 		return result;
 	}
 	
-	public Object open(RepairOrder repairOrder) {
+	public Object open(Project project) {
 		createContents();
 		setupListeners();
 		
-		loadRoFromDb(repairOrder);
+		loadRoFromDb(project);
 		
 		shlRepairOrder.open();
 		shlRepairOrder.layout();
@@ -271,7 +271,7 @@ public class RepairOrderDialog extends Dialog {
 		
 		txtUnitRepairOrder = new MyText(shlRepairOrder, SWT.BORDER | SWT.WRAP);
 		txtUnitRepairOrder.setEditable(false);
-		txtUnitRepairOrder.setText("Unit...");
+		txtUnitRepairOrder.setText("ProjectSite...");
 		txtUnitRepairOrder.setBounds(370, 10, 300, 128);
 		txtUnitRepairOrder.setBackground(SWTResourceManager.getColor(255, 102, 102));		// RED
 		// END Customer Data
@@ -623,27 +623,27 @@ public class RepairOrderDialog extends Dialog {
 		loadRoFromDb(currentRepairOrder);
 	}
 	
-	private void loadRoFromDb(RepairOrder repairOrder) {
+	private void loadRoFromDb(Project project) {
 		// set Dialog boxes and stuff from repairOrder fields
-		if (repairOrder != null) {
-			currentRepairOrder = repairOrder;
-			roId = repairOrder.getRepairOrderId();
+		if (project != null) {
+			currentRepairOrder = project;
+			roId = project.getRepairOrderId();
 			textRoNum.setText(Long.toString(roId));
 			
-			textCreatedDate.setText(repairOrder.getCreatedDate().toString());
-			textCashieredDate.setText(repairOrder.getClosedDate() == null ? "" : repairOrder.getClosedDate().toString());
+			textCreatedDate.setText(project.getCreatedDate().toString());
+			textCashieredDate.setText(project.getClosedDate() == null ? "" : project.getClosedDate().toString());
 			
 			if (!textCashieredDate.getText().equals("")) {
 				disableRoControls();
 			}
 			
-			if (repairOrder.getCustomerId() != 0) {
-				txtCustomerRepairOrder.setData(new Customer().searchByPk(repairOrder.getCustomerId()));
-				txtCustomerRepairOrder.setText(repairOrder.getCustomerName() + "\n" + repairOrder.getCustomerData());
+			if (project.getCustomerId() != 0) {
+				txtCustomerRepairOrder.setData(new Customer().searchByPk(project.getCustomerId()));
+				txtCustomerRepairOrder.setText(project.getCustomerName() + "\n" + project.getCustomerData());
 			}
 
-			if (repairOrder.getUnitId() != 0) {
-				Unit roUnit = new Unit().searchByPk(repairOrder.getUnitId());
+			if (project.getUnitId() != 0) {
+				ProjectSite roUnit = new ProjectSite().searchByPk(project.getUnitId());
 				txtUnitRepairOrder.setData(roUnit);
 				txtUnitRepairOrder.setText(roUnit.getYear() + " " + roUnit.getMake() + "\n" +
 						roUnit.getModel() + "\nVin: " + roUnit.getVin() + "\nColor: " +
@@ -651,7 +651,7 @@ public class RepairOrderDialog extends Dialog {
 			}
 
 			List<Job> roJobs = loadRoJobsFromDb();
-			repairOrder.setJobs(roJobs);
+			project.setJobs(roJobs);
 			tableJobsRepairOrder.setSelection(0);
 			tableJobsRepairOrder.notifyListeners(SWT.Selection, new Event());
 			this.calcRoTotal();
@@ -660,7 +660,7 @@ public class RepairOrderDialog extends Dialog {
 
 	private void disableRoControls() {
 		// disable editing of text boxes, disable buttons
-			// remove listeners from Customer and Unit text box and from Parts and Labor tables
+			// remove listeners from Customer and ProjectSite text box and from Parts and Labor tables
 		cashiered = true;
 		txtCustomerRepairOrder.removeMouseListener(customerSearchListener);
 		txtUnitRepairOrder.removeMouseListener(unitSearchListener);
@@ -779,17 +779,17 @@ public class RepairOrderDialog extends Dialog {
 	}
 	
 	private void saveNewRo() {
-		RepairOrder repairOrder = new RepairOrder();
-		repairOrder.setCreatedDate(Timestamp.from(Instant.now()));
-		textCreatedDate.setText(repairOrder.getCreatedDate().toString());
-		saveRo(repairOrder);
+		Project project = new Project();
+		project.setCreatedDate(Timestamp.from(Instant.now()));
+		textCreatedDate.setText(project.getCreatedDate().toString());
+		saveRo(project);
 	}
 	
-	private void saveRo(RepairOrder repairOrder) {
+	private void saveRo(Project project) {
 		if (txtCustomerRepairOrder.getData() != null && ((Customer) txtCustomerRepairOrder.getData()).getCustomerId() != -1) {
-			repairOrder.setCustomerId(((Customer) txtCustomerRepairOrder.getData()).getCustomerId());
-			repairOrder.setCustomerName(txtCustomerRepairOrder.getText(0, txtCustomerRepairOrder.getText().indexOf('\n')).split(","));
-			repairOrder.setCustomerData(txtCustomerRepairOrder.getText().substring(txtCustomerRepairOrder.getText().indexOf('\n')));
+			project.setCustomerId(((Customer) txtCustomerRepairOrder.getData()).getCustomerId());
+			project.setCustomerName(txtCustomerRepairOrder.getText(0, txtCustomerRepairOrder.getText().indexOf('\n')).split(","));
+			project.setCustomerData(txtCustomerRepairOrder.getText().substring(txtCustomerRepairOrder.getText().indexOf('\n')));
 		} else {
 			// if we haven't selected a Customer, complain - an RO Customer is required
 			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
@@ -799,18 +799,18 @@ public class RepairOrderDialog extends Dialog {
 			return;
 		}
 		
-		if (txtUnitRepairOrder.getData() != null && ((Unit) txtUnitRepairOrder.getData()).getUnitId() != -1) {
-			Unit thisUnit = (Unit) txtUnitRepairOrder.getData();
-			repairOrder.setUnitId(thisUnit.getUnitId());
-			repairOrder.setUnitYear(Integer.toString(thisUnit.getYear()));
-			repairOrder.setUnitMake(thisUnit.getMake());
-			repairOrder.setUnitModel(thisUnit.getModel());
-			repairOrder.setUnitVin(thisUnit.getVin());
+		if (txtUnitRepairOrder.getData() != null && ((ProjectSite) txtUnitRepairOrder.getData()).getUnitId() != -1) {
+			ProjectSite thisUnit = (ProjectSite) txtUnitRepairOrder.getData();
+			project.setUnitId(thisUnit.getUnitId());
+			project.setUnitYear(Integer.toString(thisUnit.getYear()));
+			project.setUnitMake(thisUnit.getMake());
+			project.setUnitModel(thisUnit.getModel());
+			project.setUnitVin(thisUnit.getVin());
 		} else {
-			// if we haven't selected a Unit, complain - an RO Unit is required
+			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
 			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
 			customerRequiredBox.setText("Notice");
-			customerRequiredBox.setMessage("Please select a Unit");
+			customerRequiredBox.setMessage("Please select a ProjectSite");
 			customerRequiredBox.open();
 			return;
 		}
@@ -820,21 +820,21 @@ public class RepairOrderDialog extends Dialog {
 		
 		if (tableJobsRepairOrder.getItemCount() > 0) {
 			for (TableItem jobTableItem : tableJobsRepairOrder.getItems()) {
-				if (!repairOrder.getJobs().contains(jobTableItem.getData())) {		// maybe use HashSet here
-					repairOrder.addJob((Job) jobTableItem.getData());
+				if (!project.getJobs().contains(jobTableItem.getData())) {		// maybe use HashSet here
+					project.addJob((Job) jobTableItem.getData());
 				}
 			}
 		}
 		
-		repairOrder.setTax(new BigDecimal(textTaxRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
-		repairOrder.setTotal(new BigDecimal(textFinalTotalRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
+		project.setTax(new BigDecimal(textTaxRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
+		project.setTotal(new BigDecimal(textFinalTotalRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
 		
-		// send RepairOrder object to DbServices
-		DbServices.saveObject(repairOrder);
-		roId = repairOrder.getRepairOrderId();
+		// send Project object to DbServices
+		DbServices.saveObject(project);
+		roId = project.getRepairOrderId();
 		textRoNum.setText(Long.toString(roId));
 		detailsToDelete = new HashMap<>();
-		currentRepairOrder = repairOrder;
-		result = repairOrder;
+		currentRepairOrder = project;
+		result = project;
 	}
 }

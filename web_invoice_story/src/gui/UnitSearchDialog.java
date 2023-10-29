@@ -14,7 +14,7 @@ import listeners.SearchTextBoxListeners;
 import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
 import guiParts.MyText;
-import objects.Unit;
+import objects.ProjectSite;
 import guiParts.UnitTable;
 
 public class UnitSearchDialog extends Dialog {
@@ -26,7 +26,7 @@ public class UnitSearchDialog extends Dialog {
 
 	public UnitSearchDialog(Shell parent, int style) {
 		super(parent, style);
-		setText("Unit Search");
+		setText("ProjectSite Search");
 	}
 
 	public Object open() {
@@ -60,7 +60,7 @@ public class UnitSearchDialog extends Dialog {
 
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shell.setText("Unit Search");
+		shell.setText("ProjectSite Search");
 		shell.setSize(1016, 410);
 		shell.setText(getText());
 		
@@ -125,12 +125,12 @@ public class UnitSearchDialog extends Dialog {
 		unitSearchTextBox.setText("Search...");
 		unitSearchTextBox.setBounds(10, 10, 976, 26);
 		unitSearchTextBox.setFocus();
-		unitSearchTextBox.addModifyListener(new SearchTextBoxListeners(unitSearchTextBox, unitTable, new Unit()));
+		unitSearchTextBox.addModifyListener(new SearchTextBoxListeners(unitSearchTextBox, unitTable, new ProjectSite()));
 		unitSearchTextBox.addFocusListener(new TextBoxFocusListener(unitSearchTextBox));
 		
 		// dialog  controls
 		Button btnSelectUnit = new Button(shell, SWT.NONE);
-		btnSelectUnit.setText("Select Unit");
+		btnSelectUnit.setText("Select ProjectSite");
 		btnSelectUnit.setBounds(10, 330, 256, 26);
 		btnSelectUnit.addMouseListener(new MouseAdapter() {
 			@Override
@@ -144,7 +144,7 @@ public class UnitSearchDialog extends Dialog {
 		
 		Button btnEditSelectedUnit = new Button(shell, SWT.NONE);
 		btnEditSelectedUnit.setBounds(342, 330, 317, 26);
-		btnEditSelectedUnit.setText("Edit Selected Unit");
+		btnEditSelectedUnit.setText("Edit Selected ProjectSite");
 		btnEditSelectedUnit.addMouseListener(new OpenExistingObjectMouseListener(unitTable, shell));
 			
 		Button btnCancel = new Button(shell, SWT.NONE);

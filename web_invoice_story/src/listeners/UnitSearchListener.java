@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Display;
 
 import gui.UnitSearchDialog;
 import guiParts.MyText;
-import objects.Unit;
+import objects.ProjectSite;
 
 public class UnitSearchListener extends MouseAdapter{
 
@@ -22,15 +22,15 @@ public class UnitSearchListener extends MouseAdapter{
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		UnitSearchDialog unitSearchDialog = new UnitSearchDialog(Display.getDefault().getActiveShell(), SWT.NONE);
-		Unit selectedUnit;
+		ProjectSite selectedUnit;
 		if (!txtBox.getText().equals(txtBoxStartingText)) {
-			// if we're editing a current unit, pass Search to Unit Search Dialog
-			selectedUnit = (Unit) unitSearchDialog.open(((Unit) txtBox.getData()).getOwner());
+			// if we're editing a current unit, pass Search to ProjectSite Search Dialog
+			selectedUnit = (ProjectSite) unitSearchDialog.open(((ProjectSite) txtBox.getData()).getOwner());
 		} else {
-			// open normal, empty Unit Search Dialog
-				selectedUnit = (Unit) unitSearchDialog.open();
+			// open normal, empty ProjectSite Search Dialog
+				selectedUnit = (ProjectSite) unitSearchDialog.open();
 		}
-		if (selectedUnit instanceof Unit) {
+		if (selectedUnit instanceof ProjectSite) {
 			StringBuilder unitData = new StringBuilder(selectedUnit.getYear() + " " + selectedUnit.getMake() + "\n" +
 														selectedUnit.getModel() + "\nVin: " + 
 														selectedUnit.getVin() + "\nColor: " + selectedUnit.getColor() + "\n" +

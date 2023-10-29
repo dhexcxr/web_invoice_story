@@ -29,7 +29,7 @@ public class PartInventoryTable extends MyTable{
 	
 	@Override
 	public void paint(DbObjectSearchable object) {		// NOTE not used
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
@@ -42,7 +42,7 @@ public class PartInventoryTable extends MyTable{
 	
 	@Override
 	public void paint(List<? extends DbObjectSearchable> partResults) {
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 		for (DbObjectSearchable object : partResults) {
 			if (object == null || !(object instanceof Part part)) {
 				break;

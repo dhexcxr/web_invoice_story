@@ -19,8 +19,8 @@ import guiParts.MyTable;
 import objects.Customer;
 import objects.DbObjectSearchable;
 import objects.Part;
-import objects.RepairOrder;
-import objects.Unit;
+import objects.Project;
+import objects.ProjectSite;
 import web_invoice_story.Application;
 
 public class OpenExistingObjectMouseListener extends MouseAdapter {
@@ -84,13 +84,13 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 
 	private void openUnit(Table table) {
 		// get object saved in TableItem Data
-		Unit unit = (Unit) table.getSelection()[0].getData();
-		Application.getLogger().log(Level.INFO, "Open unit: {0}", unit.getMake());
-		Application.getLogger().log(Level.INFO, "Unit Model: {0}", unit.getModel());
-		Application.getLogger().log(Level.INFO, "Unit VIN: {0}", unit.getVin());
+		ProjectSite projectSite = (ProjectSite) table.getSelection()[0].getData();
+		Application.getLogger().log(Level.INFO, "Open unit: {0}", projectSite.getMake());
+		Application.getLogger().log(Level.INFO, "ProjectSite Model: {0}", projectSite.getModel());
+		Application.getLogger().log(Level.INFO, "ProjectSite VIN: {0}", projectSite.getVin());
 
 		NewUnitDialog modifyExistingUnitDialog = new NewUnitDialog(shell, SWT.NONE);
-		modifyExistingUnitDialog.open(unit);
+		modifyExistingUnitDialog.open(projectSite);
 	}
 	
 	private void openPart(Table table) {
@@ -105,10 +105,10 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 	
 	private void openRo(Table table) {
 		// get object saved in TableItem Data
-		RepairOrder repairOrder= (RepairOrder) table.getSelection()[0].getData();
-		Application.getLogger().log(Level.INFO, "Open RO: {0}", repairOrder.getRepairOrderId());
+		Project project= (Project) table.getSelection()[0].getData();
+		Application.getLogger().log(Level.INFO, "Open RO: {0}", project.getRepairOrderId());
 		
 		RepairOrderDialog modifyExistingRepairOrder= new RepairOrderDialog(shell, SWT.NONE);
-		modifyExistingRepairOrder.open(repairOrder);
+		modifyExistingRepairOrder.open(project);
 	}
 }

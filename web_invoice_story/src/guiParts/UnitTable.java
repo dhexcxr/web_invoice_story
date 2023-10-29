@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import objects.DbObjectSearchable;
-import objects.Unit;
+import objects.ProjectSite;
 
 public class UnitTable extends MyTable{
 	
@@ -31,7 +31,7 @@ public class UnitTable extends MyTable{
 	
 	@Override
 	public void paint(DbObjectSearchable object) {		// NOTE not used
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
@@ -43,14 +43,14 @@ public class UnitTable extends MyTable{
 	
 	@Override
 	public void paint(List<? extends DbObjectSearchable> objectResults) {
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 		for (DbObjectSearchable object : objectResults) {
-			if (object instanceof Unit unit) {		// TODO remove all null chekcs with an instanceof
+			if (object instanceof ProjectSite projectSite) {		// TODO remove all null chekcs with an instanceof
 				TableItem tableItem = new TableItem(this, SWT.NONE);
-				tableItem.setText(new String[] {unit.getOwner(), unit.getMake(), unit.getModel(),
-						unit.getModelName(), unit.getYear() == 0 ? "" : Integer.toString(unit.getYear()),
-								Integer.toString(unit.getMileage()), unit.getColor(), unit.getVin(), unit.getNotes()});
-				tableItem.setData(unit);
+				tableItem.setText(new String[] {projectSite.getOwner(), projectSite.getMake(), projectSite.getModel(),
+						projectSite.getModelName(), projectSite.getYear() == 0 ? "" : Integer.toString(projectSite.getYear()),
+								Integer.toString(projectSite.getMileage()), projectSite.getColor(), projectSite.getVin(), projectSite.getNotes()});
+				tableItem.setData(projectSite);
 			} else {
 				break;
 			}

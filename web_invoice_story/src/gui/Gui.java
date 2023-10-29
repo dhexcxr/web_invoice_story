@@ -39,9 +39,9 @@ import listeners.TextBoxFocusListener;
 import objects.Customer;
 import objects.Invoice;
 import objects.InvoicePart;
-import objects.RepairOrder;
+import objects.Project;
 import objects.Part;
-import objects.Unit;
+import objects.ProjectSite;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -166,7 +166,7 @@ public class Gui extends Composite {
 		fd_projectSearchBox.top = new FormAttachment(0, 10);
 		projectSearchBox.setLayoutData(fd_projectSearchBox);
 		projectSearchBox.setText("Search...");
-		projectSearchBox.addModifyListener(new SearchTextBoxListeners(projectSearchBox, projectTable, new RepairOrder()));
+		projectSearchBox.addModifyListener(new SearchTextBoxListeners(projectSearchBox, projectTable, new Project()));
 		projectSearchBox.addFocusListener(new TextBoxFocusListener(projectSearchBox));
 
 		Button btnNewProject = new Button(projectsComposite, SWT.NONE);
@@ -796,7 +796,7 @@ public class Gui extends Composite {
 		
 		MyText projectSiteSearchBox = new MyText(projectSiteComposite, SWT.BORDER);
 
-		// Table for Unit search results
+		// Table for ProjectSite search results
 		MyTable projectSiteTable = new UnitTable(projectSiteComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_projectSiteTable = new FormData();
 		fd_projectSiteTable.top = new FormAttachment(projectSiteSearchBox);
@@ -850,7 +850,7 @@ public class Gui extends Composite {
 		tblclmnAddressJobSite.addSelectionListener(new TableColumnSortListener(tblclmnAddressJobSite));
 
 		// Delete right click menu
-		setupRightClickMenu(projectSiteTable, "Unit");
+		setupRightClickMenu(projectSiteTable, "ProjectSite");
 		
 		Button btnNewProjectSite = new Button(projectSiteComposite, SWT.NONE);
 		FormData fd_btnNewProjectSite = new FormData();
@@ -862,7 +862,7 @@ public class Gui extends Composite {
 		btnNewProjectSite.setText("New Project Site");
 		btnNewProjectSite.addMouseListener(new CreateNewObjectListener(projectSiteTable, projectSiteSearchBox, shell));
 
-		// Unit controls
+		// ProjectSite controls
 //		MyText jobSiteSearchBox = new MyText(unitsComposite, SWT.BORDER);
 		FormData fd_projectSiteSearchBox = new FormData();
 		fd_projectSiteSearchBox.height = 16;
@@ -871,7 +871,7 @@ public class Gui extends Composite {
 		fd_projectSiteSearchBox.left = new FormAttachment(0);
 		projectSiteSearchBox.setLayoutData(fd_projectSiteSearchBox);
 		projectSiteSearchBox.setText("Search...");
-		projectSiteSearchBox.addModifyListener(new SearchTextBoxListeners(projectSiteSearchBox, projectSiteTable, new Unit()));
+		projectSiteSearchBox.addModifyListener(new SearchTextBoxListeners(projectSiteSearchBox, projectSiteTable, new ProjectSite()));
 		projectSiteSearchBox.addFocusListener(new TextBoxFocusListener(projectSiteSearchBox));
 // END Job Site tab
 

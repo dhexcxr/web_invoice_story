@@ -20,7 +20,7 @@ import listeners.InfoTextBoxModifyListener;
 import listeners.RequiredTextBoxModifyListener;
 import listeners.VinModifyListener;
 import objects.Customer;
-import objects.Unit;
+import objects.ProjectSite;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -43,7 +43,7 @@ public class NewUnitDialog extends Dialog {
 		// to determine if we need to call addNew... or saveExisting....
 	private long unitId = -1;
 	private long customerId = -1;
-	private transient Unit unit;
+	private transient ProjectSite projectSite;
 
 	public NewUnitDialog(Shell parent, int style) {
 		super(parent, style);
@@ -63,45 +63,45 @@ public class NewUnitDialog extends Dialog {
 		return result;
 	}
 	
-	public Object open(Unit unit) {
+	public Object open(ProjectSite projectSite) {
 		createContents();
 
-		// set txtBoxes when opening a current Unit for editing
+		// set txtBoxes when opening a current ProjectSite for editing
 		// TODO remove all these null checks
-			// and make sure unit checks for a null in getters with ternaries, i.e. make == null ? "" : make 
-		if (unit.getOwner() != null) {
-			txtOwner.setText(unit.getOwner());
+			// and make sure projectSite checks for a null in getters with ternaries, i.e. make == null ? "" : make 
+		if (projectSite.getOwner() != null) {
+			txtOwner.setText(projectSite.getOwner());
 			txtOwner.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
 		}
-		if (unit.getMake() != null) {
-			txtMake.setText(unit.getMake());
+		if (projectSite.getMake() != null) {
+			txtMake.setText(projectSite.getMake());
 			txtMake.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
 		}			
-		if (unit.getModelName() != null)
-			txtModelName.setText(unit.getModelName());
-		if (unit.getMileage() != 0)
-			txtMileage.setText(Integer.toString(unit.getMileage()));
-		if (unit.getVin() != null)
-			txtVinNumber.setText(unit.getVin());
-		if (unit.getModel() != null)
-			txtModel.setText(unit.getModel());
-		if (unit.getYear() != 0)
-			txtYear.setText(Integer.toString(unit.getYear()));
-		if (unit.getColor() != null)
-			txtColor.setText(unit.getColor());
-		if (unit.getNotes() != null)
-			txtNotes.setText(unit.getNotes());
-		if (unit.getUnitId() != 0)
-			unitId = unit.getUnitId();
-		if (unit.getCustomerId() != 0)
-			customerId = unit.getCustomerId();
-		this.unit = unit;
+		if (projectSite.getModelName() != null)
+			txtModelName.setText(projectSite.getModelName());
+		if (projectSite.getMileage() != 0)
+			txtMileage.setText(Integer.toString(projectSite.getMileage()));
+		if (projectSite.getVin() != null)
+			txtVinNumber.setText(projectSite.getVin());
+		if (projectSite.getModel() != null)
+			txtModel.setText(projectSite.getModel());
+		if (projectSite.getYear() != 0)
+			txtYear.setText(Integer.toString(projectSite.getYear()));
+		if (projectSite.getColor() != null)
+			txtColor.setText(projectSite.getColor());
+		if (projectSite.getNotes() != null)
+			txtNotes.setText(projectSite.getNotes());
+		if (projectSite.getUnitId() != 0)
+			unitId = projectSite.getUnitId();
+		if (projectSite.getCustomerId() != 0)
+			customerId = projectSite.getCustomerId();
+		this.projectSite = projectSite;
 		
 		txtOwner.setData(new Customer().searchByPk(customerId));
 		
 		setupListeners();
-		// open Edit Unit dialog, customized for editing a current Unit
-		shlNewUnit.setText("Edit Unit Details");
+		// open Edit ProjectSite dialog, customized for editing a current ProjectSite
+		shlNewUnit.setText("Edit ProjectSite Details");
 		shlNewUnit.open();
 		shlNewUnit.layout();
 		Display display = getParent().getDisplay();
@@ -115,12 +115,12 @@ public class NewUnitDialog extends Dialog {
 
 	private void createContents() {
 		shlNewUnit = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shlNewUnit.setText("Add Unit");
+		shlNewUnit.setText("Add ProjectSite");
 		shlNewUnit.setSize(592, 516);
 		
 		Gui.setDialogAtCenter(shlNewUnit);
 				
-		// Unit text boxes
+		// ProjectSite text boxes
 		Label lblOwner = new Label(shlNewUnit, SWT.NONE);
 		lblOwner.setBounds(10, 10, 70, 20);
 		lblOwner.setText("Owner:");
@@ -179,12 +179,12 @@ public class NewUnitDialog extends Dialog {
 		txtNotes = new MyText(shlNewUnit, SWT.BORDER | SWT.WRAP);
 		txtNotes.setBounds(10, 326, 554, 92);
 		
-		// Unit dialog controls
+		// ProjectSite dialog controls
 		Label label = new Label(shlNewUnit, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setBounds(10, 424, 546, 5);
 		
 		btnSaveUnit = new Button(shlNewUnit, SWT.NONE);
-		btnSaveUnit.setText("Save Unit");
+		btnSaveUnit.setText("Save ProjectSite");
 		btnSaveUnit.setBounds(10, 435, 413, 26);
 				
 		btnCancel = new Button(shlNewUnit, SWT.NONE);
@@ -211,12 +211,12 @@ public class NewUnitDialog extends Dialog {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				if (unitId == -1) {
-					// save new Unit with current text boxes
+					// save new ProjectSite with current text boxes
 					addNewUnit();
 				} else {
-					Application.getLogger().log(Level.INFO, "Save existing unit");
+					Application.getLogger().log(Level.INFO, "Save existing projectSite");
 					// save modifications to existing customer
-					saveUnit(unit);
+					saveUnit(projectSite);
 				}
 			}
 		});
@@ -230,15 +230,15 @@ public class NewUnitDialog extends Dialog {
 	}
 
 	protected void addNewUnit() {
-		saveUnit(new Unit());	
+		saveUnit(new ProjectSite());	
 	}
 	
-	protected void saveUnit(Unit unit) {
+	protected void saveUnit(ProjectSite projectSite) {
 		if (txtOwner.getData() != null && ((Customer) txtOwner.getData()).getCustomerId() != -1) {
-			unit.setCustomerId(((Customer) txtOwner.getData()).getCustomerId());
-			unit.setOwner(txtOwner.getText());
+			projectSite.setCustomerId(((Customer) txtOwner.getData()).getCustomerId());
+			projectSite.setOwner(txtOwner.getText());
 		} else {
-			// if we haven't selected an Owner, complain - a Unit Owner is required
+			// if we haven't selected an Owner, complain - a ProjectSite Owner is required
 			MessageBox ownerRequirementBox = new MessageBox(shlNewUnit, SWT.ICON_INFORMATION);
 			ownerRequirementBox.setText("Notice");
 			ownerRequirementBox.setMessage("Please select an Owner");
@@ -249,7 +249,7 @@ public class NewUnitDialog extends Dialog {
 		// TODO we could add an "&& !txtMake.getText().equals(txtMake.startingText)" so that we wouldn't unnecessarily save this
 			// if it hasn't changed, but that would be a lot of extra code for no real benefit
 		if (txtMake.getText().length() > 0) {
-			unit.setMake(txtMake.getText());
+			projectSite.setMake(txtMake.getText());
 		} else {
 			// dialog box stating make is required
 			MessageBox makeRequirementBox = new MessageBox(shlNewUnit, SWT.ICON_INFORMATION);
@@ -259,36 +259,36 @@ public class NewUnitDialog extends Dialog {
 			return;
 		}
 		
-		unit.setModelName(txtModelName.getText());
+		projectSite.setModelName(txtModelName.getText());
 		
 		if (txtMileage.isModified()) {
 			try {
-				unit.setMileage(Integer.parseInt(txtMileage.getText()));
+				projectSite.setMileage(Integer.parseInt(txtMileage.getText()));
 			} catch (Exception e) {
 				Application.getLogger().log(Level.FINER, e.getMessage(), e);
 			}
 		}
 
-		unit.setVin(txtVinNumber.getText());
+		projectSite.setVin(txtVinNumber.getText());
 
-		unit.setModel(txtModel.getText());
+		projectSite.setModel(txtModel.getText());
 
 		if (txtYear.isModified()) {
 			try {
-				unit.setYear(Integer.parseInt(txtYear.getText()));
+				projectSite.setYear(Integer.parseInt(txtYear.getText()));
 			} catch (Exception e) {
 				Application.getLogger().log(Level.FINER, e.getMessage(), e);
 			}
 		}
 
-		unit.setColor(txtColor.getText());
+		projectSite.setColor(txtColor.getText());
 
 		if (txtNotes.isModified()) {
-			unit.setNotes(txtNotes.getText());
+			projectSite.setNotes(txtNotes.getText());
 		}
 		
-		DbServices.saveObject(unit);
-		result = unit;
+		DbServices.saveObject(projectSite);
+		result = projectSite;
 		shlNewUnit.close();
 	}
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
+public class Project extends DbObjectSearchable implements DbObjectSavable{
 	
 	private long repairOrderId = -1;
 	private long customerId;
@@ -17,7 +17,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	private String customerName;
 	private String customerData;
 	private long unitId;
-	private Unit unit;
+	private ProjectSite projectSite;
 	private String unitYear;
 	private String unitMake;
 	private String unitModel;
@@ -30,7 +30,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 //	private boolean cashiered;		// we might be able to use the presence of closedDate to tell if it has been cashiered
 	
 	
-	public RepairOrder() {
+	public Project() {
 	}
 
 	public long getRepairOrderId() {
@@ -91,12 +91,12 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 		this.unitId = unitId;
 	}
 
-	public Unit getUnit() {
-		return unit;
+	public ProjectSite getUnit() {
+		return projectSite;
 	}
 
-	public void setUnit(Unit unit) {
-		this.unit = unit;
+	public void setUnit(ProjectSite projectSite) {
+		this.projectSite = projectSite;
 	}
 
 	public String getUnitYear() {
@@ -239,7 +239,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public List<RepairOrder> search(String searchString) {
+	public List<Project> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
 				SELECT r.roId, r.customerId,
@@ -257,7 +257,7 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public RepairOrder searchByPk(long primaryKey) {		// NOTE not used anywhere
+	public Project searchByPk(long primaryKey) {		// NOTE not used anywhere
 		super.searchString = Long.toString(primaryKey);
 		super.searchQuery = """
 				SELECT r.roId, r.customerId,
@@ -273,9 +273,9 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 	}
 	
 	// TODO make this an abstract method in DbObjectSearchable
-	private List<RepairOrder> packObjects(List<DbObjectSearchable> searchResults) {
+	private List<Project> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Customer
-		List<RepairOrder> repairOrderSearchResults = new ArrayList<>();
+		List<Project> repairOrderSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
 					// TODO use this shortened form of instanceof casting in the Tables
@@ -285,10 +285,10 @@ public class RepairOrder extends DbObjectSearchable implements DbObjectSavable{
 		return repairOrderSearchResults;
 	}
 	
-	private RepairOrder packObject(DbObjectSearchable searchResult) {
-		if (searchResult instanceof RepairOrder repairOrder) {
-			return repairOrder;
+	private Project packObject(DbObjectSearchable searchResult) {
+		if (searchResult instanceof Project project) {
+			return project;
 		}
-		throw new IllegalArgumentException("objects.RepairOrder.packObject(): dbObjectSearchable is not a RepairOrder");
+		throw new IllegalArgumentException("objects.Project.packObject(): dbObjectSearchable is not a Project");
 	}
 }

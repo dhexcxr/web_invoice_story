@@ -7,7 +7,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Unit extends DbObjectSearchable implements DbObjectSavable{
+public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	
 	// might not need this
 	private long unitId = -1;
@@ -23,7 +23,7 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	
 	private String owner;
 	
-	public Unit() {
+	public ProjectSite() {
 	}
 	
 	public long getDbPk() {
@@ -153,7 +153,7 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public List<Unit> search(String searchString) {
+	public List<ProjectSite> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
 				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
@@ -167,7 +167,7 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 	}
 
 	@Override
-	public Unit searchByPk(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
+	public ProjectSite searchByPk(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
 		super.searchString = Long.toString(primaryKey);				// all the super. declarations in the constructor, maybe make a separate var for the searchByPk query,
 		super.searchQuery = """
 				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
@@ -178,26 +178,26 @@ public class Unit extends DbObjectSearchable implements DbObjectSavable{
 		super.querySubStringIndices[1] = 128;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
 																	// and where can we give it the generic ? extends DbObjectSearchable
 																	// I thought of this because if this function here returns a List<? extends DbObjectSearchable instead
-		return packObject(DbServices.searchForObjectByPk(this));				// of a List<Unit> nothing seems to complain, though I didn't actually test anything
+		return packObject(DbServices.searchForObjectByPk(this));				// of a List<ProjectSite> nothing seems to complain, though I didn't actually test anything
 	}
 	
-	private List<Unit> packObjects(List<DbObjectSearchable> searchResults) {		// TODO NOTE look at how all of these are implemented
+	private List<ProjectSite> packObjects(List<DbObjectSearchable> searchResults) {		// TODO NOTE look at how all of these are implemented
 		// helper to cast List of DbObjectSearchable to List of Customer				// this could probably go into DbObjectSearchable
-		List<Unit> unitSearchResults = new ArrayList<>();
+		List<ProjectSite> unitSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
-			if (object instanceof Unit unit) {
-				unitSearchResults.add(unit);
+			if (object instanceof ProjectSite projectSite) {
+				unitSearchResults.add(projectSite);
 			}
 		}
 		
 		return unitSearchResults;
 	}
 	
-	private Unit packObject(DbObjectSearchable searchResult) {
-		if (searchResult instanceof Unit unit) {
-			return unit;
+	private ProjectSite packObject(DbObjectSearchable searchResult) {
+		if (searchResult instanceof ProjectSite projectSite) {
+			return projectSite;
 		}
-		throw new IllegalArgumentException("objects.Unit.packObject(): dbObjectSearchable is not a Unit");
+		throw new IllegalArgumentException("objects.ProjectSite.packObject(): dbObjectSearchable is not a ProjectSite");
 	}
 }

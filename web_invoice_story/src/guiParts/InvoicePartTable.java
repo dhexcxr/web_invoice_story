@@ -28,14 +28,14 @@ public class InvoicePartTable extends MyTable{
 	
 	@Override
 	public void paint(DbObjectSearchable object) {		// NOTE not used
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 			paint(object, this.getSelectionIndex());
 	}
 
 	@Override
 	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {		// NOTE this IS used, I think when a Invoice Line Item is edited, this helps replace the single new line
 		// this is called only when adding a new part to a blank TableItem
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 			if (object == null) {
 				return;
 			}
@@ -50,7 +50,7 @@ public class InvoicePartTable extends MyTable{
 	
 	@Override
 	public void paint(List<? extends DbObjectSearchable> objectResults) {
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 		for (DbObjectSearchable object : objectResults) {
 			if (object == null || !(object  instanceof InvoicePart invoicePart) || invoicePart.getPart() == null ) {
 				break;

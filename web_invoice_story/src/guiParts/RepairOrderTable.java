@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import objects.DbObjectSearchable;
-import objects.RepairOrder;
+import objects.Project;
 
 public class RepairOrderTable extends MyTable {
 	private static final int RO_NUMBER_INDEX = 0;
@@ -29,7 +29,7 @@ public class RepairOrderTable extends MyTable {
 
 	@Override
 	public void paint(DbObjectSearchable object) {
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 			paint(object, this.getSelectionIndex());
 	}
 
@@ -39,21 +39,21 @@ public class RepairOrderTable extends MyTable {
 		if (object == null) {
 			return;
 		}
-		RepairOrder repairOrder= (RepairOrder) object;
+		Project project= (Project) object;
 		TableItem tableItem = this.getItem(selectedTableItemIndex);	
-		tableItem.setText(new String[] {Long.toString(repairOrder.getRepairOrderId()), repairOrder.getCustomerName(),
-				repairOrder.getUnitYear(), repairOrder.getUnitMake(), repairOrder.getUnitModel(), repairOrder.getUnitVin(), repairOrder.getJobNames()});
-		tableItem.setData(repairOrder);
+		tableItem.setText(new String[] {Long.toString(project.getRepairOrderId()), project.getCustomerName(),
+				project.getUnitYear(), project.getUnitMake(), project.getUnitModel(), project.getUnitVin(), project.getJobNames()});
+		tableItem.setData(project);
 	}
 
 	@Override
 	public void paint(List<? extends DbObjectSearchable> objectResults) {
 		for (DbObjectSearchable object : objectResults) {
-			if (object  instanceof RepairOrder repairOrder) {
+			if (object  instanceof Project project) {
 				TableItem tableItem =  new TableItem(this, SWT.NONE);	
-				tableItem.setText(new String[] {Long.toString(repairOrder.getRepairOrderId()), repairOrder.getCustomerName(),
-						repairOrder.getUnitYear(), repairOrder.getUnitMake(), repairOrder.getUnitModel(), repairOrder.getUnitVin(), repairOrder.getJobNames()});
-				tableItem.setData(repairOrder);
+				tableItem.setText(new String[] {Long.toString(project.getRepairOrderId()), project.getCustomerName(),
+						project.getUnitYear(), project.getUnitMake(), project.getUnitModel(), project.getUnitVin(), project.getJobNames()});
+				tableItem.setData(project);
 
 			} else {
 				break;

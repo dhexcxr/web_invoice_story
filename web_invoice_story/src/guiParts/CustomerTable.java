@@ -30,7 +30,7 @@ public class CustomerTable extends MyTable{
 	
 	@Override
 	public void paint(DbObjectSearchable object) {		// NOTE not used
-		// build each TableItem to fill Unit Table
+		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 

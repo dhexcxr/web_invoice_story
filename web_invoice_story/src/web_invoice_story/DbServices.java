@@ -26,8 +26,8 @@ import objects.Job;
 import objects.JobLabor;
 import objects.JobPart;
 import objects.Part;
-import objects.RepairOrder;
-import objects.Unit;
+import objects.Project;
+import objects.ProjectSite;
 
 public class DbServices {
 	// TODO add status icon somewhere to show when we're connected to DB
@@ -160,7 +160,7 @@ public class DbServices {
 		
 		if (dbObject instanceof Invoice) {		// TODO turn off auto commit until all invoice queries have completed
 			saveInvoiceLineItems(dbObject);
-		} else if (dbObject instanceof RepairOrder thisRo) {
+		} else if (dbObject instanceof Project thisRo) {
 			if (thisRo.getDbPk() == -1 ) {
 				thisRo.setDbPk(getLastRoNum());
 			}
@@ -260,7 +260,7 @@ public class DbServices {
 		if (roNum == -1) {
 			roNum = getLastRoNum();
 		}
-		List<Job> roJobs = ((RepairOrder) dbObject).getJobs();
+		List<Job> roJobs = ((Project) dbObject).getJobs();
 		for (Job job : roJobs) {
 			job.getDataMap().put("roid", Long.toString(roNum));
 			DbServices.saveObject(job);
@@ -478,11 +478,11 @@ public class DbServices {
 			results = buildCustomers(queryResultSet);
 		} else if (object instanceof Part) {
 			results = buildParts(queryResultSet);
-		} else if (object instanceof Unit) {
+		} else if (object instanceof ProjectSite) {
 			results = buildUnits(queryResultSet);
 		} else if (object instanceof Invoice) {
 			results = buildInvoices(queryResultSet);
-		} else if (object instanceof RepairOrder) {
+		} else if (object instanceof Project) {
 			results = buildRepairOrders(queryResultSet);
 		} else if (object instanceof Job) {
 			results = buildJobs(queryResultSet);
@@ -544,17 +544,17 @@ public class DbServices {
 		int i = 0;
 		while (queryResultSet.next()) {
 			
-			Unit unit = new Unit();
-			unit.setUnitId(queryResultSet.getLong(1));
-			unit.setCustomerId(queryResultSet.getLong(2));
-			unit.setMake(queryResultSet.getString(3));
-			unit.setModel(queryResultSet.getString(4));
-			unit.setModelName(queryResultSet.getString(5));
-			unit.setYear(queryResultSet.getInt(6));
-			unit.setMileage(queryResultSet.getInt(7));
-			unit.setColor(queryResultSet.getString(8));
-			unit.setVin(queryResultSet.getString(9));
-			unit.setNotes(queryResultSet.getString(10));
+			ProjectSite projectSite = new ProjectSite();
+			projectSite.setUnitId(queryResultSet.getLong(1));
+			projectSite.setCustomerId(queryResultSet.getLong(2));
+			projectSite.setMake(queryResultSet.getString(3));
+			projectSite.setModel(queryResultSet.getString(4));
+			projectSite.setModelName(queryResultSet.getString(5));
+			projectSite.setYear(queryResultSet.getInt(6));
+			projectSite.setMileage(queryResultSet.getInt(7));
+			projectSite.setColor(queryResultSet.getString(8));
+			projectSite.setVin(queryResultSet.getString(9));
+			projectSite.setNotes(queryResultSet.getString(10));
 			
 			String lastName = queryResultSet.getString(11);
 			String firstName = queryResultSet.getString(12);
@@ -562,9 +562,9 @@ public class DbServices {
 			if (firstName != null && firstName.length() != 0) {
 				owner = lastName + ", " + firstName;
 			}
-			unit.setOwner(owner);
+			projectSite.setOwner(owner);
 			
-			results.add(i, unit);
+			results.add(i, projectSite);
 			i++;
 		}
 		return results;
@@ -608,35 +608,35 @@ public class DbServices {
 		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
-			RepairOrder repairOrder = new RepairOrder();
-			repairOrder.setRepairOrderId(queryResultSet.getLong(1));
-			repairOrder.setCustomerId(queryResultSet.getLong(2));
+			Project project = new Project();
+			project.setRepairOrderId(queryResultSet.getLong(1));
+			project.setCustomerId(queryResultSet.getLong(2));
 			
 			String lastname = queryResultSet.getString(3);
 			String firstname = queryResultSet.getString(4);
-			repairOrder.setCustomerName(lastname, firstname);
+			project.setCustomerName(lastname, firstname);
 			
 			// TODO see if we can use TextBlocks here
 			String customerData = queryResultSet.getString(5) + "\n" + queryResultSet.getString(6) + ", " +
 					queryResultSet.getString(7) + " " + queryResultSet.getString(8) + "\n" + queryResultSet.getString(9) + "\n" +
 					queryResultSet.getString(10) + "\n" + queryResultSet.getString(11);
-			repairOrder.setCustomerData(customerData);
+			project.setCustomerData(customerData);
 			
-			repairOrder.setUnitId(queryResultSet.getLong(12));
-			repairOrder.setUnitYear(queryResultSet.getString(13));
-			repairOrder.setUnitMake(queryResultSet.getString(14));
-			repairOrder.setUnitModel(queryResultSet.getString(15));
-			repairOrder.setUnitVin(queryResultSet.getString(16));
+			project.setUnitId(queryResultSet.getLong(12));
+			project.setUnitYear(queryResultSet.getString(13));
+			project.setUnitMake(queryResultSet.getString(14));
+			project.setUnitModel(queryResultSet.getString(15));
+			project.setUnitVin(queryResultSet.getString(16));
 			
-			repairOrder.setCreatedDate(queryResultSet.getTimestamp(17));
-			repairOrder.setClosedDate(queryResultSet.getTimestamp(18));
+			project.setCreatedDate(queryResultSet.getTimestamp(17));
+			project.setClosedDate(queryResultSet.getTimestamp(18));
 			
-			List<Job> roJobs =  new Job().searchForJobsByRoId(repairOrder.getRepairOrderId());
+			List<Job> roJobs =  new Job().searchForJobsByRoId(project.getRepairOrderId());
 			roJobs.removeAll(Collections.singleton(null));		// NOTE i don;t think we need this anymore
 			
-			repairOrder.setJobs(roJobs);
+			project.setJobs(roJobs);
 						
-			results.add(i, repairOrder);
+			results.add(i, project);
 			i++;
 		}
 		return results;
