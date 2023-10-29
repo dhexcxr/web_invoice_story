@@ -100,87 +100,87 @@ public class Gui extends Composite {
 	}
 	
 	private void rosTab(TabFolder tabFolder) {
-		TabItem tbtmRepairOrders = new TabItem(tabFolder, SWT.NONE);
-		tbtmRepairOrders.setText("Repair Orders");
+		TabItem tbtmProjects = new TabItem(tabFolder, SWT.NONE);
+		tbtmProjects.setText("Projects");
 
-		Composite repairOrdersComposite = new Composite(tabFolder, SWT.NONE);
-		tbtmRepairOrders.setControl(repairOrdersComposite);
-		repairOrdersComposite.setLayout(new FormLayout());
+		Composite projectsComposite = new Composite(tabFolder, SWT.NONE);
+		tbtmProjects.setControl(projectsComposite);
+		projectsComposite.setLayout(new FormLayout());
 
 		// Table for RO search results
-		RepairOrderTable roTable = new RepairOrderTable(repairOrdersComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		FormData fd_roTable = new FormData();
-		fd_roTable.right = new FormAttachment(100, -10);
-		fd_roTable.bottom = new FormAttachment(100, -10);
-		fd_roTable.top = new FormAttachment(0, 74);
-		fd_roTable.left = new FormAttachment(0, 10);
-		roTable.setLayoutData(fd_roTable);
-		roTable.setHeaderVisible(true);
-		roTable.setLinesVisible(true);
-		roTable.addMouseListener(new OpenExistingObjectMouseListener(roTable, shell));
-		roTable.addMenuDetectListener(new DeleteEnableListener(roTable));
+		RepairOrderTable projectTable = new RepairOrderTable(projectsComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_projectTable = new FormData();
+		fd_projectTable.right = new FormAttachment(100, -10);
+		fd_projectTable.bottom = new FormAttachment(100, -10);
+		fd_projectTable.top = new FormAttachment(0, 74);
+		fd_projectTable.left = new FormAttachment(0, 10);
+		projectTable.setLayoutData(fd_projectTable);
+		projectTable.setHeaderVisible(true);
+		projectTable.setLinesVisible(true);
+		projectTable.addMouseListener(new OpenExistingObjectMouseListener(projectTable, shell));
+		projectTable.addMenuDetectListener(new DeleteEnableListener(projectTable));
 
-		TableColumn tblclmnRoRo = new TableColumn(roTable, SWT.NONE);
-		tblclmnRoRo.setText("RO #");
-		tblclmnRoRo.setWidth(75);
-		tblclmnRoRo.addSelectionListener(new TableColumnSortListener(tblclmnRoRo));
+		TableColumn tblclmnProjectProject = new TableColumn(projectTable, SWT.NONE);
+		tblclmnProjectProject.setText("Project #");
+		tblclmnProjectProject.setWidth(75);
+		tblclmnProjectProject.addSelectionListener(new TableColumnSortListener(tblclmnProjectProject));
 
-		TableColumn tblclmnCustomerRo = new TableColumn(roTable, SWT.NONE);
+		TableColumn tblclmnCustomerRo = new TableColumn(projectTable, SWT.NONE);
 		tblclmnCustomerRo.setText("Customer");
 		tblclmnCustomerRo.setWidth(164);
 		tblclmnCustomerRo.addSelectionListener(new TableColumnSortListener(tblclmnCustomerRo));
 
-		TableColumn tblclmnYearRo = new TableColumn(roTable, SWT.NONE);
-		tblclmnYearRo.setText("Year");
+		TableColumn tblclmnYearRo = new TableColumn(projectTable, SWT.NONE);
+		tblclmnYearRo.setText("Year (n/a)");
 		tblclmnYearRo.setWidth(65);
 		tblclmnYearRo.addSelectionListener(new TableColumnSortListener(tblclmnYearRo));
 
-		TableColumn tblclmnMakeRo = new TableColumn(roTable, SWT.NONE);
-		tblclmnMakeRo.setText("Make");
+		TableColumn tblclmnMakeRo = new TableColumn(projectTable, SWT.NONE);
+		tblclmnMakeRo.setText("Make (n/a)");
 		tblclmnMakeRo.setWidth(109);
 		tblclmnMakeRo.addSelectionListener(new TableColumnSortListener(tblclmnMakeRo));
 
-		TableColumn tblclmnModelRo = new TableColumn(roTable, SWT.NONE);
-		tblclmnModelRo.setText("Model");
+		TableColumn tblclmnModelRo = new TableColumn(projectTable, SWT.NONE);
+		tblclmnModelRo.setText("Model (n/a)");
 		tblclmnModelRo.setWidth(113);
 		tblclmnModelRo.addSelectionListener(new TableColumnSortListener(tblclmnModelRo));
 
-		TableColumn tblclmnVinRo = new TableColumn(roTable, SWT.NONE);
-		tblclmnVinRo.setText("VIN");
-		tblclmnVinRo.setWidth(222);
-		tblclmnVinRo.addSelectionListener(new TableColumnSortListener(tblclmnVinRo));
+		TableColumn tblclmnJobSiteRo = new TableColumn(projectTable, SWT.NONE);
+		tblclmnJobSiteRo.setText("Job Site Address");
+		tblclmnJobSiteRo.setWidth(222);
+		tblclmnJobSiteRo.addSelectionListener(new TableColumnSortListener(tblclmnJobSiteRo));
 
-		TableColumn tblclmnJobsRo = new TableColumn(roTable, SWT.NONE);
+		TableColumn tblclmnJobsRo = new TableColumn(projectTable, SWT.NONE);
 		tblclmnJobsRo.setText("Jobs");
 		tblclmnJobsRo.setWidth(212);
 		tblclmnJobsRo.addSelectionListener(new TableColumnSortListener(tblclmnJobsRo));
 
 		// Delete right click menu
-		setupRightClickMenu(roTable, "Repair Order");
+		setupRightClickMenu(projectTable, "Repair Order");
 		
 		// RO controls
-		MyText roSearchBox = new MyText(repairOrdersComposite, SWT.BORDER);
-		FormData fd_roSearchBox = new FormData();
-		fd_roSearchBox.bottom = new FormAttachment(0, 33);
-		fd_roSearchBox.left = new FormAttachment(0, 10);
-		fd_roSearchBox.top = new FormAttachment(0, 10);
-		roSearchBox.setLayoutData(fd_roSearchBox);
-		roSearchBox.setText("Search...");
-		roSearchBox.addModifyListener(new SearchTextBoxListeners(roSearchBox, roTable, new RepairOrder()));
-		roSearchBox.addFocusListener(new TextBoxFocusListener(roSearchBox));
+		MyText projectSearchBox = new MyText(projectsComposite, SWT.BORDER);
+		FormData fd_projectSearchBox = new FormData();
+		fd_projectSearchBox.bottom = new FormAttachment(0, 33);
+		fd_projectSearchBox.left = new FormAttachment(0, 10);
+		fd_projectSearchBox.top = new FormAttachment(0, 10);
+		projectSearchBox.setLayoutData(fd_projectSearchBox);
+		projectSearchBox.setText("Search...");
+		projectSearchBox.addModifyListener(new SearchTextBoxListeners(projectSearchBox, projectTable, new RepairOrder()));
+		projectSearchBox.addFocusListener(new TextBoxFocusListener(projectSearchBox));
 
-		Button btnNewRepairOrder = new Button(repairOrdersComposite, SWT.NONE);
-		fd_roSearchBox.right = new FormAttachment(btnNewRepairOrder, -10);
-		FormData fd_btnNewRepairOrder = new FormData();
-		fd_btnNewRepairOrder.left = new FormAttachment(100, -161);
-		fd_btnNewRepairOrder.bottom = new FormAttachment(0, 33);
-		fd_btnNewRepairOrder.right = new FormAttachment(100, -10);
-		fd_btnNewRepairOrder.top = new FormAttachment(0, 10);
-		btnNewRepairOrder.setLayoutData(fd_btnNewRepairOrder);
-		btnNewRepairOrder.setText("New Repair Order");
-		btnNewRepairOrder.addMouseListener(new CreateNewObjectListener(roTable, roSearchBox, shell));
+		Button btnNewProject = new Button(projectsComposite, SWT.NONE);
+		fd_projectSearchBox.right = new FormAttachment(btnNewProject, -10);
+		FormData fd_btnNewProject = new FormData();
+		fd_btnNewProject.left = new FormAttachment(100, -161);
+		fd_btnNewProject.bottom = new FormAttachment(0, 33);
+		fd_btnNewProject.right = new FormAttachment(100, -10);
+		fd_btnNewProject.top = new FormAttachment(0, 10);
+		btnNewProject.setLayoutData(fd_btnNewProject);
+		btnNewProject.setText("New Project");
+		btnNewProject.addMouseListener(new CreateNewObjectListener(projectTable, projectSearchBox, shell));
 
-		Button btnNewEstimate = new Button(repairOrdersComposite, SWT.NONE);
+		Button btnNewEstimate = new Button(projectsComposite, SWT.NONE);
 		FormData fd_btnNewEstimate = new FormData();
 		fd_btnNewEstimate.top = new FormAttachment(0, 43);
 		fd_btnNewEstimate.bottom = new FormAttachment(0, 65);
@@ -190,22 +190,22 @@ public class Gui extends Composite {
 		btnNewEstimate.setLayoutData(fd_btnNewEstimate);
 		btnNewEstimate.setText("New Estimate");
 
-		Button btnDeleteRepairOrder = new Button(repairOrdersComposite, SWT.NONE);
-		FormData fd_btnDeleteRepairOrder = new FormData();
-		fd_btnDeleteRepairOrder.bottom = new FormAttachment(0, 65);
-		fd_btnDeleteRepairOrder.left = new FormAttachment(100, -322);
-		fd_btnDeleteRepairOrder.right = new FormAttachment(100, -171);
-		fd_btnDeleteRepairOrder.top = new FormAttachment(0, 43);
-		btnDeleteRepairOrder.setLayoutData(fd_btnDeleteRepairOrder);
-		btnDeleteRepairOrder.setText("Delete Repair Order");
-		btnDeleteRepairOrder.addSelectionListener(new SelectionAdapter() {
+		Button btnDeleteProject = new Button(projectsComposite, SWT.NONE);
+		FormData fd_btnDeleteProject = new FormData();
+		fd_btnDeleteProject.bottom = new FormAttachment(0, 65);
+		fd_btnDeleteProject.left = new FormAttachment(100, -322);
+		fd_btnDeleteProject.right = new FormAttachment(100, -171);
+		fd_btnDeleteProject.top = new FormAttachment(0, 43);
+		btnDeleteProject.setLayoutData(fd_btnDeleteProject);
+		btnDeleteProject.setText("Delete Project");
+		btnDeleteProject.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// delete Repair Order
 			}
 		});
 
-		Button btnShowCashiered = new Button(repairOrdersComposite, SWT.CHECK);
+		Button btnShowCashiered = new Button(projectsComposite, SWT.CHECK);
 		FormData fd_btnShowCashiered = new FormData();
 		fd_btnShowCashiered.bottom = new FormAttachment(0, 65);
 		fd_btnShowCashiered.top = new FormAttachment(0, 43);
@@ -213,7 +213,7 @@ public class Gui extends Composite {
 		btnShowCashiered.setLayoutData(fd_btnShowCashiered);
 		btnShowCashiered.setText("Show Cashiered");
 
-		Button btnShowEstimates = new Button(repairOrdersComposite, SWT.CHECK);
+		Button btnShowEstimates = new Button(projectsComposite, SWT.CHECK);
 		FormData fd_btnShowEstimates = new FormData();
 		fd_btnShowEstimates.left = new FormAttachment(btnShowCashiered, 10);
 		fd_btnShowEstimates.bottom = new FormAttachment(0, 65);
@@ -784,82 +784,199 @@ public class Gui extends Composite {
 		TabItem tbtmProjectSite = new TabItem(tabFolderCustomer, SWT.NONE);
 		tbtmProjectSite.setText("Project Sites");
 // END customer tab
-
-		Button btnNewCustomer = new Button(customerComposite, SWT.NONE);
-		btnNewCustomer.setText("New Customer");
-		btnNewCustomer.setBounds(877, 10, 109, 26);
-		btnNewCustomer.addMouseListener(new CreateNewObjectListener(customerTable, customerSearchTextBox, shell));
-	}
-	
-	private void unitsTab(TabFolder tabFolder) {
-		TabItem tbtmUnits = new TabItem(tabFolder, SWT.NONE);
-		tbtmUnits.setText("Units");
-
-		Composite unitsComposite = new Composite(tabFolder, SWT.NONE);
-		tbtmUnits.setControl(unitsComposite);
+		
+// Job Site tab
+		Composite projectSiteComposite = new Composite(tabFolderCustomer, SWT.NONE);
+		tbtmProjectSite.setControl(projectSiteComposite);
+		FormLayout fl_projectSiteComposite = new FormLayout();
+		fl_projectSiteComposite.spacing = 5;
+		fl_projectSiteComposite.marginWidth = 5;
+		fl_projectSiteComposite.marginHeight = 5;
+		projectSiteComposite.setLayout(fl_projectSiteComposite);
+		
+		MyText projectSiteSearchBox = new MyText(projectSiteComposite, SWT.BORDER);
 
 		// Table for Unit search results
-		MyTable unitTable = new UnitTable(unitsComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		unitTable.setBounds(10, 42, 976, 663);
-		unitTable.setHeaderVisible(true);
-		unitTable.setLinesVisible(true);
-		unitTable.addMouseListener(new OpenExistingObjectMouseListener(unitTable, shell));
-		unitTable.addMenuDetectListener(new DeleteEnableListener(unitTable));
+		MyTable projectSiteTable = new UnitTable(projectSiteComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_projectSiteTable = new FormData();
+		fd_projectSiteTable.top = new FormAttachment(projectSiteSearchBox);
+		fd_projectSiteTable.bottom = new FormAttachment(100);
+		fd_projectSiteTable.right = new FormAttachment(100);
+		fd_projectSiteTable.left = new FormAttachment(0);
+		projectSiteTable.setLayoutData(fd_projectSiteTable);
+		projectSiteTable.setHeaderVisible(true);
+		projectSiteTable.setLinesVisible(true);
+		projectSiteTable.addMouseListener(new OpenExistingObjectMouseListener(projectSiteTable, shell));
+		projectSiteTable.addMenuDetectListener(new DeleteEnableListener(projectSiteTable));
 
-		TableColumn tblclmnOwnerUnit = new TableColumn(unitTable, SWT.NONE);
-		tblclmnOwnerUnit.setText("Owner");
-		tblclmnOwnerUnit.setWidth(165);
-		tblclmnOwnerUnit.addSelectionListener(new TableColumnSortListener(tblclmnOwnerUnit));
+		TableColumn tblclmnOwnerJobSite = new TableColumn(projectSiteTable, SWT.NONE);
+		tblclmnOwnerJobSite.setText("Owner");
+		tblclmnOwnerJobSite.setWidth(165);
+		tblclmnOwnerJobSite.addSelectionListener(new TableColumnSortListener(tblclmnOwnerJobSite));
 
-		TableColumn tblclmnMakeUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnMakeUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnMakeUnit.setText("Make");
 		tblclmnMakeUnit.setWidth(119);
 		tblclmnMakeUnit.addSelectionListener(new TableColumnSortListener(tblclmnMakeUnit));
 
-		TableColumn tblclmnModelUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnModelUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnModelUnit.setText("Model");
 		tblclmnModelUnit.setWidth(135);
 		tblclmnModelUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelUnit));
 
-		TableColumn tblclmnModelNameUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnModelNameUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnModelNameUnit.setText("Model Name");
 		tblclmnModelNameUnit.setWidth(135);
 		tblclmnModelNameUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelNameUnit));
 
-		TableColumn tblclmnYearUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnYearUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnYearUnit.setText("Year");
 		tblclmnYearUnit.setWidth(50);
 		tblclmnYearUnit.addSelectionListener(new TableColumnSortListener(tblclmnYearUnit));
 
-		TableColumn tblclmnMileageUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnMileageUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnMileageUnit.setText("Mileage");
 		tblclmnMileageUnit.setWidth(85);
 		tblclmnMileageUnit.addSelectionListener(new TableColumnSortListener(tblclmnMileageUnit));
 
-		TableColumn tblclmnColorUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnColorUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnColorUnit.setText("Color");
 		tblclmnColorUnit.setWidth(92);
 		tblclmnColorUnit.addSelectionListener(new TableColumnSortListener(tblclmnColorUnit));
 
-		TableColumn tblclmnVinUnit = new TableColumn(unitTable, SWT.NONE);
-		tblclmnVinUnit.setText("VIN");
-		tblclmnVinUnit.setWidth(188);
-		tblclmnVinUnit.addSelectionListener(new TableColumnSortListener(tblclmnVinUnit));
+		TableColumn tblclmnAddressJobSite = new TableColumn(projectSiteTable, SWT.NONE);
+		tblclmnAddressJobSite.setText("Address");
+		tblclmnAddressJobSite.setWidth(188);
+		tblclmnAddressJobSite.addSelectionListener(new TableColumnSortListener(tblclmnAddressJobSite));
 
 		// Delete right click menu
-		setupRightClickMenu(unitTable, "Unit");
+		setupRightClickMenu(projectSiteTable, "Unit");
 		
+		Button btnNewProjectSite = new Button(projectSiteComposite, SWT.NONE);
+		FormData fd_btnNewProjectSite = new FormData();
+		fd_btnNewProjectSite.height = 28;
+		fd_btnNewProjectSite.width = 112;
+		fd_btnNewProjectSite.top = new FormAttachment(0, -1);
+		fd_btnNewProjectSite.right = new FormAttachment(100);
+		btnNewProjectSite.setLayoutData(fd_btnNewProjectSite);
+		btnNewProjectSite.setText("New Project Site");
+		btnNewProjectSite.addMouseListener(new CreateNewObjectListener(projectSiteTable, projectSiteSearchBox, shell));
+
 		// Unit controls
-		MyText unitSearchBox = new MyText(unitsComposite, SWT.BORDER);
-		unitSearchBox.setText("Search...");
-		unitSearchBox.setBounds(10, 10, 861, 26);
-		unitSearchBox.addModifyListener(new SearchTextBoxListeners(unitSearchBox, unitTable, new Unit()));
-		unitSearchBox.addFocusListener(new TextBoxFocusListener(unitSearchBox));
+//		MyText jobSiteSearchBox = new MyText(unitsComposite, SWT.BORDER);
+		FormData fd_projectSiteSearchBox = new FormData();
+		fd_projectSiteSearchBox.height = 16;
+		fd_projectSiteSearchBox.right = new FormAttachment(btnNewProjectSite);
+		fd_projectSiteSearchBox.top = new FormAttachment(0);
+		fd_projectSiteSearchBox.left = new FormAttachment(0);
+		projectSiteSearchBox.setLayoutData(fd_projectSiteSearchBox);
+		projectSiteSearchBox.setText("Search...");
+		projectSiteSearchBox.addModifyListener(new SearchTextBoxListeners(projectSiteSearchBox, projectSiteTable, new Unit()));
+		projectSiteSearchBox.addFocusListener(new TextBoxFocusListener(projectSiteSearchBox));
+// END Job Site tab
+
+		// Accounts folder
+		// Customer Detail Tab
+		TabItem tbtmAccountsDetail = new TabItem(tabFolderCustomer, SWT.NONE);
+		tbtmAccountsDetail.setText("Accounts");
 		
-		Button btnNewUnit = new Button(unitsComposite, SWT.NONE);
-		btnNewUnit.setText("New Unit");
-		btnNewUnit.setBounds(877, 10, 109, 26);
-		btnNewUnit.addMouseListener(new CreateNewObjectListener(unitTable, unitSearchBox, shell));
+//		TabFolder tabFolderAccountsFolder = new TabFolder(customerComposite, SWT.NONE);
+//		FormData fd_tabFolderAccountsFolder = new FormData();
+//		fd_tabFolderAccountsFolder.bottom = new FormAttachment(100);
+//		fd_tabFolderAccountsFolder.right = new FormAttachment(100);
+//		fd_tabFolderAccountsFolder.top = new FormAttachment(0);
+//		fd_tabFolderAccountsFolder.left = new FormAttachment(0);
+//		tabFolderAccountsFolder .setLayoutData(fd_tabFolderAccountsFolder);
+
+		Composite accountsDetailComposite = new Composite(tabFolderCustomer, SWT.NONE);
+		tbtmAccountsDetail.setControl(accountsDetailComposite);
+		FormLayout fl_accountsDetailComposite = new FormLayout();
+		fl_accountsDetailComposite.spacing = 5;
+		fl_accountsDetailComposite.marginWidth = 5;
+		fl_accountsDetailComposite.marginHeight = 5;
+		accountsDetailComposite.setLayout(fl_accountsDetailComposite);
+		
+		MyText customerSearchTextBox_1 = new MyText(accountsDetailComposite, SWT.BORDER);
+		
+		CustomerTable accountsTable = new CustomerTable(accountsDetailComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_accountsTable = new FormData();
+		fd_accountsTable.top = new FormAttachment(customerSearchTextBox_1	);
+		fd_accountsTable.bottom = new FormAttachment(100);
+		fd_accountsTable.right = new FormAttachment(100);
+		fd_accountsTable.left = new FormAttachment(0);
+		accountsTable.setLayoutData(fd_accountsTable);
+		accountsTable.setHeaderVisible(true);
+		accountsTable.setLinesVisible(true);
+		accountsTable.addMouseListener(new OpenExistingObjectMouseListener(accountsTable, shell));
+		accountsTable.addMenuDetectListener(new DeleteEnableListener(accountsTable));
+		
+		TableColumn tblclmnAccountNumber = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnAccountNumber.setWidth(100);
+		tblclmnAccountNumber.setText("Account Number");
+		tblclmnAccountNumber.addSelectionListener(new TableColumnSortListener(tblclmnAccountNumber));
+
+		
+		
+		TableColumn tblclmnAccountHolderName = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnAccountHolderName.setWidth(100);
+		tblclmnAccountHolderName.setText("Account Holder");
+		tblclmnAccountHolderName.addSelectionListener(new TableColumnSortListener(tblclmnAccountHolderName));
+		
+		TableColumn tblclmnLastCharge = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnLastCharge.setWidth(100);
+		tblclmnLastCharge.setText("Last Charge");
+		tblclmnLastCharge.addSelectionListener(new TableColumnSortListener(tblclmnLastCharge));
+		
+		TableColumn tblclmnLastPayment = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnLastPayment.setWidth(100);
+		tblclmnLastPayment.setText("Last Payment");
+		tblclmnLastPayment.addSelectionListener(new TableColumnSortListener(tblclmnLastPayment));
+		
+		TableColumn tblclmnBalance = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnBalance.setWidth(100);
+		tblclmnBalance.setText("Balance");
+		tblclmnBalance.addSelectionListener(new TableColumnSortListener(tblclmnBalance));
+		
+		TableColumn tblclmnHomePhoneCustomer_1 = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnHomePhoneCustomer_1.setWidth(100);
+		tblclmnHomePhoneCustomer_1.setText("Home Phone");
+		tblclmnHomePhoneCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnHomePhoneCustomer_1));
+		
+		TableColumn tblclmnCellPhoneCustomer_1 = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnCellPhoneCustomer_1.setWidth(100);
+		tblclmnCellPhoneCustomer_1.setText("Cell Phone");
+		tblclmnCellPhoneCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnCellPhoneCustomer_1));
+		
+		TableColumn tblclmnEmailCustomer_1 = new TableColumn(accountsTable, SWT.NONE);
+		tblclmnEmailCustomer_1.setWidth(100);
+		tblclmnEmailCustomer_1.setText("E-mail");
+		tblclmnEmailCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnEmailCustomer_1));
+		
+		// Delete right click menu
+		setupRightClickMenu(accountsTable, "Account");
+		
+		Button btnNewCustomer_1 = new Button(accountsDetailComposite, SWT.NONE);
+		FormData fd_btnNewCustomer_1 = new FormData();
+		fd_btnNewCustomer_1.height = 28;
+		fd_btnNewCustomer_1.width = 112;
+		fd_btnNewCustomer_1.top = new FormAttachment(0, -1);
+		fd_btnNewCustomer_1.right = new FormAttachment(100);
+		btnNewCustomer_1.setLayoutData(fd_btnNewCustomer_1);
+		btnNewCustomer_1.setText("(dont need)");
+		btnNewCustomer_1.addMouseListener(new CreateNewObjectListener(accountsTable, customerSearchTextBox_1, shell));
+
+		FormData fd_customerSearchTextBox_1 = new FormData();
+		fd_customerSearchTextBox_1.height = 16;
+		fd_customerSearchTextBox_1.right = new FormAttachment(btnNewCustomer_1);
+		fd_customerSearchTextBox_1.top = new FormAttachment(0);
+		fd_customerSearchTextBox_1.left = new FormAttachment(0);
+		customerSearchTextBox_1.setLayoutData(fd_customerSearchTextBox_1);
+		customerSearchTextBox_1.setText("Search...");
+		customerSearchTextBox_1.addModifyListener(new SearchTextBoxListeners(customerSearchTextBox_1, accountsTable, new Customer()));
+		customerSearchTextBox_1.addFocusListener(new TextBoxFocusListener(customerSearchTextBox_1));
+	}
+	
+	private void unitsTab(TabFolder tabFolder) {
 	}
 	
 	private void reportsTab(TabFolder tabFolder) {
