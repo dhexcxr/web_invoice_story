@@ -85,9 +85,9 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 	private void openUnit(Table table) {
 		// get object saved in TableItem Data
 		ProjectSite projectSite = (ProjectSite) table.getSelection()[0].getData();
-		Application.getLogger().log(Level.INFO, "Open unit: {0}", projectSite.getMake());
-		Application.getLogger().log(Level.INFO, "ProjectSite Model: {0}", projectSite.getModel());
-		Application.getLogger().log(Level.INFO, "ProjectSite VIN: {0}", projectSite.getVin());
+		Application.getLogger().log(Level.INFO, "Open unit: {0}", projectSite.getAddressProjectSite());
+		Application.getLogger().log(Level.INFO, "ProjectSite Model: {0}", projectSite.getCityProjectSiteString());
+		Application.getLogger().log(Level.INFO, "ProjectSite VIN: {0}", projectSite.getNotesProjectSite());
 
 		NewUnitDialog modifyExistingUnitDialog = new NewUnitDialog(shell, SWT.NONE);
 		modifyExistingUnitDialog.open(projectSite);

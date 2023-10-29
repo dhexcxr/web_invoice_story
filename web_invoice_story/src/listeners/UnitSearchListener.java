@@ -31,10 +31,9 @@ public class UnitSearchListener extends MouseAdapter{
 				selectedUnit = (ProjectSite) unitSearchDialog.open();
 		}
 		if (selectedUnit instanceof ProjectSite) {
-			StringBuilder unitData = new StringBuilder(selectedUnit.getYear() + " " + selectedUnit.getMake() + "\n" +
-														selectedUnit.getModel() + "\nVin: " + 
-														selectedUnit.getVin() + "\nColor: " + selectedUnit.getColor() + "\n" +
-														"Mileage: " + selectedUnit.getMileage());
+			StringBuilder unitData = new StringBuilder(selectedUnit.getStateProjectSite() + " " + selectedUnit.getAddressProjectSite() + "\n" +
+														selectedUnit.getCityProjectSiteString() + "\nVin: " + 
+														selectedUnit.getNotesProjectSite() + "\nColor: " + selectedUnit.getZipCodeProjectSiteString() + "\n");
 			txtBox.setText(unitData.toString());
 			txtBox.setData(selectedUnit);
 		}

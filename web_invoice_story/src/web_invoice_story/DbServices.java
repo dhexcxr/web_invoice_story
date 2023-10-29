@@ -126,7 +126,7 @@ public class DbServices {
 			return 0;		// no object passed in, so no object deleted
 		}
 		StringBuilder queryString = new StringBuilder();		// TODO this query (below) is potentially dangerous, i'm not sanitizing getDbPk() with PrepareStatement
-		queryString.append("DELETE FROM cis2901c." + dbObject.getTableName() + " WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk());
+		queryString.append("DELETE FROM web_invoice_story." + dbObject.getTableName() + " WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk());
 		return sendQueryToDb(queryString);
 	}
 	
@@ -143,9 +143,9 @@ public class DbServices {
 		boolean creatingNewObject = (dbObject.getDbPk() == -1);
 		// start building query string
 		if (creatingNewObject) {
-			queryString.append("INSERT INTO cis2901c." + dbObject.getTableName() + " () VALUES ();" );
+			queryString.append("INSERT INTO web_invoice_story." + dbObject.getTableName() + " () VALUES ();" );
 		} else {
-			queryString.append("UPDATE cis2901c." + dbObject.getTableName() + " SET WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk() + ";");
+			queryString.append("UPDATE web_invoice_story." + dbObject.getTableName() + " SET WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk() + ";");
 		}
 		// check which object data is present and add those fields to query string
 		List<String> dbFields = insertFieldsIntoQuery(queryString, dbObject, creatingNewObject);
@@ -181,7 +181,7 @@ public class DbServices {
 		// get primary key of last object saved into dbObject's database table
 		ResultSet results = null;
 		try (PreparedStatement lastDbObjectPkStatement = DbServices.getDbConnection().prepareStatement(
-									"SELECT MAX(" + dbObject.getPkName() + ") FROM cis2901c." + dbObject.getTableName() + ";")) {
+									"SELECT MAX(" + dbObject.getPkName() + ") FROM web_invoice_story." + dbObject.getTableName() + ";")) {
 			results = lastDbObjectPkStatement.executeQuery();
 			while (results.next()) {
 				return results.getLong(1);		// we should always return here
@@ -196,7 +196,7 @@ public class DbServices {
 
 	private static int getLastInvoiceNum() {
 		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(invoicenum) FROM cis2901c.invoice;")) {
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(invoicenum) FROM web_invoice_story.invoice;")) {
 			results = lastInvoiceNumStatement.executeQuery();
 			while (results.next()) {
 				return results.getInt(1);		// we should always return here
@@ -211,7 +211,7 @@ public class DbServices {
 
 	private static int getLastRoNum() {
 		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(roid) FROM cis2901c.ro;")) {
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(roid) FROM web_invoice_story.ro;")) {
 			results = lastInvoiceNumStatement.executeQuery();
 			while (results.next()) {
 				return results.getInt(1);		// we should always return here
@@ -226,7 +226,7 @@ public class DbServices {
 
 	private static int getLastJobId() {
 		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(jobid) FROM cis2901c.job;")) {
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(jobid) FROM web_invoice_story.job;")) {
 			results = lastInvoiceNumStatement.executeQuery();
 			while (results.next()) {
 				return results.getInt(1);		// we should always return here
@@ -301,8 +301,8 @@ public class DbServices {
 	}
 	
 	private static void sellRoPartsOutOfInventory(long roNumber) {
-		StringBuilder query = new StringBuilder("UPDATE cis2901c.part p JOIN cis2901c.jobpart jp ON p.partid = jp.partid "
-				+ "JOIN cis2901c.job j ON jp.jobid = j.jobid "
+		StringBuilder query = new StringBuilder("UPDATE web_invoice_story.part p JOIN web_invoice_story.jobpart jp ON p.partid = jp.partid "
+				+ "JOIN web_invoice_story.job j ON jp.jobid = j.jobid "
 				+ "SET p.onhand = p.onhand - jp.quantity WHERE j.roid = ?;");
 		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(roNumber))));
 	}
@@ -545,19 +545,16 @@ public class DbServices {
 		while (queryResultSet.next()) {
 			
 			ProjectSite projectSite = new ProjectSite();
-			projectSite.setUnitId(queryResultSet.getLong(1));
+			projectSite.setProjectSiteId(queryResultSet.getLong(1));
 			projectSite.setCustomerId(queryResultSet.getLong(2));
-			projectSite.setMake(queryResultSet.getString(3));
-			projectSite.setModel(queryResultSet.getString(4));
-			projectSite.setModelName(queryResultSet.getString(5));
-			projectSite.setYear(queryResultSet.getInt(6));
-			projectSite.setMileage(queryResultSet.getInt(7));
-			projectSite.setColor(queryResultSet.getString(8));
-			projectSite.setVin(queryResultSet.getString(9));
-			projectSite.setNotes(queryResultSet.getString(10));
+			projectSite.setAddressProjectSite(queryResultSet.getString(3));
+			projectSite.setCityProjectSite(queryResultSet.getString(4));
+			projectSite.setStateProjectSite(queryResultSet.getString(5));
+			projectSite.setZipCodeProjectSite(queryResultSet.getString(6));
+			projectSite.setNotesProjectSite(queryResultSet.getString(7));
 			
-			String lastName = queryResultSet.getString(11);
-			String firstName = queryResultSet.getString(12);
+			String lastName = queryResultSet.getString(8);
+			String firstName = queryResultSet.getString(9);
 			String owner = lastName;
 			if (firstName != null && firstName.length() != 0) {
 				owner = lastName + ", " + firstName;

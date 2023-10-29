@@ -645,9 +645,9 @@ public class RepairOrderDialog extends Dialog {
 			if (project.getUnitId() != 0) {
 				ProjectSite roUnit = new ProjectSite().searchByPk(project.getUnitId());
 				txtUnitRepairOrder.setData(roUnit);
-				txtUnitRepairOrder.setText(roUnit.getYear() + " " + roUnit.getMake() + "\n" +
-						roUnit.getModel() + "\nVin: " + roUnit.getVin() + "\nColor: " +
-						roUnit.getColor() + "\n" + "Mileage: " + roUnit.getMileage());
+				txtUnitRepairOrder.setText(roUnit.getStateProjectSite() + " " + roUnit.getAddressProjectSite() + "\n" +
+						roUnit.getCityProjectSiteString() + "\nVin: " + roUnit.getNotesProjectSite() + "\nColor: " +
+						roUnit.getZipCodeProjectSiteString());
 			}
 
 			List<Job> roJobs = loadRoJobsFromDb();
@@ -799,13 +799,13 @@ public class RepairOrderDialog extends Dialog {
 			return;
 		}
 		
-		if (txtUnitRepairOrder.getData() != null && ((ProjectSite) txtUnitRepairOrder.getData()).getUnitId() != -1) {
+		if (txtUnitRepairOrder.getData() != null && ((ProjectSite) txtUnitRepairOrder.getData()).getProjectSiteId() != -1) {
 			ProjectSite thisUnit = (ProjectSite) txtUnitRepairOrder.getData();
-			project.setUnitId(thisUnit.getUnitId());
-			project.setUnitYear(Integer.toString(thisUnit.getYear()));
-			project.setUnitMake(thisUnit.getMake());
-			project.setUnitModel(thisUnit.getModel());
-			project.setUnitVin(thisUnit.getVin());
+			project.setUnitId(thisUnit.getProjectSiteId());
+			project.setUnitYear(thisUnit.getStateProjectSite());
+			project.setUnitMake(thisUnit.getAddressProjectSite());
+			project.setUnitModel(thisUnit.getCityProjectSiteString());
+			project.setUnitVin(thisUnit.getNotesProjectSite());
 		} else {
 			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
 			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
