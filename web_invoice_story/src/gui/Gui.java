@@ -248,14 +248,20 @@ public class Gui extends Composite {
 		
 		Composite inventoryComposite = new Composite(tabFolderParts, SWT.NONE);
 		tbtmInventory.setControl(inventoryComposite);
-		inventoryComposite.setLayout(new FormLayout());
+		FormLayout fl_inventoryComposite = new FormLayout();
+		fl_inventoryComposite.spacing = 5;
+		fl_inventoryComposite.marginWidth = 5;
+		fl_inventoryComposite.marginHeight = 5;
+		inventoryComposite.setLayout(fl_inventoryComposite);
+		
+		MyText partSearchTextBox = new MyText(inventoryComposite, SWT.BORDER);
 		
 		MyTable partTableInventory = new PartInventoryTable(inventoryComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_partTableInventory = new FormData();
-		fd_partTableInventory.bottom = new FormAttachment(0, 652);
-		fd_partTableInventory.right = new FormAttachment(0, 958);
-		fd_partTableInventory.top = new FormAttachment(0, 42);
-		fd_partTableInventory.left = new FormAttachment(0, 10);
+		fd_partTableInventory.top = new FormAttachment(partSearchTextBox);
+		fd_partTableInventory.bottom = new FormAttachment(100);
+		fd_partTableInventory.right = new FormAttachment(100);
+		fd_partTableInventory.left = new FormAttachment(0);
 		partTableInventory.setLayoutData(fd_partTableInventory);
 		partTableInventory.setLinesVisible(true);
 		partTableInventory.setHeaderVisible(true);
@@ -300,27 +306,31 @@ public class Gui extends Composite {
 		// Delete right click menu
 		setupRightClickMenu(partTableInventory, "Part");
 		
-		// Inventory controls
-		MyText partSearchTextBox = new MyText(inventoryComposite, SWT.BORDER);
+		// Inventory controls		
+		Button btnNewPart = new Button(inventoryComposite, SWT.NONE);
+		FormData fd_btnNewPart = new FormData();
+		fd_btnNewPart.height = 28;
+//		fd_btnNewPart.bottom = new FormAttachment(partSearchTextBox, 5, SWT.BOTTOM);
+		fd_btnNewPart.width = 112;
+//		fd_btnNewPart.bottom = new FormAttachment(0, 36);
+		fd_btnNewPart.right = new FormAttachment(100);
+		fd_btnNewPart.top = new FormAttachment(0, -1);
+//		fd_btnNewPart.left = new FormAttachment(0, 877);
+		btnNewPart.setLayoutData(fd_btnNewPart);
+		btnNewPart.setText("New Part");
+		btnNewPart.addMouseListener(new CreateNewObjectListener(partTableInventory, partSearchTextBox, shell));
+		
+//		MyText partSearchTextBox = new MyText(inventoryComposite, SWT.BORDER);
 		FormData fd_partSearchTextBox = new FormData();
-		fd_partSearchTextBox.bottom = new FormAttachment(0, 36);
-		fd_partSearchTextBox.right = new FormAttachment(0, 871);
-		fd_partSearchTextBox.top = new FormAttachment(0, 10);
-		fd_partSearchTextBox.left = new FormAttachment(0, 10);
+		//		fd_partSearchTextBox.bottom = new FormAttachment(0, 36);
+				fd_partSearchTextBox.right = new FormAttachment(btnNewPart);
+		fd_partSearchTextBox.height = 16;
+		fd_partSearchTextBox.top = new FormAttachment(0);
+		fd_partSearchTextBox.left = new FormAttachment(0);
 		partSearchTextBox.setLayoutData(fd_partSearchTextBox);
 		partSearchTextBox.setText("Search...");
 		partSearchTextBox.addModifyListener(new SearchTextBoxListeners(partSearchTextBox, partTableInventory, new Part()));
 		partSearchTextBox.addFocusListener(new TextBoxFocusListener(partSearchTextBox));
-		
-		Button btnNewPart = new Button(inventoryComposite, SWT.NONE);
-		FormData fd_btnNewPart = new FormData();
-		fd_btnNewPart.bottom = new FormAttachment(0, 36);
-		fd_btnNewPart.right = new FormAttachment(0, 958);
-		fd_btnNewPart.top = new FormAttachment(0, 10);
-		fd_btnNewPart.left = new FormAttachment(0, 877);
-		btnNewPart.setLayoutData(fd_btnNewPart);
-		btnNewPart.setText("New Part");
-		btnNewPart.addMouseListener(new CreateNewObjectListener(partTableInventory, partSearchTextBox, shell));
 		// END Inventory tab
 		
 		// START Invoice tab
@@ -650,14 +660,52 @@ public class Gui extends Composite {
 
 	private void customersTab(TabFolder tabFolder) {
 		TabItem tbtmCustomers = new TabItem(tabFolder, SWT.NONE);
-		tbtmCustomers.setText("Customers");
-
+		tbtmCustomers.setText("Customers/Accounts");
+		
 		Composite customerComposite = new Composite(tabFolder, SWT.NONE);
 		tbtmCustomers.setControl(customerComposite);
+		FormLayout fl_customerComposite = new FormLayout();
+		fl_customerComposite.spacing = 5;
+		fl_customerComposite.marginWidth = 5;
+		fl_customerComposite.marginHeight = 5;
+		customerComposite.setLayout(fl_customerComposite);
+		
+		TabFolder tabFolderCustomer = new TabFolder(customerComposite, SWT.NONE);
+		FormData fd_tabFolderCustomer = new FormData();
+		fd_tabFolderCustomer.bottom = new FormAttachment(100);
+		fd_tabFolderCustomer.right = new FormAttachment(100);
+		fd_tabFolderCustomer.top = new FormAttachment(0);
+		fd_tabFolderCustomer.left = new FormAttachment(0);
+		tabFolderCustomer.setLayoutData(fd_tabFolderCustomer);
+		FormData fd_tabFolderParts = new FormData();
+		fd_tabFolderParts.bottom = new FormAttachment(100);
+		fd_tabFolderParts.right = new FormAttachment(100);
+		fd_tabFolderParts.top = new FormAttachment(0);
+		fd_tabFolderParts.left = new FormAttachment(0);
+		tabFolderCustomer.setLayoutData(fd_tabFolderParts);
 
+		// Customer Detail Tab
+		TabItem tbtmCustomerDetail = new TabItem(tabFolderCustomer, SWT.NONE);
+		tbtmCustomerDetail.setText("Customers");
+		
+		Composite customerDetailComposite = new Composite(tabFolderCustomer, SWT.NONE);
+		tbtmCustomerDetail.setControl(customerDetailComposite);
+		FormLayout fl_customerDetailComposite = new FormLayout();
+		fl_customerDetailComposite.spacing = 5;
+		fl_customerDetailComposite.marginWidth = 5;
+		fl_customerDetailComposite.marginHeight = 5;
+		customerDetailComposite.setLayout(fl_customerDetailComposite);
+
+		MyText customerSearchTextBox = new MyText(customerDetailComposite, SWT.BORDER);
+		
 		// Table for Customer search results
-		MyTable customerTable = new CustomerTable(customerComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		customerTable.setBounds(10, 42, 976, 663);
+		MyTable customerTable = new CustomerTable(customerDetailComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_customerTable = new FormData();
+		fd_customerTable.top = new FormAttachment(customerSearchTextBox);
+		fd_customerTable.bottom = new FormAttachment(100);
+		fd_customerTable.right = new FormAttachment(100);
+		fd_customerTable.left = new FormAttachment(0);
+		customerTable.setLayoutData(fd_customerTable);
 		customerTable.setHeaderVisible(true);
 		customerTable.setLinesVisible(true);
 		customerTable.addMouseListener(new OpenExistingObjectMouseListener(customerTable, shell));
@@ -713,11 +761,29 @@ public class Gui extends Composite {
 		setupRightClickMenu(customerTable, "Customer");
 		
 		// Customer controls
-		MyText customerSearchTextBox = new MyText(customerComposite, SWT.BORDER);
+		Button btnNewCustomer = new Button(customerDetailComposite, SWT.NONE);
+		FormData fd_btnNewCustomer = new FormData();
+		fd_btnNewCustomer.height = 28;
+		fd_btnNewCustomer.width = 112;
+		fd_btnNewCustomer.right = new FormAttachment(100);
+		fd_btnNewCustomer.top = new FormAttachment(0, -1);
+		btnNewCustomer.setLayoutData(fd_btnNewCustomer);
+		btnNewCustomer.setText("New Customer");
+		btnNewCustomer.addMouseListener(new CreateNewObjectListener(customerTable, customerSearchTextBox, shell));
+		
+//		MyText customerSearchTextBox = new MyText(customerDetailComposite, SWT.BORDER);
+		FormData fd_customerSearchTextBox = new FormData();
+		fd_customerSearchTextBox.height = 16;
+		fd_customerSearchTextBox.right = new FormAttachment(btnNewCustomer);
+		fd_customerSearchTextBox.top = new FormAttachment(0);
+		fd_customerSearchTextBox.left = new FormAttachment(0);
+		customerSearchTextBox.setLayoutData(fd_customerSearchTextBox);
 		customerSearchTextBox.setText("Search...");
-		customerSearchTextBox.setBounds(10, 10, 861, 26);
 		customerSearchTextBox.addModifyListener(new SearchTextBoxListeners(customerSearchTextBox, customerTable, new Customer()));
 		customerSearchTextBox.addFocusListener(new TextBoxFocusListener(customerSearchTextBox));
+		TabItem tbtmProjectSite = new TabItem(tabFolderCustomer, SWT.NONE);
+		tbtmProjectSite.setText("Project Sites");
+// END customer tab
 
 		Button btnNewCustomer = new Button(customerComposite, SWT.NONE);
 		btnNewCustomer.setText("New Customer");
