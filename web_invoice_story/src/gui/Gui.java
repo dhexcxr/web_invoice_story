@@ -94,7 +94,6 @@ public class Gui extends Composite {
 		rosTab(tabFolderGui);
 		partsTab(tabFolderGui);
 		customersTab(tabFolderGui);
-		unitsTab(tabFolderGui);
 		reportsTab(tabFolderGui);
 		settingsTab(tabFolderGui);
 	}
@@ -974,9 +973,6 @@ public class Gui extends Composite {
 		customerSearchTextBox_1.setText("Search...");
 		customerSearchTextBox_1.addModifyListener(new SearchTextBoxListeners(customerSearchTextBox_1, accountsTable, new Customer()));
 		customerSearchTextBox_1.addFocusListener(new TextBoxFocusListener(customerSearchTextBox_1));
-	}
-	
-	private void unitsTab(TabFolder tabFolder) {
 	}
 	
 	private void reportsTab(TabFolder tabFolder) {
