@@ -28,6 +28,7 @@ import objects.JobPart;
 import objects.Part;
 import objects.Project;
 import objects.ProjectSite;
+import objects.StoreLocation;
 
 public class DbServices {
 	// TODO add status icon somewhere to show when we're connected to DB
@@ -476,6 +477,8 @@ public class DbServices {
 		List<DbObjectSearchable> results = new ArrayList<>();
 		if (object instanceof Customer) {
 			results = buildCustomers(queryResultSet);
+		} else if (object instanceof StoreLocation) {
+			results = buildStoreLocations(queryResultSet);
 		} else if (object instanceof Part) {
 			results = buildParts(queryResultSet);
 		} else if (object instanceof ProjectSite) {
@@ -494,6 +497,10 @@ public class DbServices {
 		return results;
 	}
 	
+	
+	// TODO move these builders into the DbObjectSearchable, probably as a static method (as I am thinking of making all the search methods)
+		// then i can just pass the results to the static method without doing a bunch of instanceof as in buildFoundObjects()
+		// e.g. buildFoundObjects would just need to have one line: object.buildObjects(resultSet);
 	private static List<DbObjectSearchable> buildCustomers(ResultSet queryResultSet) throws SQLException {
 		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
@@ -512,6 +519,25 @@ public class DbServices {
 			customer.setCustomerId(queryResultSet.getLong(11));
 
 			results.add(i, customer);
+			i++;
+		}
+		return results;
+	}
+	
+	private static List<DbObjectSearchable> buildStoreLocations(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+		int i = 0;
+		while (queryResultSet.next()) {
+			StoreLocation storeLocation = new StoreLocation();
+			storeLocation.setStoreLocationId(queryResultSet.getLong(1));
+			storeLocation.setName(queryResultSet.getString(2));
+			storeLocation.setAddress(queryResultSet.getString(3));
+			storeLocation.setCity(queryResultSet.getString(4));
+			storeLocation.setState(queryResultSet.getString(5));			
+			storeLocation.setZipCode(queryResultSet.getString(6));
+			storeLocation.setPhoneStore(queryResultSet.getString(7));
+
+			results.add(i, storeLocation);
 			i++;
 		}
 		return results;
