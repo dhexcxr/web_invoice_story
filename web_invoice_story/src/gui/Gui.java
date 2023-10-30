@@ -42,6 +42,7 @@ import objects.InvoicePart;
 import objects.Project;
 import objects.Part;
 import objects.ProjectSite;
+import objects.StoreLocation;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -54,6 +55,7 @@ import guiParts.MyTable;
 import guiParts.MyText;
 import guiParts.PartInventoryTable;
 import guiParts.RepairOrderTable;
+import guiParts.StoreLocationCombo;
 import guiParts.UnitTable;
 
 import org.eclipse.swt.widgets.TableItem;
@@ -1032,6 +1034,35 @@ public class Gui extends Composite {
 		fd_lblResetConfirmDialog.left = new FormAttachment(0, 5);
 		lblResetConfirmDialog.setLayoutData(fd_lblResetConfirmDialog);
 		lblResetConfirmDialog.setText("This will re-enable the Repair Order Close and Cancel Changes confirmation dialog boxes.");
+		
+		Group grpCurrentLocation = new Group(settingsComposite, SWT.NONE);
+		FormLayout fl_grpCurrentLocation = new FormLayout();
+		fl_grpCurrentLocation.spacing = 5;
+		fl_grpCurrentLocation.marginWidth = 5;
+		fl_grpCurrentLocation.marginHeight = 5;
+		grpCurrentLocation.setLayout(fl_grpCurrentLocation);
+		FormData fd_grpCurrentLocation = new FormData();
+		fd_grpCurrentLocation.top = new FormAttachment(grpResetConfirmDialog);
+		grpCurrentLocation.setLayoutData(fd_grpCurrentLocation);
+		
+		StoreLocationCombo comboCurrentLocation = new StoreLocationCombo(new StoreLocation().getAllStoreLocations(), grpCurrentLocation, SWT.DROP_DOWN | SWT.READ_ONLY);
+		comboCurrentLocation.select(Application.getSettings().getCurrentLocation());		// TODO decide how to make sure currentSelection always == locationID
+		FormData fd_comboCurrentLocation = new FormData();
+		fd_comboCurrentLocation.height = 24;
+		fd_comboCurrentLocation.width = 256;
+		fd_comboCurrentLocation.top = new FormAttachment(0, 5);
+		fd_comboCurrentLocation.left = new FormAttachment(0, 5);
+		comboCurrentLocation.setLayoutData(fd_comboCurrentLocation);
+		
+		comboCurrentLocation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int newLocationSelection = comboCurrentLocation.getSelectedLocationId();
+				Application.getSettings().setCurrentLocation(newLocationSelection);		// TODO make sure we save this to settings on close
+				Application.getSettings().save();
+			}
+		});
+		
 	}
 	
 	private void setupRightClickMenu(MyTable table, String deleteString) {

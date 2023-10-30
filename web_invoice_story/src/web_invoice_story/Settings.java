@@ -15,6 +15,7 @@ public class Settings {
 	private String database = "";
 	private boolean skipCancelConfirm = false;
 	private boolean skipCloseConfirm = false;
+	private int currentLocation = 0;
 	
 	// To add and save new Settings, add a private field to class
 		// use prop object to load property from file into field and create
@@ -34,7 +35,10 @@ public class Settings {
 			
 			database = prop.getProperty("database");
 			skipCancelConfirm = Boolean.parseBoolean(prop.getProperty("skipCancelConfirm"));
-			skipCloseConfirm = Boolean.parseBoolean(prop.getProperty("skipCloseConfirm"));		
+			skipCloseConfirm = Boolean.parseBoolean(prop.getProperty("skipCloseConfirm"));	
+			currentLocation = Integer.parseInt(prop.getProperty("currentLocation"));
+			
+			inputStream.close();
 		} catch (Exception e) {
 			Application.getLogger().log(Level.SEVERE, "Exception {0}", e.toString());
 		}
@@ -61,6 +65,15 @@ public class Settings {
 	public void setSkipCloseConfirm(boolean newSetting) {
 		skipCloseConfirm = newSetting;
 		prop.setProperty("skipCloseConfirm", Boolean.toString(skipCloseConfirm));
+	}
+
+	public int getCurrentLocation() {
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(int currentLocation) {
+		this.currentLocation = currentLocation;
+		prop.setProperty("currentLocation", Integer.toString(currentLocation));
 	}
 
 	// save current Settings.prop into file
