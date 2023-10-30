@@ -10,16 +10,13 @@ import web_invoice_story.DbServices;
 public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	
 	// might not need this
-	private long unitId = -1;
+	private long projectSiteId = -1;
 	private long customerId;
-	private String make;
-	private String model;
-	private String modelName;
-	private int year;
-	private int mileage;
-	private String color;
-	private String vin;
-	private String notes;
+	private String addressProjectSite;
+	private String cityProjectSite;
+	private String stateProjectSite;
+	private String zipCodeProjectSite;
+	private String notesProjectSite;
 	
 	private String owner;
 	
@@ -27,28 +24,28 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	}
 	
 	public long getDbPk() {
-		return getUnitId();
+		return getProjectSiteId();
 	}
 	
 	@Override
 	public void setDbPk(long dbPk) {
-		unitId = dbPk;
+		projectSiteId = dbPk;
 	}
 	
 	public String getPkName() {
-		return "unitId";
+		return "projectSiteId";
 	}
 	
 	public String getTableName() {
-		return "unit";
+		return "projectSite";
 	}
 
-	public long getUnitId() {
-		return unitId;
+	public long getProjectSiteId() {
+		return projectSiteId;
 	}
 
-	public void setUnitId(long unitId) {
-		this.unitId = unitId;
+	public void setProjectSiteId(long unitId) {
+		this.projectSiteId = unitId;
 	}
 
 	public long getCustomerId() {
@@ -59,69 +56,53 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 		this.customerId = customerId;
 	}
 
-	public String getMake() {
-		return make == null ? "" : make;
+	public String getAddressProjectSite() {
+		return addressProjectSite == null ? "" : addressProjectSite;
 	}
 
-	public void setMake(String make) {
-		this.make = make;
+	public void setAddressProjectSite(String addressProjectSiteString) {
+		this.addressProjectSite = addressProjectSiteString;
 	}
 
-	public String getModel() {
-		return model == null ? "" : model;
+	public String getCityProjectSiteString() {
+		return cityProjectSite == null ? "" : cityProjectSite;
 	}
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
-	
-	public String getModelName() {
-		return modelName == null ? "" : modelName;
+	public void setCityProjectSite(String cityProjectSite) {
+		this.cityProjectSite = cityProjectSite;
 	}
 
-	public void setModel(String model) {
-		this.model = model;
+	public String getStateProjectSite() {
+		return stateProjectSite;
 	}
 
-	public int getYear() {
-		return year;
+	public void setStateProjectSite(String stateProjectSite) {
+		this.stateProjectSite = stateProjectSite;
 	}
 
-	public void setYear(int modelYear) {
-		this.year = modelYear;
+	public String getZipCodeProjectSiteString() {
+		return zipCodeProjectSite == null ? "" : zipCodeProjectSite;
 	}
 
-	public int getMileage() {
-		return mileage;
+	public void setZipCodeProjectSite(String zipCodeProjectSite) {
+		this.zipCodeProjectSite = zipCodeProjectSite;
 	}
 
-	public void setMileage(int mileage) {
-		this.mileage = mileage;
+	public String getNotesProjectSite() {
+		return notesProjectSite == null ? "" : notesProjectSite;
 	}
 
-	public String getColor() {
-		return color == null ? "" : color;
+	public void setNotesProjectSite(String notesProjectSite) {
+		this.notesProjectSite = notesProjectSite;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
-	}
-
-	public String getVin() {
-		return vin == null ? "" : vin;
-	}
-
-	public void setVin(String vin) {
-		this.vin = vin;
-	}
-
-	public String getNotes() {
-		return notes == null ? "" : notes;
-	}
-
-	public void setNotes(String notes) {
-		this.notes = notes;
-	}
+//	public String getNotes() {
+//		return notes == null ? "" : notes;
+//	}
+//
+//	public void setNotes(String notes) {
+//		this.notes = notes;
+//	}
 	
 	public String getOwner() {
 		return owner == null ? "" : owner;
@@ -133,21 +114,18 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 
 	@Override
 	public Map<String, String> getDataMap() {
-		// TODO we might need to make these Maps into <String, Object>, then instanceof on the Object value
+		// TODO we might need to addressProjectSite these Maps into <String, Object>, then instanceof on the Object value
 			// to see how to treat it when building PreparedStatements with setParameter
 		Map<String, String> dataMap = new HashMap<>();
-		if (unitId != -1) {
-			dataMap.put("unitId", Long.toString(unitId));
+		if (projectSiteId != -1) {
+			dataMap.put("projectSiteId", Long.toString(projectSiteId));
 		}
 		dataMap.put("customerId", Long.toString(customerId));
-		dataMap.put("make", make);
-		dataMap.put("model", model);
-		dataMap.put("modelName", modelName);
-		dataMap.put("year", Integer.toString(year));
-		dataMap.put("mileage", Integer.toString(mileage));
-		dataMap.put("color", color);
-		dataMap.put("vin", vin);
-		dataMap.put("notes", notes);
+		dataMap.put("addressProjectSite", addressProjectSite);
+		dataMap.put("cityProjectSite", cityProjectSite);
+		dataMap.put("stateProjectSite", stateProjectSite);
+		dataMap.put("zipCodeProjectSite", zipCodeProjectSite);
+		dataMap.put("notesProjectSite", notesProjectSite);
 		
 		return dataMap;
 	}
@@ -156,10 +134,10 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	public List<ProjectSite> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
-				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId 
-				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.vin LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.year LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND u.unitId IN (";
+				SELECT u.projectSiteId, u.customerId, u.address, u.city, u.state, u.zipCode, u.notes, c.lastName, c.firstName
+				FROM web_invoice_story.projectSite AS u JOIN web_invoice_story.customer AS c ON u.customerId = c.customerId 
+				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.address LIKE ? OR u.city LIKE ? OR u.state LIKE ? OR u.zipCode LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND u.projectSiteId IN (";
 		super.querySubStringIndices[0] = 15;
 		super.querySubStringIndices[1] = 128;
 		
@@ -168,12 +146,12 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 
 	@Override
 	public ProjectSite searchByPk(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
-		super.searchString = Long.toString(primaryKey);				// all the super. declarations in the constructor, maybe make a separate var for the searchByPk query,
+		super.searchString = Long.toString(primaryKey);				// all the super. declarations in the constructor, maybe addressProjectSite a separate var for the searchByPk query,
 		super.searchQuery = """
-				SELECT u.unitId, u.customerId, u.make, u.model, u.modelname, u.year, u.mileage, u.color, u.vin, u.notes, 
-				c.lastName, c.firstName FROM cis2901c.unit AS u JOIN cis2901c.customer AS c ON u.customerId = c.customerId
-				WHERE unitId = ?;""";
-		super.outerSearchQueryAppendix = " AND u.unitId IN (";
+				SELECT u.projectSiteId, u.customerId, u.address, u.city, u.state, u.zipCode, u.notes, c.lastName, c.firstName 
+				FROM web_invoice_story.projectSite AS u JOIN web_invoice_story.customer AS c ON u.customerId = c.customerId
+				WHERE projectSiteId = ?;""";
+		super.outerSearchQueryAppendix = " AND u.projectSiteId IN (";
 		super.querySubStringIndices[0] = 15;					// and move these 2 search() function implementations into the DbObjectSearchable too
 		super.querySubStringIndices[1] = 128;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
 																	// and where can we give it the generic ? extends DbObjectSearchable

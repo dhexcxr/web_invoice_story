@@ -11,10 +11,12 @@ public class Settings {
 	
 	private InputStream inputStream;
 	private String propFileName = "resources/settings.properties";
+//	private String propFileName = "/Users/mcglass/eclipse-rcp-workspace3/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/../../../../../git/web_invoice_story/web_invoice_story/bin/resources/settings.properties";
 	private Properties prop;
 	private String database = "";
 	private boolean skipCancelConfirm = false;
 	private boolean skipCloseConfirm = false;
+	private int currentLocation = 0;
 	
 	// To add and save new Settings, add a private field to class
 		// use prop object to load property from file into field and create
@@ -34,7 +36,10 @@ public class Settings {
 			
 			database = prop.getProperty("database");
 			skipCancelConfirm = Boolean.parseBoolean(prop.getProperty("skipCancelConfirm"));
-			skipCloseConfirm = Boolean.parseBoolean(prop.getProperty("skipCloseConfirm"));		
+			skipCloseConfirm = Boolean.parseBoolean(prop.getProperty("skipCloseConfirm"));	
+			currentLocation = Integer.parseInt(prop.getProperty("currentLocation"));
+			
+			inputStream.close();
 		} catch (Exception e) {
 			Application.getLogger().log(Level.SEVERE, "Exception {0}", e.toString());
 		}
@@ -63,12 +68,23 @@ public class Settings {
 		prop.setProperty("skipCloseConfirm", Boolean.toString(skipCloseConfirm));
 	}
 
+	public int getCurrentLocation() {
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(int currentLocation) {
+		this.currentLocation = currentLocation;
+		prop.setProperty("currentLocation", Integer.toString(currentLocation));
+	}
+
 	// save current Settings.prop into file
-	public void save() {
-		try (FileOutputStream settingsFileOuput = new FileOutputStream(propFileName)) {
+	public void save() {											// HACK because just opening propFileName like we do above doesn't work with FileOutputStream for some reason
+		try (FileOutputStream settingsFileOuput = new FileOutputStream("/Users/mcglass/eclipse-rcp-workspace3/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/../../../../../git/web_invoice_story/web_invoice_story/bin/resources/settings.properties")) {
 			prop.store(settingsFileOuput, "Service Salamander Settings");
+			settingsFileOuput.flush();
+			settingsFileOuput.close();
 		} catch (IOException e) {
 			Application.getLogger().log(Level.SEVERE, e.toString());
 		}
-	}
+	}	
 }

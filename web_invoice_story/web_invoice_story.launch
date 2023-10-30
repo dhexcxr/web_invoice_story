@@ -111,6 +111,7 @@
         <setEntry value="web_invoice_story*1.0.0.qualifier"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
+    <stringAttribute key="timestamp" value="1698641509642"/>
     <booleanAttribute key="tracing" value="false"/>
     <booleanAttribute key="useCustomFeatures" value="false"/>
     <booleanAttribute key="useDefaultConfigArea" value="true"/>

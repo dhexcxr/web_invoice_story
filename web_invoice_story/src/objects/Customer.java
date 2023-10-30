@@ -199,7 +199,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.searchQuery = """
 				SELECT firstName, lastName, address, city, state, zipcode,
 				homePhone, workPhone, cellPhone, email, customerId
-				FROM cis2901c.customer
+				FROM web_invoice_story.customer
 				WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ?
 				OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND customerId IN (";
@@ -215,7 +215,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
 				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, email, customerId
-				FROM cis2901c.customer WHERE customerId = ?;""";
+				FROM web_invoice_story.customer WHERE customerId = ?;""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;

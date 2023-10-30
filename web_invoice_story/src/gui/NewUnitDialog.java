@@ -73,26 +73,26 @@ public class NewUnitDialog extends Dialog {
 			txtOwner.setText(projectSite.getOwner());
 			txtOwner.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
 		}
-		if (projectSite.getMake() != null) {
-			txtMake.setText(projectSite.getMake());
+		if (projectSite.getAddressProjectSite() != null) {
+			txtMake.setText(projectSite.getAddressProjectSite());
 			txtMake.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
 		}			
-		if (projectSite.getModelName() != null)
-			txtModelName.setText(projectSite.getModelName());
-		if (projectSite.getMileage() != 0)
-			txtMileage.setText(Integer.toString(projectSite.getMileage()));
-		if (projectSite.getVin() != null)
-			txtVinNumber.setText(projectSite.getVin());
-		if (projectSite.getModel() != null)
-			txtModel.setText(projectSite.getModel());
-		if (projectSite.getYear() != 0)
-			txtYear.setText(Integer.toString(projectSite.getYear()));
-		if (projectSite.getColor() != null)
-			txtColor.setText(projectSite.getColor());
-		if (projectSite.getNotes() != null)
-			txtNotes.setText(projectSite.getNotes());
-		if (projectSite.getUnitId() != 0)
-			unitId = projectSite.getUnitId();
+//		if (projectSite.getModelName() != null)
+//			txtModelName.setText(projectSite.getModelName());
+//		if (projectSite.getMileage() != 0)
+//			txtMileage.setText(Integer.toString(projectSite.getMileage()));
+		if (projectSite.getNotesProjectSite() != null)
+			txtVinNumber.setText(projectSite.getNotesProjectSite());
+		if (projectSite.getCityProjectSiteString() != null)
+			txtModel.setText(projectSite.getCityProjectSiteString());
+//		if (projectSite.getStateProjectSite() != 0)
+//			txtYear.setText(Integer.toString(projectSite.getStateProjectSite()));
+		if (projectSite.getZipCodeProjectSiteString() != null)
+			txtColor.setText(projectSite.getZipCodeProjectSiteString());
+//		if (projectSite.getNotes() != null)
+//			txtNotes.setText(projectSite.getNotes());
+		if (projectSite.getProjectSiteId() != 0)
+			unitId = projectSite.getProjectSiteId();
 		if (projectSite.getCustomerId() != 0)
 			customerId = projectSite.getCustomerId();
 		this.projectSite = projectSite;
@@ -249,7 +249,7 @@ public class NewUnitDialog extends Dialog {
 		// TODO we could add an "&& !txtMake.getText().equals(txtMake.startingText)" so that we wouldn't unnecessarily save this
 			// if it hasn't changed, but that would be a lot of extra code for no real benefit
 		if (txtMake.getText().length() > 0) {
-			projectSite.setMake(txtMake.getText());
+			projectSite.setAddressProjectSite(txtMake.getText());
 		} else {
 			// dialog box stating make is required
 			MessageBox makeRequirementBox = new MessageBox(shlNewUnit, SWT.ICON_INFORMATION);
@@ -259,33 +259,33 @@ public class NewUnitDialog extends Dialog {
 			return;
 		}
 		
-		projectSite.setModelName(txtModelName.getText());
+//		projectSite.setModelName(txtModelName.getText());
 		
 		if (txtMileage.isModified()) {
 			try {
-				projectSite.setMileage(Integer.parseInt(txtMileage.getText()));
+				projectSite.setStateProjectSite(txtMileage.getText());
 			} catch (Exception e) {
 				Application.getLogger().log(Level.FINER, e.getMessage(), e);
 			}
 		}
 
-		projectSite.setVin(txtVinNumber.getText());
+		projectSite.setNotesProjectSite(txtVinNumber.getText());
 
-		projectSite.setModel(txtModel.getText());
+		projectSite.setCityProjectSite(txtModel.getText());
 
 		if (txtYear.isModified()) {
 			try {
-				projectSite.setYear(Integer.parseInt(txtYear.getText()));
+				projectSite.setStateProjectSite(txtYear.getText());
 			} catch (Exception e) {
 				Application.getLogger().log(Level.FINER, e.getMessage(), e);
 			}
 		}
 
-		projectSite.setColor(txtColor.getText());
+		projectSite.setZipCodeProjectSite(txtColor.getText());
 
-		if (txtNotes.isModified()) {
-			projectSite.setNotes(txtNotes.getText());
-		}
+//		if (txtNotes.isModified()) {
+//			projectSite.setNotes(txtNotes.getText());
+//		}
 		
 		DbServices.saveObject(projectSite);
 		result = projectSite;

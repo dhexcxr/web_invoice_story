@@ -42,6 +42,7 @@ import objects.InvoicePart;
 import objects.Project;
 import objects.Part;
 import objects.ProjectSite;
+import objects.StoreLocation;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -54,6 +55,7 @@ import guiParts.MyTable;
 import guiParts.MyText;
 import guiParts.PartInventoryTable;
 import guiParts.RepairOrderTable;
+import guiParts.StoreLocationCombo;
 import guiParts.UnitTable;
 
 import org.eclipse.swt.widgets.TableItem;
@@ -94,7 +96,6 @@ public class Gui extends Composite {
 		rosTab(tabFolderGui);
 		partsTab(tabFolderGui);
 		customersTab(tabFolderGui);
-		unitsTab(tabFolderGui);
 		reportsTab(tabFolderGui);
 		settingsTab(tabFolderGui);
 	}
@@ -601,6 +602,7 @@ public class Gui extends Composite {
 					cashieredInvoice.setTableLineItems(invoicePartsTable.getItems());
 					
 					// send invoice obj to DbServices
+					// TODO i think this can be done with the Invoice object now
 					DbServices.saveObject(cashieredInvoice);
 					
 					clearInvoiceGui();
@@ -976,9 +978,6 @@ public class Gui extends Composite {
 		customerSearchTextBox_1.addFocusListener(new TextBoxFocusListener(customerSearchTextBox_1));
 	}
 	
-	private void unitsTab(TabFolder tabFolder) {
-	}
-	
 	private void reportsTab(TabFolder tabFolder) {
 		TabItem tbtmReports = new TabItem(tabFolder, SWT.NONE);
 		tbtmReports.setText("Reports");
@@ -995,14 +994,30 @@ public class Gui extends Composite {
 		TabItem tbtmSettings = new TabItem(tabFolder, SWT.NONE);
 		tbtmSettings.setText("Settings");
 		
-		Composite composite = new Composite(tabFolder, SWT.NONE);
-		tbtmSettings.setControl(composite);
+		Composite settingsComposite = new Composite(tabFolder, SWT.NONE);
+		tbtmSettings.setControl(settingsComposite);
+		FormLayout fl_settingsComposite = new FormLayout();
+		fl_settingsComposite.spacing = 5;
+		fl_settingsComposite.marginWidth = 5;
+		fl_settingsComposite.marginHeight = 5;
+		settingsComposite.setLayout(fl_settingsComposite);
 		
-		Group group = new Group(composite, SWT.NONE);
-		group.setBounds(10, 10, 323, 98);
+		Group grpResetConfirmDialog = new Group(settingsComposite, SWT.NONE);
+		FormData fd_grpResetConfirmDialog = new FormData();
+//		fd_grpResetConfirmDialog.bottom = new FormAttachment(0, 108);
+//		fd_grpResetConfirmDialog.right = new FormAttachment(0, 333);
+		fd_grpResetConfirmDialog.top = new FormAttachment(0);
+		fd_grpResetConfirmDialog.left = new FormAttachment(0);
+		grpResetConfirmDialog.setLayoutData(fd_grpResetConfirmDialog);
+		grpResetConfirmDialog.setLayout(new FormLayout());
 		
-		Button btnResetConfirmDialog = new Button(group, SWT.NONE);
-		btnResetConfirmDialog.setBounds(10, 17, 260, 30);
+		Button btnResetConfirmDialog = new Button(grpResetConfirmDialog, SWT.NONE);
+		FormData fd_btnResetConfirmDialog = new FormData();
+		fd_btnResetConfirmDialog.bottom = new FormAttachment(0, 42);
+		fd_btnResetConfirmDialog.right = new FormAttachment(0, 265);
+		fd_btnResetConfirmDialog.top = new FormAttachment(0, 12);
+		fd_btnResetConfirmDialog.left = new FormAttachment(0, 5);
+		btnResetConfirmDialog.setLayoutData(fd_btnResetConfirmDialog);
 		btnResetConfirmDialog.setText("Reset Confirmation Dialog Settings");
 		btnResetConfirmDialog.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1012,9 +1027,43 @@ public class Gui extends Composite {
 			}
 		});
 		
-		Label lblResetConfirmDialog = new Label(group, SWT.WRAP);
-		lblResetConfirmDialog.setBounds(10, 53, 310, 42);
+		Label lblResetConfirmDialog = new Label(grpResetConfirmDialog, SWT.WRAP);
+		FormData fd_lblResetConfirmDialog = new FormData();
+		fd_lblResetConfirmDialog.bottom = new FormAttachment(0, 90);
+		fd_lblResetConfirmDialog.right = new FormAttachment(0, 315);
+		fd_lblResetConfirmDialog.top = new FormAttachment(0, 48);
+		fd_lblResetConfirmDialog.left = new FormAttachment(0, 5);
+		lblResetConfirmDialog.setLayoutData(fd_lblResetConfirmDialog);
 		lblResetConfirmDialog.setText("This will re-enable the Repair Order Close and Cancel Changes confirmation dialog boxes.");
+		
+		Group grpCurrentLocation = new Group(settingsComposite, SWT.NONE);
+		FormLayout fl_grpCurrentLocation = new FormLayout();
+		fl_grpCurrentLocation.spacing = 5;
+		fl_grpCurrentLocation.marginWidth = 5;
+		fl_grpCurrentLocation.marginHeight = 5;
+		grpCurrentLocation.setLayout(fl_grpCurrentLocation);
+		FormData fd_grpCurrentLocation = new FormData();
+		fd_grpCurrentLocation.top = new FormAttachment(grpResetConfirmDialog);
+		grpCurrentLocation.setLayoutData(fd_grpCurrentLocation);
+		
+		StoreLocationCombo comboCurrentLocation = new StoreLocationCombo(new StoreLocation().getAllStoreLocations(), grpCurrentLocation, SWT.DROP_DOWN | SWT.READ_ONLY);
+		comboCurrentLocation.select(Application.getSettings().getCurrentLocation());		// TODO decide how to make sure currentSelection always == locationID
+		FormData fd_comboCurrentLocation = new FormData();
+		fd_comboCurrentLocation.height = 24;
+		fd_comboCurrentLocation.width = 256;
+		fd_comboCurrentLocation.top = new FormAttachment(0, 5);
+		fd_comboCurrentLocation.left = new FormAttachment(0, 5);
+		comboCurrentLocation.setLayoutData(fd_comboCurrentLocation);
+		
+		comboCurrentLocation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int newLocationSelection = comboCurrentLocation.getSelectedLocationId();
+				Application.getSettings().setCurrentLocation(newLocationSelection);		// TODO make sure we save this to settings on close
+				Application.getSettings().save();
+			}
+		});
+		
 	}
 	
 	private void setupRightClickMenu(MyTable table, String deleteString) {

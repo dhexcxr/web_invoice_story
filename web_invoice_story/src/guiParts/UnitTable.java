@@ -12,6 +12,7 @@ import objects.ProjectSite;
 
 public class UnitTable extends MyTable{
 	
+		// TODO change these refs
 	private static final int OWNER_INDEX = 0;
 	private static final int MAKE_INDEX = 1;
 	private static final int MODEL_INDEX = 2;
@@ -47,9 +48,8 @@ public class UnitTable extends MyTable{
 		for (DbObjectSearchable object : objectResults) {
 			if (object instanceof ProjectSite projectSite) {		// TODO remove all null chekcs with an instanceof
 				TableItem tableItem = new TableItem(this, SWT.NONE);
-				tableItem.setText(new String[] {projectSite.getOwner(), projectSite.getMake(), projectSite.getModel(),
-						projectSite.getModelName(), projectSite.getYear() == 0 ? "" : Integer.toString(projectSite.getYear()),
-								Integer.toString(projectSite.getMileage()), projectSite.getColor(), projectSite.getVin(), projectSite.getNotes()});
+				tableItem.setText(new String[] {projectSite.getOwner(), projectSite.getAddressProjectSite(), projectSite.getCityProjectSiteString(),
+						 projectSite.getStateProjectSite(), projectSite.getZipCodeProjectSiteString(), projectSite.getNotesProjectSite()});
 				tableItem.setData(projectSite);
 			} else {
 				break;

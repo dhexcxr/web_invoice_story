@@ -180,7 +180,7 @@ public class JobPart extends InvoicePart {
 	
 	public List<JobPart> searchJobLaborByJobId(long jobId) {
 		super.searchString = Long.toString(jobId);
-		super.searchQuery = "SELECT jobpartid, jobid, partid, partnumber, description, quantity, soldprice FROM cis2901c.jobpart WHERE jobid = ?;";
+		super.searchQuery = "SELECT jobpartid, jobid, partid, partnumber, description, quantity, soldprice FROM web_invoice_story.jobpart WHERE jobid = ?;";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;

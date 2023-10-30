@@ -246,8 +246,8 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
 				r.unitId, u.year, u.make, u.model, u.vin,
 				r.createdTime, r.closedTime, r.cashiered
-				FROM cis2901c.ro AS r JOIN cis2901c.customer AS c ON r.customerid = c.customerid
-				JOIN cis2901c.unit AS u ON r.unitId = u.unitId
+				FROM web_invoice_story.ro AS r JOIN web_invoice_story.customer AS c ON r.customerid = c.customerid
+				JOIN web_invoice_story.unit AS u ON r.unitId = u.unitId
 				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
 		super.outerSearchQueryAppendix = " AND roId IN (";
 		super.querySubStringIndices[0] = 13;
@@ -264,7 +264,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
 				r.unitId, u.year, u.make, u.model, u.vin,
 				r.createdTime, r.closedTime, r.cashiered
-				FROM cis2901c.ro WHERE r.roId = ?;""";
+				FROM web_invoice_story.ro WHERE r.roId = ?;""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
