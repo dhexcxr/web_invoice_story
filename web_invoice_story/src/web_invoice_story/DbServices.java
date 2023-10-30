@@ -448,7 +448,6 @@ public class DbServices {
 			statement.setMaxRows(MAX_RESULTS);
 			fillStatementParameters(statement, object);
 			ResultSet queryResultSet = statement.executeQuery();
-				// TODO make buildFoundObjects return a List<DbObjectSearchable>
 			results = buildFoundObjects(queryResultSet, object);
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -14,12 +14,9 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	private long customerId;
 	private String addressProjectSite;
 	private String cityProjectSite;
-	private String modelName;
 	private String stateProjectSite;
-	private int mileage;
 	private String zipCodeProjectSite;
 	private String notesProjectSite;
-	private String notes;
 	
 	private String owner;
 	

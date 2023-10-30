@@ -602,6 +602,7 @@ public class Gui extends Composite {
 					cashieredInvoice.setTableLineItems(invoicePartsTable.getItems());
 					
 					// send invoice obj to DbServices
+					// TODO i think this can be done with the Invoice object now
 					DbServices.saveObject(cashieredInvoice);
 					
 					clearInvoiceGui();
