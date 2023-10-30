@@ -482,7 +482,7 @@ public class DbServices {
 		} else if (object instanceof Part) {
 			results = buildParts(queryResultSet);
 		} else if (object instanceof ProjectSite) {
-			results = buildUnits(queryResultSet);
+			results = buildProjectSites(queryResultSet);
 		} else if (object instanceof Invoice) {
 			results = buildInvoices(queryResultSet);
 		} else if (object instanceof Project) {
@@ -565,7 +565,7 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildUnits(ResultSet queryResultSet) throws SQLException {
+	private static List<DbObjectSearchable> buildProjectSites(ResultSet queryResultSet) throws SQLException {
 		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
