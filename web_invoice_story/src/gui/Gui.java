@@ -991,14 +991,30 @@ public class Gui extends Composite {
 		TabItem tbtmSettings = new TabItem(tabFolder, SWT.NONE);
 		tbtmSettings.setText("Settings");
 		
-		Composite composite = new Composite(tabFolder, SWT.NONE);
-		tbtmSettings.setControl(composite);
+		Composite settingsComposite = new Composite(tabFolder, SWT.NONE);
+		tbtmSettings.setControl(settingsComposite);
+		FormLayout fl_settingsComposite = new FormLayout();
+		fl_settingsComposite.spacing = 5;
+		fl_settingsComposite.marginWidth = 5;
+		fl_settingsComposite.marginHeight = 5;
+		settingsComposite.setLayout(fl_settingsComposite);
 		
-		Group group = new Group(composite, SWT.NONE);
-		group.setBounds(10, 10, 323, 98);
+		Group grpResetConfirmDialog = new Group(settingsComposite, SWT.NONE);
+		FormData fd_grpResetConfirmDialog = new FormData();
+//		fd_grpResetConfirmDialog.bottom = new FormAttachment(0, 108);
+//		fd_grpResetConfirmDialog.right = new FormAttachment(0, 333);
+		fd_grpResetConfirmDialog.top = new FormAttachment(0);
+		fd_grpResetConfirmDialog.left = new FormAttachment(0);
+		grpResetConfirmDialog.setLayoutData(fd_grpResetConfirmDialog);
+		grpResetConfirmDialog.setLayout(new FormLayout());
 		
-		Button btnResetConfirmDialog = new Button(group, SWT.NONE);
-		btnResetConfirmDialog.setBounds(10, 17, 260, 30);
+		Button btnResetConfirmDialog = new Button(grpResetConfirmDialog, SWT.NONE);
+		FormData fd_btnResetConfirmDialog = new FormData();
+		fd_btnResetConfirmDialog.bottom = new FormAttachment(0, 42);
+		fd_btnResetConfirmDialog.right = new FormAttachment(0, 265);
+		fd_btnResetConfirmDialog.top = new FormAttachment(0, 12);
+		fd_btnResetConfirmDialog.left = new FormAttachment(0, 5);
+		btnResetConfirmDialog.setLayoutData(fd_btnResetConfirmDialog);
 		btnResetConfirmDialog.setText("Reset Confirmation Dialog Settings");
 		btnResetConfirmDialog.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1008,8 +1024,13 @@ public class Gui extends Composite {
 			}
 		});
 		
-		Label lblResetConfirmDialog = new Label(group, SWT.WRAP);
-		lblResetConfirmDialog.setBounds(10, 53, 310, 42);
+		Label lblResetConfirmDialog = new Label(grpResetConfirmDialog, SWT.WRAP);
+		FormData fd_lblResetConfirmDialog = new FormData();
+		fd_lblResetConfirmDialog.bottom = new FormAttachment(0, 90);
+		fd_lblResetConfirmDialog.right = new FormAttachment(0, 315);
+		fd_lblResetConfirmDialog.top = new FormAttachment(0, 48);
+		fd_lblResetConfirmDialog.left = new FormAttachment(0, 5);
+		lblResetConfirmDialog.setLayoutData(fd_lblResetConfirmDialog);
 		lblResetConfirmDialog.setText("This will re-enable the Repair Order Close and Cancel Changes confirmation dialog boxes.");
 	}
 	
