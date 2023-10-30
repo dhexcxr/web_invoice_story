@@ -11,6 +11,7 @@ public class Settings {
 	
 	private InputStream inputStream;
 	private String propFileName = "resources/settings.properties";
+//	private String propFileName = "/Users/mcglass/eclipse-rcp-workspace3/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/../../../../../git/web_invoice_story/web_invoice_story/bin/resources/settings.properties";
 	private Properties prop;
 	private String database = "";
 	private boolean skipCancelConfirm = false;
@@ -77,11 +78,13 @@ public class Settings {
 	}
 
 	// save current Settings.prop into file
-	public void save() {
-		try (FileOutputStream settingsFileOuput = new FileOutputStream(propFileName)) {
+	public void save() {											// HACK because just opening propFileName like we do above doesn't work with FileOutputStream for some reason
+		try (FileOutputStream settingsFileOuput = new FileOutputStream("/Users/mcglass/eclipse-rcp-workspace3/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/../../../../../git/web_invoice_story/web_invoice_story/bin/resources/settings.properties")) {
 			prop.store(settingsFileOuput, "Service Salamander Settings");
+			settingsFileOuput.flush();
+			settingsFileOuput.close();
 		} catch (IOException e) {
 			Application.getLogger().log(Level.SEVERE, e.toString());
 		}
-	}
+	}	
 }
