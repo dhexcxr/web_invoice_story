@@ -167,7 +167,7 @@ public class DbServices {
 			}
 			saveRoJobs(thisRo);
 			if (thisRo.getClosedDate() != null) {
-				sellRoPartsOutOfInventory(thisRo.getRepairOrderId());
+				sellRoPartsOutOfInventory(thisRo.getProjectId());
 			}
 		} else if (dbObject instanceof Job) {
 			if (dbObject.getDbPk() == -1 ) {
@@ -631,7 +631,7 @@ public class DbServices {
 		int i = 0;
 		while (queryResultSet.next()) {
 			Project project = new Project();
-			project.setRepairOrderId(queryResultSet.getLong(1));
+			project.setProjectId(queryResultSet.getLong(1));
 			project.setCustomerId(queryResultSet.getLong(2));
 			
 			String lastname = queryResultSet.getString(3);
@@ -653,7 +653,7 @@ public class DbServices {
 			project.setCreatedDate(queryResultSet.getTimestamp(17));
 			project.setClosedDate(queryResultSet.getTimestamp(18));
 			
-			List<Job> roJobs =  new Job().searchForJobsByRoId(project.getRepairOrderId());
+			List<Job> roJobs =  new Job().searchForJobsByRoId(project.getProjectId());
 			roJobs.removeAll(Collections.singleton(null));		// NOTE i don;t think we need this anymore
 			
 			project.setJobs(roJobs);

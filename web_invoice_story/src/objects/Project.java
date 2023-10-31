@@ -11,7 +11,7 @@ import web_invoice_story.DbServices;
 
 public class Project extends DbObjectSearchable implements DbObjectSavable{
 	
-	private long repairOrderId = -1;
+	private long projectId = -1;
 	private long customerId;
 	private Customer customer;
 	private String customerName;
@@ -33,12 +33,12 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public Project() {
 	}
 
-	public long getRepairOrderId() {
-		return repairOrderId;
+	public long getProjectId() {
+		return projectId;
 	}
 
-	public void setRepairOrderId(long repairOrderId) {
-		this.repairOrderId = repairOrderId;
+	public void setProjectId(long repairOrderId) {
+		this.projectId = repairOrderId;
 	}
 
 	public long getCustomerId() {
@@ -198,12 +198,12 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 
 	@Override
 	public long getDbPk() {
-		return getRepairOrderId();
+		return getProjectId();
 	}
 	
 	@Override
 	public void setDbPk(long dbPk) {
-		repairOrderId = dbPk;
+		projectId = dbPk;
 	}
 	
 	@Override
@@ -218,8 +218,8 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	
 	public Map<String, String> getDataMap() {
 		Map<String, String> dataMap = new HashMap<>();
-		if (repairOrderId != -1) {
-			dataMap.put("roid", Long.toString(repairOrderId));
+		if (projectId != -1) {
+			dataMap.put("roid", Long.toString(projectId));
 		}
 		dataMap.put("customerid", Long.toString(customerId));
 		dataMap.put("customerdata", customerData);

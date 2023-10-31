@@ -625,7 +625,7 @@ public class RepairOrderDialog extends Dialog {
 		// set Dialog boxes and stuff from repairOrder fields
 		if (project != null) {
 			currentRepairOrder = project;
-			roId = project.getRepairOrderId();
+			roId = project.getProjectId();
 			textRoNum.setText(Long.toString(roId));
 			
 			textCreatedDate.setText(project.getCreatedDate().toString());
@@ -829,7 +829,7 @@ public class RepairOrderDialog extends Dialog {
 		
 		// send Project object to DbServices
 		DbServices.saveObject(project);
-		roId = project.getRepairOrderId();
+		roId = project.getProjectId();
 		textRoNum.setText(Long.toString(roId));
 		detailsToDelete = new HashMap<>();
 		currentRepairOrder = project;

@@ -106,7 +106,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 	private void openRo(Table table) {
 		// get object saved in TableItem Data
 		Project project= (Project) table.getSelection()[0].getData();
-		Application.getLogger().log(Level.INFO, "Open RO: {0}", project.getRepairOrderId());
+		Application.getLogger().log(Level.INFO, "Open RO: {0}", project.getProjectId());
 		
 		RepairOrderDialog modifyExistingRepairOrder= new RepairOrderDialog(shell, SWT.NONE);
 		modifyExistingRepairOrder.open(project);
