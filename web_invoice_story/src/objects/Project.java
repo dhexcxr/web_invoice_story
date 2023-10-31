@@ -242,13 +242,14 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public List<Project> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT r.roId, r.customerId,
-				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
-				r.unitId, u.year, u.make, u.model, u.vin,
-				r.createdTime, r.closedTime, r.cashiered
-				FROM web_invoice_story.ro AS r JOIN web_invoice_story.customer AS c ON r.customerid = c.customerid
-				JOIN web_invoice_story.unit AS u ON r.unitId = u.unitId
-				WHERE r.roId LIKE ? OR c.lastname LIKE ? OR c.firstname LIKE ? OR c.homephone LIKE ? OR c.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
+				SELECT project.projectId, project.customerId,
+				customer.firstname, customer.lastname, customer.address, customer.city, customer.state, customer.zipcode, customer.homephone, customer.cellphone, customer.email,
+				project.projectSiteId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode,
+				project.createdTime, project.closedTime, project.cashiered
+				FROM web_invoice_story.project
+				JOIN web_invoice_story.customer ON project.customerid = customer.customerid
+				JOIN web_invoice_story.projectSite ON project.projectSiteId = projectSite.projectSiteId
+				WHERE project.roId LIKE ? OR customer.lastname LIKE ? OR customer.firstname LIKE ? OR customer.homephone LIKE ? OR customer.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
 		super.outerSearchQueryAppendix = " AND roId IN (";
 		super.querySubStringIndices[0] = 13;
 		super.querySubStringIndices[1] = 210;
@@ -260,11 +261,12 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public Project searchByPk(long primaryKey) {		// NOTE not used anywhere
 		super.searchString = Long.toString(primaryKey);
 		super.searchQuery = """
-				SELECT r.roId, r.customerId,
-				c.firstname, c.lastname, c.address, c.city, c.state, c.zipcode, c.homephone, c.cellphone, c.email,
-				r.unitId, u.year, u.make, u.model, u.vin,
-				r.createdTime, r.closedTime, r.cashiered
-				FROM web_invoice_story.ro WHERE r.roId = ?;""";
+				SELECT project.projectId, project.customerId,
+				customer.firstname, customer.lastname, customer.address, customer.city, customer.state, customer.zipcode, customer.homephone, customer.cellphone, customer.email,
+				project.unitId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode,
+				project.createdTime, project.closedTime, project.cashiered
+				FROM web_invoice_story.project
+				WHERE project.roId = ?;""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
