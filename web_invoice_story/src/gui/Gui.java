@@ -311,20 +311,16 @@ public class Gui extends Composite {
 		Button btnNewPart = new Button(inventoryComposite, SWT.NONE);
 		FormData fd_btnNewPart = new FormData();
 		fd_btnNewPart.height = 28;
-//		fd_btnNewPart.bottom = new FormAttachment(partSearchTextBox, 5, SWT.BOTTOM);
 		fd_btnNewPart.width = 112;
-//		fd_btnNewPart.bottom = new FormAttachment(0, 36);
 		fd_btnNewPart.right = new FormAttachment(100);
 		fd_btnNewPart.top = new FormAttachment(0, -1);
-//		fd_btnNewPart.left = new FormAttachment(0, 877);
 		btnNewPart.setLayoutData(fd_btnNewPart);
 		btnNewPart.setText("New Part");
 		btnNewPart.addMouseListener(new CreateNewObjectListener(partTableInventory, partSearchTextBox, shell));
 		
 //		MyText partSearchTextBox = new MyText(inventoryComposite, SWT.BORDER);
 		FormData fd_partSearchTextBox = new FormData();
-		//		fd_partSearchTextBox.bottom = new FormAttachment(0, 36);
-				fd_partSearchTextBox.right = new FormAttachment(btnNewPart);
+		fd_partSearchTextBox.right = new FormAttachment(btnNewPart);
 		fd_partSearchTextBox.height = 16;
 		fd_partSearchTextBox.top = new FormAttachment(0);
 		fd_partSearchTextBox.left = new FormAttachment(0);
@@ -371,6 +367,11 @@ public class Gui extends Composite {
 		txtInvoiceNotes.addFocusListener(new TextBoxFocusListener(txtInvoiceNotes));
 		
 		Group grpTotals = new Group(invoiceComposite, SWT.NONE);
+		FormLayout fl_grpTotals = new FormLayout();
+		fl_grpTotals.spacing = 5;
+		fl_grpTotals.marginWidth = 5;
+		fl_grpTotals.marginHeight = 5;
+		grpTotals.setLayout(fl_grpTotals);
 		FormData fd_grpTotals = new FormData();
 		fd_grpTotals.height = 100;
 		fd_grpTotals.bottom = new FormAttachment(100);
@@ -379,27 +380,51 @@ public class Gui extends Composite {
 		grpTotals.setText("Totals");
 		
 		txtPartsTotalInvoice = new MyText(grpTotals, SWT.BORDER);
+		FormData fd_txtPartsTotalInvoice = new FormData();
+		fd_txtPartsTotalInvoice.width = 96;
+		fd_txtPartsTotalInvoice.top = new FormAttachment(0);
+		fd_txtPartsTotalInvoice.right = new FormAttachment(100);
+		txtPartsTotalInvoice.setLayoutData(fd_txtPartsTotalInvoice);
 		txtPartsTotalInvoice.setEditable(false);
-		txtPartsTotalInvoice.setBounds(87, 22, 128, 26);
 		
 		Label lblPartsTotal = new Label(grpTotals, SWT.NONE);
-		lblPartsTotal.setBounds(10, 25, 71, 20);
+		FormData fd_lblPartsTotal = new FormData();
+		fd_lblPartsTotal.top = new FormAttachment(txtPartsTotalInvoice, 5, SWT.TOP);
+		fd_lblPartsTotal.right = new FormAttachment(txtPartsTotalInvoice);
+		fd_lblPartsTotal.bottom = new FormAttachment(txtPartsTotalInvoice, 0, SWT.BOTTOM);
+		lblPartsTotal.setLayoutData(fd_lblPartsTotal);
 		lblPartsTotal.setText("Parts Total:");
 		
 		txtTaxInvoice = new MyText(grpTotals, SWT.BORDER);
+		FormData fd_txtTaxInvoice = new FormData();
+		fd_txtTaxInvoice.top = new FormAttachment(lblPartsTotal, 2);
+		fd_txtTaxInvoice.left = new FormAttachment(txtPartsTotalInvoice, 0, SWT.LEFT);
+		fd_txtTaxInvoice.right = new FormAttachment(100);
+		txtTaxInvoice.setLayoutData(fd_txtTaxInvoice);
 		txtTaxInvoice.setEditable(false);
-		txtTaxInvoice.setBounds(87, 54, 128, 26);
 		
 		Label lblTax = new Label(grpTotals, SWT.NONE);
-		lblTax.setBounds(57, 57, 24, 20);
+		FormData fd_lblTax = new FormData();
+		fd_lblTax.top = new FormAttachment(txtTaxInvoice, 5, SWT.TOP);
+		fd_lblTax.right = new FormAttachment(txtTaxInvoice);
+		fd_lblTax.bottom = new FormAttachment(txtTaxInvoice, 0, SWT.BOTTOM);
+		lblTax.setLayoutData(fd_lblTax);
 		lblTax.setText("Tax:");
 		
 		txtFinalTotal = new MyText(grpTotals, SWT.BORDER);
+		FormData fd_txtFinalTotal = new FormData();
+		fd_txtFinalTotal.left = new FormAttachment(txtPartsTotalInvoice, 0, SWT.LEFT);
+		fd_txtFinalTotal.top = new FormAttachment(txtTaxInvoice);
+		fd_txtFinalTotal.right = new FormAttachment(100);
+		txtFinalTotal.setLayoutData(fd_txtFinalTotal);
 		txtFinalTotal.setEditable(false);
-		txtFinalTotal.setBounds(87, 86, 128, 26);
 		
 		Label lblFinalTotal = new Label(grpTotals, SWT.NONE);
-		lblFinalTotal.setBounds(10, 89, 71, 20);
+		FormData fd_lblFinalTotal = new FormData();
+		fd_lblFinalTotal.top = new FormAttachment(txtFinalTotal, 5, SWT.TOP);
+		fd_lblFinalTotal.bottom = new FormAttachment(txtFinalTotal, 0, SWT.BOTTOM);
+		fd_lblFinalTotal.right = new FormAttachment(txtFinalTotal);
+		lblFinalTotal.setLayoutData(fd_lblFinalTotal);
 		lblFinalTotal.setText("Final Total:");
 		
 		Group grpSelectedPart = new Group(invoiceComposite, SWT.NONE);
@@ -449,7 +474,6 @@ public class Gui extends Composite {
 		lblSupplier.setAlignment(SWT.RIGHT);
 		FormData fd_lblSupplier = new FormData();
 		fd_lblSupplier.bottom = new FormAttachment(lblNotes, 5, SWT.BOTTOM);
-		fd_lblSupplier.left = new FormAttachment(textSupplierInvoice, -50, SWT.LEFT);
 		fd_lblSupplier.right = new FormAttachment(textSupplierInvoice, -2);
 		fd_lblSupplier.top = new FormAttachment(lblNotes, 0, SWT.TOP);
 		lblSupplier.setLayoutData(fd_lblSupplier);
@@ -457,7 +481,6 @@ public class Gui extends Composite {
 		
 		Label lblCategory = new Label(grpSelectedPart, SWT.NONE);
 		FormData fd_lblCategory = new FormData();
-		fd_lblCategory.left = new FormAttachment(lblSupplier, -5, SWT.LEFT);
 		fd_lblCategory.right = new FormAttachment(textCategoryInvoice);
 		fd_lblCategory.bottom = new FormAttachment(lblSupplier, 16, SWT.BOTTOM);
 		fd_lblCategory.top = new FormAttachment(lblSupplier);
@@ -466,7 +489,7 @@ public class Gui extends Composite {
 		
 		textPartNotesInvoice = new MyText(grpSelectedPart, SWT.BORDER);
 		FormData fd_textPartNotesInvoice = new FormData();
-		fd_textPartNotesInvoice.right = new FormAttachment(lblCategory, -10);
+		fd_textPartNotesInvoice.right = new FormAttachment(lblCategory, -20);
 		fd_textPartNotesInvoice.top = new FormAttachment(lblNotes);
 		fd_textPartNotesInvoice.bottom = new FormAttachment(100);
 		fd_textPartNotesInvoice.left = new FormAttachment(0);
@@ -475,9 +498,9 @@ public class Gui extends Composite {
 		
 		Button btnDeleteLineItem = new Button(grpSelectedPart, SWT.NONE);
 		FormData fd_btnDeleteLineItem = new FormData();
+		fd_btnDeleteLineItem.bottom = new FormAttachment(textPartNotesInvoice, 0, SWT.BOTTOM);
 		fd_btnDeleteLineItem.top = new FormAttachment(textCategoryInvoice, 10);
 		fd_btnDeleteLineItem.left = new FormAttachment(textPartNotesInvoice, 10);
-		fd_btnDeleteLineItem.bottom = new FormAttachment(100, 5);
 		fd_btnDeleteLineItem.right = new FormAttachment(100, 5);
 		btnDeleteLineItem.setLayoutData(fd_btnDeleteLineItem);
 		btnDeleteLineItem.setText("Delete Line Item");
@@ -881,14 +904,6 @@ public class Gui extends Composite {
 		// Customer Detail Tab
 		TabItem tbtmAccountsDetail = new TabItem(tabFolderCustomer, SWT.NONE);
 		tbtmAccountsDetail.setText("Accounts");
-		
-//		TabFolder tabFolderAccountsFolder = new TabFolder(customerComposite, SWT.NONE);
-//		FormData fd_tabFolderAccountsFolder = new FormData();
-//		fd_tabFolderAccountsFolder.bottom = new FormAttachment(100);
-//		fd_tabFolderAccountsFolder.right = new FormAttachment(100);
-//		fd_tabFolderAccountsFolder.top = new FormAttachment(0);
-//		fd_tabFolderAccountsFolder.left = new FormAttachment(0);
-//		tabFolderAccountsFolder .setLayoutData(fd_tabFolderAccountsFolder);
 
 		Composite accountsDetailComposite = new Composite(tabFolderCustomer, SWT.NONE);
 		tbtmAccountsDetail.setControl(accountsDetailComposite);
@@ -1004,8 +1019,6 @@ public class Gui extends Composite {
 		
 		Group grpResetConfirmDialog = new Group(settingsComposite, SWT.NONE);
 		FormData fd_grpResetConfirmDialog = new FormData();
-//		fd_grpResetConfirmDialog.bottom = new FormAttachment(0, 108);
-//		fd_grpResetConfirmDialog.right = new FormAttachment(0, 333);
 		fd_grpResetConfirmDialog.top = new FormAttachment(0);
 		fd_grpResetConfirmDialog.left = new FormAttachment(0);
 		grpResetConfirmDialog.setLayoutData(fd_grpResetConfirmDialog);
