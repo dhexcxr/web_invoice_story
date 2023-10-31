@@ -197,12 +197,12 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Customer from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT firstName, lastName, address, city, state, zipcode,
-				homePhone, workPhone, cellPhone, email, customerId
+				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode,
+				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId
 				FROM web_invoice_story.customer
-				WHERE firstName LIKE ? OR homePhone LIKE ? OR lastName LIKE ? OR workPhone LIKE ? OR address LIKE ? OR cellPhone LIKE ?
-				OR city LIKE ? OR zipcode LIKE ? OR state LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND customerId IN (";
+				WHERE customer.firstName LIKE ? OR customer.homePhone LIKE ? OR customer.lastName LIKE ? OR customer.workPhone LIKE ? OR customer.address LIKE ? OR customer.cellPhone LIKE ?
+				OR customer.city LIKE ? OR customer.zipcode LIKE ? OR customer.state LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND customer.customerId IN (";
 		super.querySubStringIndices[0] = 7;
 		super.querySubStringIndices[1] = 99;
 
@@ -214,8 +214,9 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
-				SELECT firstName, lastName, address, city, state, zipcode, homePhone, workPhone, cellPhone, email, customerId
-				FROM web_invoice_story.customer WHERE customerId = ?;""";
+				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode, customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId
+				FROM web_invoice_story.customer
+				WHERE customer.customerId = ?;""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;

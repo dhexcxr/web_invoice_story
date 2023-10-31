@@ -176,17 +176,16 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Invoice from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT i.invoicenum, i.customerid, c.lastname, c.firstname,
-				c.address, c.city, c.state, c.zipcode,
-				c.homephone, c.cellphone, c.email, i.notes, i.tax,
-				i.cashiereddate, i.cashiered, ip.count, ip.total + i.tax 
-				FROM web_invoice_story.invoice AS i JOIN web_invoice_story.customer AS c
-				ON i.customerid = c.customerid 
-				JOIN (SELECT invoicenum, COUNT(partid) AS count, SUM(quantity *
-				soldprice) AS total FROM web_invoice_story.invoicepart GROUP BY invoicenum) AS ip 
-				ON i.invoicenum = ip.invoicenum WHERE c.lastname LIKE ? OR
-				c.firstname LIKE ? OR i.invoicenum LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND i.invoicenum IN (";
+				SELECT invoice.invoicenum, invoice.customerid, customer.lastname, customer.firstname,
+				customer.address, customer.city, customer.state, customer.zipcode,
+				customer.homephone, customer.cellphone, customer.email, invoice.notes, invoice.tax,
+				invoice.cashiereddate, invoice.cashiered, invoicePart.count, invoicePart.total + invoice.tax 
+				FROM web_invoice_story.invoice
+				JOIN web_invoice_story.customer ON invoice.customerid = customer.customerid 
+				JOIN (SELECT invoicenum, COUNT(partid) AS count, SUM(quantity * soldprice) AS total
+				\tFROM web_invoice_story.invoicepart GROUP BY invoicenum) AS invoicePart ON invoice.invoicenum = invoicePart.invoicenum
+				WHERE customer.lastname LIKE ? OR customer.firstname LIKE ? OR invoice.invoicenum LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND invoice.invoicenum IN (";
 		super.querySubStringIndices[0] = 19;
 		super.querySubStringIndices[1] = 207;
 		

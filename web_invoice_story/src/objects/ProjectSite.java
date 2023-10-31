@@ -134,10 +134,11 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	public List<ProjectSite> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT u.projectSiteId, u.customerId, u.address, u.city, u.state, u.zipCode, u.notes, c.lastName, c.firstName
-				FROM web_invoice_story.projectSite AS u JOIN web_invoice_story.customer AS c ON u.customerId = c.customerId 
-				WHERE c.firstName LIKE ? OR c.lastName LIKE ? OR u.address LIKE ? OR u.city LIKE ? OR u.state LIKE ? OR u.zipCode LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND u.projectSiteId IN (";
+				SELECT projectSite.projectSiteId, projectSite.customerId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode, projectSite.notes, customer.lastName, customer.firstName
+				FROM web_invoice_story.projectSite
+				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId 
+				WHERE customer.firstName LIKE ? OR customer.lastName LIKE ? OR projectSite.address LIKE ? OR projectSite.city LIKE ? OR projectSite.state LIKE ? OR projectSite.zipCode LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
 		super.querySubStringIndices[0] = 15;
 		super.querySubStringIndices[1] = 128;
 		
@@ -148,10 +149,11 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	public ProjectSite searchByPk(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
 		super.searchString = Long.toString(primaryKey);				// all the super. declarations in the constructor, maybe addressProjectSite a separate var for the searchByPk query,
 		super.searchQuery = """
-				SELECT u.projectSiteId, u.customerId, u.address, u.city, u.state, u.zipCode, u.notes, c.lastName, c.firstName 
-				FROM web_invoice_story.projectSite AS u JOIN web_invoice_story.customer AS c ON u.customerId = c.customerId
+				SELECT ps.projectSiteId, ps.customerId, ps.address, ps.city, ps.state, ps.zipCode, ps.notes, customer.lastName, customer.firstName 
+				FROM web_invoice_story.projectSite
+				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId
 				WHERE projectSiteId = ?;""";
-		super.outerSearchQueryAppendix = " AND u.projectSiteId IN (";
+		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
 		super.querySubStringIndices[0] = 15;					// and move these 2 search() function implementations into the DbObjectSearchable too
 		super.querySubStringIndices[1] = 128;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
 																	// and where can we give it the generic ? extends DbObjectSearchable

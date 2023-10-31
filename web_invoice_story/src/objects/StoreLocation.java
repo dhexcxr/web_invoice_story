@@ -162,7 +162,7 @@ public class StoreLocation extends DbObjectSearchable implements DbObjectSavable
 	public List<StoreLocation> getAllStoreLocations() {
 		super.searchString = "";
 		super.searchQuery = """
-				SELECT locationId, name, address, city, state, zipcode, phone
+				SELECT storeLocation.locationId, storeLocation.name, storeLocation.address, storeLocation.city, storeLocation.state, storeLocation.zipcode, storeLocation.phone
 				FROM web_invoice_story.storeLocation""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
@@ -176,9 +176,9 @@ public class StoreLocation extends DbObjectSearchable implements DbObjectSavable
 		// search for a Customer from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT name, address, city, state, zipcode, phone
+				SELECT storeLocation.name, storeLocation.address, storeLocation.city, storeLocation.state, storeLocation.zipcode, storeLocation.phone
 				FROM web_invoice_story.storeLocation
-				WHERE name LIKE ? OR address LIKE ? OR city LIKE ? OR state LIKE ? OR zipcode LIKE ? OR phone LIKE ?""";
+				WHERE storeLocation.name LIKE ? OR storeLocation.address LIKE ? OR storeLocation.city LIKE ? OR storeLocation.state LIKE ? OR storeLocation.zipcode LIKE ? OR storeLocation.phone LIKE ?""";
 		super.outerSearchQueryAppendix = " AND locationId IN (";
 		super.querySubStringIndices[0] = 7;
 		super.querySubStringIndices[1] = 99;
@@ -191,8 +191,9 @@ public class StoreLocation extends DbObjectSearchable implements DbObjectSavable
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(locationId);
 		super.searchQuery = """
-				SELECT name, address, city, state, zipcode, phone
-				FROM web_invoice_story.storeLocation WHERE locationId = ?;""";
+				SELECT storeLocation.name, storeLocation.address, storeLocation.city, storeLocation.state, storeLocation.zipcode, storeLocation.phone
+				FROM web_invoice_story.storeLocation
+				WHERE storeLocation.locationId = ?;""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;

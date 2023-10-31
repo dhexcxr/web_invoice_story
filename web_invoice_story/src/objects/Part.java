@@ -143,9 +143,10 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		// search for a Part from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM web_invoice_story.part  
-				WHERE partNumber LIKE ? OR supplier LIKE ? OR category LIKE ? OR description LIKE ?;""";
-		super.outerSearchQueryAppendix = " AND partId IN (";
+				SELECT part.partId, part.partNumber, part.supplier, part.category, part.description, part.notes, part.cost, part.retail, part.onHand
+				FROM web_invoice_story.part
+				WHERE part.partNumber LIKE ? OR part.supplier LIKE ? OR part.category LIKE ? OR part.description LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND part.partId IN (";
 		super.querySubStringIndices[0] = 13;
 		super.querySubStringIndices[1] = 87;
 
@@ -158,8 +159,9 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		// search for a Part from the database using a primary key
 		super.searchString = Long.toString(partNum);
 		super.searchQuery = """
-				SELECT partId, partNumber, supplier, category, description, notes, cost, retail, onHand FROM web_invoice_story.part  
-				WHERE partId = ?;""";
+				SELECT part.partId, part.partNumber, part.supplier, part.category, part.description, part.notes, part.cost, part.retail, part.onHand
+				FROM web_invoice_story.part
+				WHERE part.partId = ?;""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
