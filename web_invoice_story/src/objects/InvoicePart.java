@@ -121,7 +121,7 @@ public class InvoicePart extends DbObjectSearchable implements DbObjectSavable {
 
 	@Override
 	public String getTableName() {
-		return "invoicepart";
+		return "invoicepart";		// TODO change all refs to this table to invoiceLineItem, because that's what its called in the DB now
 	}
 
 	@Override

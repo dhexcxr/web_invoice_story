@@ -20,6 +20,10 @@ import org.eclipse.swt.widgets.Control;
 // TODO copy most of Customer tab into here, i.e. search and table display, when a selection is made in table
 		// return Customer object to insert data into RO or unit info 
 
+// TODO add lsiteners so that hitting [Enter] on a selected Customer in the table will select it and return
+	// also the same thing for hitting [Enter] on the Select Customer button
+	// also, allow [Esc] to close dialog
+
 public class CustomerSearchDialog extends Dialog {
 
 	protected Object result;		// TODO probably change this to Customer, wouldn't need cast for results
