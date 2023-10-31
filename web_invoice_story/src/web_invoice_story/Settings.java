@@ -4,8 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.Level;
+
+import org.eclipse.core.runtime.FileLocator;
 
 public class Settings {
 	
@@ -78,13 +83,17 @@ public class Settings {
 	}
 
 	// save current Settings.prop into file
-	public void save() {											// HACK because just opening propFileName like we do above doesn't work with FileOutputStream for some reason
-		try (FileOutputStream settingsFileOuput = new FileOutputStream("/Users/mcglass/eclipse-rcp-workspace3/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/../../../../../git/web_invoice_story/web_invoice_story/bin/resources/settings.properties")) {
+	public void save() {
+		try (FileOutputStream settingsFileOuput =
+				new FileOutputStream(Paths.get(FileLocator.resolve(getClass().getClassLoader().getResource(propFileName)).toURI()).normalize().toString())) {
 			prop.store(settingsFileOuput, "Service Salamander Settings");
 			settingsFileOuput.flush();
 			settingsFileOuput.close();
 		} catch (IOException e) {
 			Application.getLogger().log(Level.SEVERE, e.toString());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}	
 }
