@@ -2,6 +2,8 @@ package objects;
 
 import java.util.List;
 
+import web_invoice_story.Application;
+
 public abstract class DbObjectSearchable {
 
 	protected String searchString;
@@ -24,6 +26,21 @@ public abstract class DbObjectSearchable {
 
 	public String getSearchQuery() {
 		// return subclass's correct DB search query 
+		int selectedLocation = Application.getSettings().getCurrentLocation();
+		
+		if (selectedLocation != 0 && !(this instanceof StoreLocation)) {
+			// modify search query to only show results from selected location
+			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
+			
+			// add location details
+			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf("WHERE") - 1,
+					"\nINNER JOIN web_invoice_story.storeLocation on storeLocation.locationId = "
+					+ ((DbObjectSavable) this).getTableName() + ".locationId"
+					+ " AND storeLocation.locationId = " + selectedLocation);
+//			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
+			searchQuery = searchQueryWithLoc.toString();
+		}
+		
 		StringBuilder innserSearchQuery = new StringBuilder(searchQuery);
 		for (int i = 1; i < getWordsFromSearchString().length; i++) {
 			innserSearchQuery.delete(querySubStringIndices[0], querySubStringIndices[1]);
