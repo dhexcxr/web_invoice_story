@@ -31,6 +31,7 @@ public class AmountDueDialog extends Dialog{
 
 	public boolean open(String finalTotal) {
 		createContents();
+		txtFinalTotal.setText(finalTotal);
 		if (new BigDecimal(finalTotal.replaceAll("[^-.0-9]", "")).compareTo(BigDecimal.valueOf(0)) < 0) {
 			txtAmountTendered.setText("$0");
 		}
