@@ -36,6 +36,7 @@ import listeners.RequiredTextBoxModifyListener;
 import listeners.SearchTextBoxListeners;
 import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
+import objects.Account;
 import objects.Customer;
 import objects.Invoice;
 import objects.InvoicePart;
@@ -43,6 +44,7 @@ import objects.Project;
 import objects.Part;
 import objects.ProjectSite;
 import objects.StoreLocation;
+import objects.Invoice.InvoiceResult;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -612,9 +614,9 @@ public class Gui extends Composite {
 					return;
 				}
 				AmountDueDialog amountDueDialog = new AmountDueDialog(shell, getStyle());
-				boolean cashiered = amountDueDialog.open(txtFinalTotal.getText());
+				Invoice.InvoiceResult invoiceResult = amountDueDialog.open(txtFinalTotal.getText());
 				
-				if (cashiered) {
+				if (invoiceResult != InvoiceResult.CANCELED) {
 					Invoice cashieredInvoice = new Invoice();
 					cashieredInvoice.setCustomerId(((Customer) txtCustomerInvoice.getData()).getCustomerId());
 					cashieredInvoice.setCustomerData(txtCustomerInvoice.getText());
@@ -627,6 +629,12 @@ public class Gui extends Composite {
 					// send invoice obj to DbServices
 					// TODO i think this can be done with the Invoice object now
 					DbServices.saveObject(cashieredInvoice);
+					
+					if (invoiceResult == InvoiceResult.CHARGED) {
+						// create account entries
+						BigDecimal amountChargedToAccount = amountDueDialog.getAmountCharged();
+						// TODO send queries to DB to save account details
+					}
 					
 					clearInvoiceGui();
 				}

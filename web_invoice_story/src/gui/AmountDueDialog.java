@@ -1,14 +1,20 @@
 package gui;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import objects.Invoice;
+import objects.Invoice.InvoiceResult;
+
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
@@ -16,20 +22,37 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class AmountDueDialog extends Dialog{
 	
 	protected boolean cashiered;
+	protected Invoice.InvoiceResult result;
 	protected Shell shlAmountDue;
 	private Text txtFinalTotal;
 	private Text txtAmountTendered;
 	private Text txtAmountCharged;
+	
+	private BigDecimal amountCharged;
+	
+	private Button btnChargeRemainderToAcct;
 
 	public AmountDueDialog(Shell parent, int style) {
 		super(parent, style);
 	}
 
-	public boolean open(String finalTotal) {
+	public BigDecimal getAmountCharged() {
+		return amountCharged;
+	}
+
+	public void setAmountCharged(BigDecimal amountCharged) {
+		this.amountCharged = amountCharged;
+	}
+
+	public Invoice.InvoiceResult open(String finalTotal) {
 		createContents();
 		txtFinalTotal.setText(finalTotal);
 		if (new BigDecimal(finalTotal.replaceAll("[^-.0-9]", "")).compareTo(BigDecimal.valueOf(0)) < 0) {
@@ -43,7 +66,7 @@ public class AmountDueDialog extends Dialog{
 				display.sleep();
 			}
 		}
-		return cashiered;
+		return result;
 	}
 	
 	private void createContents() {
@@ -68,6 +91,20 @@ public class AmountDueDialog extends Dialog{
 		txtFinalTotal.setEditable(false);
 		
 		txtAmountTendered = new Text(shlAmountDue, SWT.BORDER);
+		txtAmountTendered.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
+				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().length() == 0 ? "0" : txtAmountTendered.getText().replace("$", ""));
+				if (tendered.compareTo(total) >= 0) {	// if customer is tendering more than total charge
+					btnChargeRemainderToAcct.setSelection(false);	// unselect Charge to Account
+					btnChargeRemainderToAcct.setEnabled(false);		// disable option to charge to account
+					txtAmountCharged.setText("");		// clear calculated amount to charge
+				} else {
+					btnChargeRemainderToAcct.setEnabled(true);
+					btnChargeRemainderToAcct.notifyListeners(SWT.Selection, new Event());	// calculate new amount charged, might just make a method that does this
+				}
+			}
+		});
 		FormData fd_txtAmountTendered = new FormData();
 		fd_txtAmountTendered.right = new FormAttachment(txtFinalTotal, 0, SWT.RIGHT);
 		fd_txtAmountTendered.left = new FormAttachment(txtFinalTotal, 0, SWT.LEFT);
@@ -98,8 +135,25 @@ public class AmountDueDialog extends Dialog{
 		fd_txtAmountCharged.top = new FormAttachment(txtAmountTendered);
 		fd_txtAmountCharged.height = 24;
 		txtAmountCharged.setLayoutData(fd_txtAmountCharged);
+		txtAmountCharged.setEditable(false);
+		txtAmountCharged.setBackground(SWTResourceManager.getColor(239, 239, 239));
 		
-		Button btnChargeRemainderToAcct = new Button(shlAmountDue, SWT.CHECK);
+		btnChargeRemainderToAcct = new Button(shlAmountDue, SWT.CHECK);
+		btnChargeRemainderToAcct.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// calculate remainder of total and charge to account
+				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
+				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().length() == 0 ? "0" : txtAmountTendered.getText().replace("$", ""));
+				
+				if (btnChargeRemainderToAcct.getSelection()) {
+					txtAmountCharged.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+					txtAmountCharged.setText(total.subtract(tendered).setScale(2, RoundingMode.HALF_UP).toString());
+				} else {	// if this is unchecked now
+					txtAmountCharged.setText("");			// clear the Amount Charged box
+				}
+			}
+		});
 		btnChargeRemainderToAcct.setFont(SWTResourceManager.getFont(".AppleSystemUIFont", 14, SWT.NORMAL));
 		FormData fd_btnChargeRemainderToAcct = new FormData();
 		fd_btnChargeRemainderToAcct.right = new FormAttachment(lblAmountTendered, 0, SWT.RIGHT);
@@ -116,24 +170,42 @@ public class AmountDueDialog extends Dialog{
 		btnCashier.setLayoutData(fd_btnCashier);
 		btnCashier.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {						// TODO don't allow anything but numbers
+			public void mouseDown(MouseEvent e) {
+				
+				// calculate any change
 				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
 				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().replace("$", ""));
 				BigDecimal chageDue = total.subtract(tendered);
-				// if not enough money entered, complain
+				
+				if (btnChargeRemainderToAcct.getSelection()) {
+					chageDue = chageDue.subtract(new BigDecimal(txtAmountCharged.getText().replaceAll("[^-.0-9]", "")));
+					
+				}
+				
+				// prepare to tell the user the result
+				MessageBox changeDueMessageBox= new MessageBox(shlAmountDue, getStyle());
+				
+				// if not enough money tendered, complain
 				if (chageDue.compareTo(BigDecimal.valueOf(0)) > 0) {
 					MessageBox notEnoughTenderedMessageBox = new MessageBox(shlAmountDue, SWT.ICON_INFORMATION);
 					notEnoughTenderedMessageBox.setText("Notice");
 					notEnoughTenderedMessageBox.setMessage("Customer did not tender enough money...");
 					notEnoughTenderedMessageBox.open();
 					return;
-				}	
-				MessageBox changeDueMessageBox= new MessageBox(shlAmountDue, getStyle());
-				changeDueMessageBox.setText("Change Due");
-				changeDueMessageBox.setMessage("Change due to Customer: $" + chageDue.toString().replace("-", ""));
+				} else if (chageDue.compareTo(BigDecimal.valueOf(0)) == 0) {
+					changeDueMessageBox.setText("Change Due");
+					changeDueMessageBox.setMessage("No change due");
+					result = btnChargeRemainderToAcct.getSelection()
+							? InvoiceResult.CHARGED
+							: InvoiceResult.NOCHANGE;
+				} else if (chageDue.compareTo(BigDecimal.valueOf(0)) < 0) {
+					changeDueMessageBox.setText("Change Due");
+					changeDueMessageBox.setMessage("Change due to Customer: $" + chageDue.toString().replace("-", ""));
+					result = InvoiceResult.WITHCHANGE;
+				}
+				
 				changeDueMessageBox.open();
 				shlAmountDue.close();
-				cashiered = true;
 			}
 		});
 		btnCashier.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
@@ -151,7 +223,7 @@ public class AmountDueDialog extends Dialog{
 			public void mouseDown(MouseEvent e) {
 				// close dialog
 				shlAmountDue.close();
-				cashiered = false;
+				result = InvoiceResult.CANCELED;
 			}
 		});
 		btnCancel.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));

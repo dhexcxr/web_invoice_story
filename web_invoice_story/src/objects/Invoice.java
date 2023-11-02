@@ -27,6 +27,13 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 	private TableItem[] tableLineItems;
 	private Part[] parts;
 	
+	public enum InvoiceResult {
+		WITHCHANGE,
+		NOCHANGE,
+		CHARGED,
+		CANCELED
+	}
+	
 	public Invoice() {
 		// empty default constructor
 	}
