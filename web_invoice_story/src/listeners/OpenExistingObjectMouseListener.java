@@ -50,7 +50,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 			// just like in DbServices.searchForObject
 		// LATER NOTE probably doing an instanceof on the table object we saved up there
 		if (table.getColumn(0).getText().equals("First Name") && table.getSelection().length > 0) {
-			openCustomer(table);
+			openCustomer(table);	// followup to LATER NOTE - the thing to do is push this method up to the tables as an abstract openObjects(), then just call table.openObjects()
 		} else if (table.getColumn(0).getText().equals("Owner") && table.getSelection().length > 0) {
 			openUnit(table);
 		} else if (table.getColumn(0).getText().equals("Part Number") && table.getSelection().length > 0) {

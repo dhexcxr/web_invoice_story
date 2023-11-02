@@ -25,8 +25,6 @@ public class SearchTextBoxListeners implements ModifyListener {
 
 	@Override
 	public void modifyText(ModifyEvent e) {
-		// TODO refactor this listener, call searchObject.setSearchString(searchBox.getText()) then pass that to 
-			// DbServices.searchForObject(searchObject), then we can remove all these conditionals
 		int queryLength = searchBox.getText().trim().length();
 		if (queryLength > 0 && !searchBox.getText().equals(textBoxStartingText)) {
 			table.removeAll();

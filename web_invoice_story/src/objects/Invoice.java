@@ -193,8 +193,8 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 				\tFROM web_invoice_story.invoicepart GROUP BY invoicenum) AS invoicePart ON invoice.invoicenum = invoicePart.invoicenum
 				WHERE customer.lastname LIKE ? OR customer.firstname LIKE ? OR invoice.invoicenum LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND invoice.invoicenum IN (";
-		super.querySubStringIndices[0] = 19;
-		super.querySubStringIndices[1] = 207;
+		super.querySubStringIndices[0] = 25;
+		super.querySubStringIndices[1] = 330;
 		
 		return packObjects(DbServices.searchForObject(this));
 	}

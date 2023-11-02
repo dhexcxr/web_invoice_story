@@ -11,6 +11,8 @@ import web_invoice_story.DbServices;
 
 public class Project extends DbObjectSearchable implements DbObjectSavable{
 	
+	// TODO make a 1 line invoice when cashiering Projects
+	
 	private long projectId = -1;
 	private long customerId;
 	private Customer customer;
