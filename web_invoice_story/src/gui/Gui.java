@@ -50,6 +50,7 @@ import web_invoice_story.DbServices;
 
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import guiParts.AccountTable;
 import guiParts.CustomerTable;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
@@ -921,84 +922,84 @@ public class Gui extends Composite {
 		fl_accountsDetailComposite.marginHeight = 5;
 		accountsDetailComposite.setLayout(fl_accountsDetailComposite);
 		
-		MyText customerSearchTextBox_1 = new MyText(accountsDetailComposite, SWT.BORDER);
+		MyText accountSearchTextBox = new MyText(accountsDetailComposite, SWT.BORDER);
 		
-		CustomerTable accountsTable = new CustomerTable(accountsDetailComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		FormData fd_accountsTable = new FormData();
-		fd_accountsTable.top = new FormAttachment(customerSearchTextBox_1	);
-		fd_accountsTable.bottom = new FormAttachment(100);
-		fd_accountsTable.right = new FormAttachment(100);
-		fd_accountsTable.left = new FormAttachment(0);
-		accountsTable.setLayoutData(fd_accountsTable);
-		accountsTable.setHeaderVisible(true);
-		accountsTable.setLinesVisible(true);
-		accountsTable.addMouseListener(new OpenExistingObjectMouseListener(accountsTable, shell));
-		accountsTable.addMenuDetectListener(new DeleteEnableListener(accountsTable));
+		AccountTable accountTable = new AccountTable(accountsDetailComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_accountTable = new FormData();
+		fd_accountTable.top = new FormAttachment(accountSearchTextBox);
+		fd_accountTable.bottom = new FormAttachment(100);
+		fd_accountTable.right = new FormAttachment(100);
+		fd_accountTable.left = new FormAttachment(0);
+		accountTable.setLayoutData(fd_accountTable);
+		accountTable.setHeaderVisible(true);
+		accountTable.setLinesVisible(true);
+		accountTable.addMouseListener(new OpenExistingObjectMouseListener(accountTable, shell));
+		accountTable.addMenuDetectListener(new DeleteEnableListener(accountTable));
 		
-		TableColumn tblclmnAccountNumber = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnAccountNumber = new TableColumn(accountTable, SWT.NONE);
 		tblclmnAccountNumber.setWidth(100);
 		tblclmnAccountNumber.setText("Account Number");
 		tblclmnAccountNumber.addSelectionListener(new TableColumnSortListener(tblclmnAccountNumber));
 
 		
 		
-		TableColumn tblclmnAccountHolderName = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnAccountHolderName = new TableColumn(accountTable, SWT.NONE);
 		tblclmnAccountHolderName.setWidth(100);
 		tblclmnAccountHolderName.setText("Account Holder");
 		tblclmnAccountHolderName.addSelectionListener(new TableColumnSortListener(tblclmnAccountHolderName));
 		
-		TableColumn tblclmnLastCharge = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnLastCharge = new TableColumn(accountTable, SWT.NONE);
 		tblclmnLastCharge.setWidth(100);
 		tblclmnLastCharge.setText("Last Charge");
 		tblclmnLastCharge.addSelectionListener(new TableColumnSortListener(tblclmnLastCharge));
 		
-		TableColumn tblclmnLastPayment = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnLastPayment = new TableColumn(accountTable, SWT.NONE);
 		tblclmnLastPayment.setWidth(100);
 		tblclmnLastPayment.setText("Last Payment");
 		tblclmnLastPayment.addSelectionListener(new TableColumnSortListener(tblclmnLastPayment));
 		
-		TableColumn tblclmnBalance = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnBalance = new TableColumn(accountTable, SWT.NONE);
 		tblclmnBalance.setWidth(100);
 		tblclmnBalance.setText("Balance");
 		tblclmnBalance.addSelectionListener(new TableColumnSortListener(tblclmnBalance));
 		
-		TableColumn tblclmnHomePhoneCustomer_1 = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnHomePhoneCustomer_1 = new TableColumn(accountTable, SWT.NONE);
 		tblclmnHomePhoneCustomer_1.setWidth(100);
 		tblclmnHomePhoneCustomer_1.setText("Home Phone");
 		tblclmnHomePhoneCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnHomePhoneCustomer_1));
 		
-		TableColumn tblclmnCellPhoneCustomer_1 = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnCellPhoneCustomer_1 = new TableColumn(accountTable, SWT.NONE);
 		tblclmnCellPhoneCustomer_1.setWidth(100);
 		tblclmnCellPhoneCustomer_1.setText("Cell Phone");
 		tblclmnCellPhoneCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnCellPhoneCustomer_1));
 		
-		TableColumn tblclmnEmailCustomer_1 = new TableColumn(accountsTable, SWT.NONE);
+		TableColumn tblclmnEmailCustomer_1 = new TableColumn(accountTable, SWT.NONE);
 		tblclmnEmailCustomer_1.setWidth(100);
 		tblclmnEmailCustomer_1.setText("E-mail");
 		tblclmnEmailCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnEmailCustomer_1));
 		
 		// Delete right click menu
-		setupRightClickMenu(accountsTable, "Account");
+		setupRightClickMenu(accountTable, "Account");
 		
-		Button btnNewCustomer_1 = new Button(accountsDetailComposite, SWT.NONE);
-		FormData fd_btnNewCustomer_1 = new FormData();
-		fd_btnNewCustomer_1.height = 28;
-		fd_btnNewCustomer_1.width = 112;
-		fd_btnNewCustomer_1.top = new FormAttachment(0, -1);
-		fd_btnNewCustomer_1.right = new FormAttachment(100);
-		btnNewCustomer_1.setLayoutData(fd_btnNewCustomer_1);
-		btnNewCustomer_1.setText("(dont need)");
-		btnNewCustomer_1.addMouseListener(new CreateNewObjectListener(accountsTable, customerSearchTextBox_1, shell));
+		Button btnNewAccount = new Button(accountsDetailComposite, SWT.NONE);
+		FormData fd_btnNewAccount = new FormData();
+		fd_btnNewAccount.height = 28;
+		fd_btnNewAccount.width = 112;
+		fd_btnNewAccount.top = new FormAttachment(0, -1);
+		fd_btnNewAccount.right = new FormAttachment(100);
+		btnNewAccount.setLayoutData(fd_btnNewAccount);
+		btnNewAccount.setText("New Account");
+		btnNewAccount.addMouseListener(new CreateNewObjectListener(accountTable, accountSearchTextBox, shell));
 
-		FormData fd_customerSearchTextBox_1 = new FormData();
-		fd_customerSearchTextBox_1.height = 16;
-		fd_customerSearchTextBox_1.right = new FormAttachment(btnNewCustomer_1);
-		fd_customerSearchTextBox_1.top = new FormAttachment(0);
-		fd_customerSearchTextBox_1.left = new FormAttachment(0);
-		customerSearchTextBox_1.setLayoutData(fd_customerSearchTextBox_1);
-		customerSearchTextBox_1.setText("Search...");
-		customerSearchTextBox_1.addModifyListener(new SearchTextBoxListeners(customerSearchTextBox_1, accountsTable, new Customer()));
-		customerSearchTextBox_1.addFocusListener(new TextBoxFocusListener(customerSearchTextBox_1));
+		FormData fd_accountSearchTextBox = new FormData();
+		fd_accountSearchTextBox.height = 16;
+		fd_accountSearchTextBox.right = new FormAttachment(btnNewAccount);
+		fd_accountSearchTextBox.top = new FormAttachment(0);
+		fd_accountSearchTextBox.left = new FormAttachment(0);
+		accountSearchTextBox.setLayoutData(fd_accountSearchTextBox);
+		accountSearchTextBox.setText("Search...");
+		accountSearchTextBox.addModifyListener(new SearchTextBoxListeners(accountSearchTextBox, accountTable, new Account()));
+		accountSearchTextBox.addFocusListener(new TextBoxFocusListener(accountSearchTextBox));
 	}
 	
 	private void reportsTab(TabFolder tabFolder) {
