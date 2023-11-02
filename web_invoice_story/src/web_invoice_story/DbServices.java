@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import objects.Account;
 import objects.Customer;
 import objects.DbObjectSavable;
 import objects.DbObjectSearchable;
@@ -475,7 +476,7 @@ public class DbServices {
 		// build correct object out of the SQL query ResultSet
 		List<DbObjectSearchable> results = new ArrayList<>();
 		if (object instanceof Customer) {
-			results = buildCustomers(queryResultSet);
+			results = buildCustomers(queryResultSet);		// TODO push buildObjects(queryResultSet) up to superclass
 		} else if (object instanceof StoreLocation) {
 			results = buildStoreLocations(queryResultSet);
 		} else if (object instanceof Part) {
@@ -492,6 +493,8 @@ public class DbServices {
 			results = buildJobLabors(queryResultSet);
 		} else if (object instanceof JobPart) {
 			results = buildJobParts(queryResultSet);
+		} else if (object instanceof Account) {
+			results = buildAccounts(queryResultSet);
 		}
 		return results;
 	}
@@ -715,6 +718,30 @@ public class DbServices {
 			jobPart.setPart((Part) new Part().searchByPk(jobPart.getPartId()));
 			
 			results.add(i, jobPart);
+			i++;
+		}
+		return results;
+	}
+	
+	private static List<DbObjectSearchable> buildAccounts(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+		int i = 0;
+		while (queryResultSet.next()) {
+			Account account = new Account();
+			account.setAccountId(queryResultSet.getLong(1));
+			account.setCustomerId(queryResultSet.getLong(2));
+			
+			String lastname = queryResultSet.getString(3);
+			String firstname = queryResultSet.getString(4);
+			account.setCustomerName(lastname, firstname);
+			
+			account.setAccountNumber(queryResultSet.getString(5));
+			account.setAccountName(queryResultSet.getString(6));
+			account.setBalance(queryResultSet.getBigDecimal(7));
+			
+			// TODO maybe get accountTransactions here
+			
+			results.add(i, account);
 			i++;
 		}
 		return results;
