@@ -1,0 +1,191 @@
+package objects;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.swt.widgets.Table;
+
+import web_invoice_story.DbServices;
+
+public class Account extends DbObjectSearchable implements DbObjectSavable {
+	
+	// might not need this
+	private long accountId = -1;
+	private long customerId;
+	private String accountHolder;
+	private String accountNumber;
+	private String accountName;
+	private BigDecimal balance;
+	
+	private List<AccountTransaction> transactions;
+
+	
+	public Account() {
+		// empty default constructor
+	}
+	
+	public long getDbPk() {
+		// return Customer object's primary key
+		return getAccountId();
+	}
+	
+	@Override
+	public void setDbPk(long dbPk) {
+		// set Customer object's primary key
+		accountId = dbPk;
+	}
+	
+	@Override
+	public String getPkName() {
+		// get Customer table's primary key field name
+		return "accountId";
+	}
+	
+	@Override
+	public String getTableName() {
+		// get Customer table's name
+		return "customer";
+	}
+	
+	public long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(long customerId) {
+		this.accountId = customerId;
+	}
+
+	public long getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(long customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getAccountHolder() {
+		return accountHolder;
+	}
+
+	public void setCustomerName(String lastname, String firstname) {
+			if (firstname != null) {
+				firstname = firstname.equals("") ? firstname : ", " + firstname;
+			}
+			this.accountHolder = lastname + firstname;
+		}
+
+	public String getAccountNumber() {
+		return accountNumber == null ? "" : accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getAccountName() {
+		return accountName == null ? "" : accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public BigDecimal getBalance() {
+		return balance /* == null ? BigDecimal.valueOf(0) : balance */;
+	}
+	
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+	
+	public List<AccountTransaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<AccountTransaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	public Map<String, String> getDataMap() {
+		// TODO we might need to make these Maps into <String, Object>, then instanceof on the Object value
+			// to see how to treat it when building PreparedStatements with setParameter (of course I already changed all Customer fields to String)
+		
+		// return helper data for saving and updating Customer objects
+		Map<String, String> dataMap = new HashMap<>();
+		if (accountId != -1) {
+			dataMap.put("accountId", Long.toString(accountId));
+		}
+		dataMap.put("customerId", Long.toString(customerId));
+		dataMap.put("accountNumber", accountNumber);
+		dataMap.put("accountName", accountName);
+		dataMap.put("balance", balance.toString());
+				
+		return dataMap;
+	}
+
+	protected static void populateAccountTable(Table table) {
+		// not yet used, could populate "" in searchForObject call with current txtSearchBox.getText()
+		new Account().search("");
+	}
+	
+	@Override
+	public List<Account> search(String searchString) {
+		// search for a Customer from the database using a search string
+		super.searchString = searchString;
+		super.searchQuery = """
+				SELECT account.accountId, account.customerId, customer.lastname, customer.firstname, account.accountNumber, account.accountName, account.balance
+				FROM web_invoice_story.account
+				LEFT JOIN web_invoice_story.customer on customer.customerId = account.customerId
+				WHERE customer.firstName LIKE ? OR customer.lastName LIKE ? OR customer.homePhone LIKE ? OR account.accountNumber LIKE ? OR account.accountName LIKE ?;""";
+		super.outerSearchQueryAppendix = " AND account.accountId IN (";
+		super.querySubStringIndices[0] = 24;
+		super.querySubStringIndices[1] = 145;
+
+		return packObjects(DbServices.searchForObject(this));
+	}
+	
+	@Override
+	public Account searchByPk(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
+		// search for a Customer from the database using a primary key
+		super.searchString = Long.toString(customerId);
+		super.searchQuery = """
+				SELECT account.accountId, account.customerId, account.accountNumber, account.accountName, account.balance
+				FROM web_invoice_story.account
+				WHERE account.accountId = ?;""";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+
+		return packObject(DbServices.searchForObjectByPk(this));
+	}
+	
+	// TODO make these methods of superclass
+		// another NOTE these are not used now but may be useful if I remove the two search methods
+			// from the super class and make them return objects of the Class they're called on
+	private List<Account> packObjects(List<DbObjectSearchable> searchResults) {
+		// helper to cast List of DbObjectSearchable to List of Customer
+		List<Account> accountSearchResults = new ArrayList<>();
+		
+		for (DbObjectSearchable object : searchResults) {
+			accountSearchResults.add(packObject(object));
+		}
+		
+		return accountSearchResults;
+	}
+	
+	private Account packObject(DbObjectSearchable dbObjectSearchable) {
+		// helper to cast List of DbObjectSearchable to List of Customer
+			if (dbObjectSearchable instanceof Account account) {
+				return account;
+			}
+			throw new IllegalArgumentException("objects.Account.packObject(): dbObjectSearchable is not an Account");
+	}
+
+	@Override
+	public String toString() {
+		return "Account [accountId=" + accountId + ", customerId=" + customerId + ", accountNumber=" + accountNumber + ", accountName=" + accountName + ", balance=" + balance + "]";
+	}
+}
