@@ -626,7 +626,11 @@ public class Gui extends Composite {
 					cashieredInvoice.setTax(new BigDecimal(txtTaxInvoice.getText().replace("$", "")));
 					cashieredInvoice.setCashiereDateTime(Timestamp.from(Instant.now()));
 					cashieredInvoice.setCashiered(true);
-					cashieredInvoice.setTableLineItems(invoicePartsTable.getItems());
+					
+					cashieredInvoice.setTableLineItems(invoicePartsTable.getItems());	// probably not needed anymore
+					cashieredInvoice.setPartsFromTableItems(invoicePartsTable.getItems());
+					
+//					cashieredInvoice.setCashierResult(invoiceResult);
 					
 					// send invoice obj to DbServices
 					// TODO i think this can be done with the Invoice object now

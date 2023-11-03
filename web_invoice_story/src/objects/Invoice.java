@@ -153,6 +153,17 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 		this.parts = parts;
 	}
 	
+	public void setPartsFromTableItems(TableItem[] items) {
+		Part[] partsFromTableItems = new Part[items.length];
+		// hack, I need to change Part[] to List<Part>, and get all calling methods to handle the change
+		int i = 0;
+		while(items[i].getData() != null) {
+			partsFromTableItems[i] = ((InvoicePart) items[i].getData()).getPart();
+			i++;
+		}
+		this.setParts(partsFromTableItems);
+	}
+	
 	@SuppressWarnings("unused")
 	private BigDecimal getPartsTotal() {
 		// not used right now, need to populate Part[] parts before this is usable
