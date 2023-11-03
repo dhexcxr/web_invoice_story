@@ -621,6 +621,7 @@ public class Gui extends Composite {
 					Invoice cashieredInvoice = new Invoice();
 					cashieredInvoice.setCustomerId(((Customer) txtCustomerInvoice.getData()).getCustomerId());
 					cashieredInvoice.setCustomerData(txtCustomerInvoice.getText());
+					cashieredInvoice.setLocationId(Application.getSettings().getCurrentLocation());
 					cashieredInvoice.setNotes(txtInvoiceNotes.getText());
 					cashieredInvoice.setTax(new BigDecimal(txtTaxInvoice.getText().replace("$", "")));
 					cashieredInvoice.setCashiereDateTime(Timestamp.from(Instant.now()));

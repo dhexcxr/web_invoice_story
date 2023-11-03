@@ -18,6 +18,7 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 	private long customerId;
 	private String customerName;
 	private String customerData;
+	private long locationId;
 	private String notes;
 	private Timestamp cashiereDateTime;
 	private BigDecimal tax;
@@ -96,6 +97,14 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 		this.customerData = customerData;
 	}
 
+	public long getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(long locationId) {
+		this.locationId = locationId;
+	}
+
 	public String getNotes() {
 		return notes;
 	}
@@ -171,6 +180,7 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 		}
 		dataMap.put("customerid", Long.toString(customerId));
 		dataMap.put("customerdata", customerData);
+		dataMap.put("locationId", Long.toString(locationId));
 		dataMap.put("notes", notes);
 		dataMap.put("tax", tax.toString());
 		dataMap.put("cashiereddate", cashiereDateTime.toString());
