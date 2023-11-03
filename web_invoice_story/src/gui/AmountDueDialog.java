@@ -94,7 +94,7 @@ public class AmountDueDialog extends Dialog{
 		txtAmountTendered.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
 				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
-				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().length() == 0 ? "0" : txtAmountTendered.getText().replace("$", ""));
+				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().length() == 0 ? "0" : txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
 				if (tendered.compareTo(total) >= 0) {	// if customer is tendering more than total charge
 					btnChargeRemainderToAcct.setSelection(false);	// unselect Charge to Account
 					btnChargeRemainderToAcct.setEnabled(false);		// disable option to charge to account
@@ -144,7 +144,7 @@ public class AmountDueDialog extends Dialog{
 			public void widgetSelected(SelectionEvent e) {
 				// calculate remainder of total and charge to account
 				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
-				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().length() == 0 ? "0" : txtAmountTendered.getText().replace("$", ""));
+				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().length() == 0 ? "0" : txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
 				
 				if (btnChargeRemainderToAcct.getSelection()) {
 					txtAmountCharged.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -174,7 +174,7 @@ public class AmountDueDialog extends Dialog{
 				
 				// calculate any change
 				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
-				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().replace("$", ""));
+				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
 				BigDecimal chageDue = total.subtract(tendered);
 				
 				if (btnChargeRemainderToAcct.getSelection()) {
