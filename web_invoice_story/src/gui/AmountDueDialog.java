@@ -26,6 +26,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Control;
 
 public class AmountDueDialog extends Dialog{
 	
@@ -39,6 +40,8 @@ public class AmountDueDialog extends Dialog{
 	private BigDecimal amountCharged;
 	
 	private Button btnChargeRemainderToAcct;
+	private Button btnCashier;
+	private Button btnCancel;
 
 	public AmountDueDialog(Shell parent, int style) {
 		super(parent, style);
@@ -55,6 +58,7 @@ public class AmountDueDialog extends Dialog{
 	public Invoice.InvoiceResult open(String finalTotal) {
 		createContents();
 		txtFinalTotal.setText(finalTotal);
+		shlAmountDue.setTabList(new Control[]{txtFinalTotal, txtAmountTendered, btnChargeRemainderToAcct, txtAmountCharged, btnCancel, btnCashier});
 		if (new BigDecimal(finalTotal.replaceAll("[^-.0-9]", "")).compareTo(BigDecimal.valueOf(0)) < 0) {
 			txtAmountTendered.setText("$0");
 		}
@@ -161,7 +165,7 @@ public class AmountDueDialog extends Dialog{
 		btnChargeRemainderToAcct.setLayoutData(fd_btnChargeRemainderToAcct);
 		btnChargeRemainderToAcct.setText("Charge to Account");
 		
-		Button btnCashier = new Button(shlAmountDue, SWT.NONE);
+		btnCashier = new Button(shlAmountDue, SWT.NONE);
 		FormData fd_btnCashier = new FormData();
 		fd_btnCashier.height = 96;
 		fd_btnCashier.width = 256;
@@ -211,7 +215,7 @@ public class AmountDueDialog extends Dialog{
 		btnCashier.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
 		btnCashier.setText("Cashier");
 		
-		Button btnCancel = new Button(shlAmountDue, SWT.NONE);
+		btnCancel = new Button(shlAmountDue, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.width = 160;
 		fd_btnCancel.height = 96;
