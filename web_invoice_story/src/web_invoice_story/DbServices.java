@@ -252,7 +252,7 @@ public class DbServices {
 			}
 			InvoicePart invoicePart = new InvoicePart(invoiceLinePart);
 			invoicePart.getDataMap().put("invoicenum", Long.toString(invoiceNumber));
-			saveObject(invoicePart);
+			saveObject(invoicePart);	// TODO this needs to be invoicePart.save()
 		}
 		sellInvoicePartsOutOfInventory(invoiceNumber);
 	}
@@ -300,6 +300,8 @@ public class DbServices {
 		StringBuilder query = new StringBuilder("UPDATE part p JOIN invoicelineitem ip ON p.partid = ip.partid "
 				+ "SET p.onhand = p.onhand - ip.quantity WHERE ip.invoicenum = ?;");
 		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(invoiceNumber))));
+		// TODO these need to go somewhere else, probably in InvoicePart
+		// TODO alos, these need to have the tables and fields corrected
 	}
 	
 	private static void sellRoPartsOutOfInventory(long roNumber) {
@@ -307,6 +309,7 @@ public class DbServices {
 				+ "JOIN web_invoice_story.job j ON jp.jobid = j.jobid "
 				+ "SET p.onhand = p.onhand - jp.quantity WHERE j.roid = ?;");
 		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(roNumber))));
+		// TODO these need to go somewhere else, probably in JobPart 
 	}
 	
 	private static int sendQueryToDb(StringBuilder queryString) {
@@ -499,7 +502,7 @@ public class DbServices {
 		return results;
 	}
 	
-	
+
 	// TODO move these builders into the DbObjectSearchable, probably as a static method (as I am thinking of making all the search methods)
 		// then i can just pass the results to the static method without doing a bunch of instanceof as in buildFoundObjects()
 		// e.g. buildFoundObjects would just need to have one line: object.buildObjects(resultSet);
@@ -739,7 +742,7 @@ public class DbServices {
 			account.setAccountName(queryResultSet.getString(6));
 			account.setBalance(queryResultSet.getBigDecimal(7));
 			
-			// TODO maybe get accountTransactions here
+			// TODO maybe query for accountTransactions here so we can add them to the List<AccountTransactions>
 			
 			results.add(i, account);
 			i++;
