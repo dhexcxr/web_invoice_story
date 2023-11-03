@@ -152,10 +152,11 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
-				SELECT account.accountId, account.customerId, account.accountNumber, account.accountName, account.balance
+				SELECT account.accountId, account.customerId, customer.lastname, customer.firstname, account.accountNumber, account.accountName, account.balance
 				FROM web_invoice_story.account
-				WHERE account.accountId = ?;""";
-		super.outerSearchQueryAppendix = "";
+				LEFT JOIN web_invoice_story.customer on customer.customerId = account.customerId
+				WHERE account.customerId = ?;""";	// NOTE this is searching by customerId, not the actual PK
+		super.outerSearchQueryAppendix = "";		// i'm not following precendent and I should probably make a new method for this
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;
 
