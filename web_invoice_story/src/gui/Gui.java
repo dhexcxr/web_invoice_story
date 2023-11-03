@@ -37,6 +37,7 @@ import listeners.SearchTextBoxListeners;
 import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
 import objects.Account;
+import objects.AccountTransaction;
 import objects.Customer;
 import objects.Invoice;
 import objects.InvoicePart;
@@ -637,9 +638,17 @@ public class Gui extends Composite {
 					DbServices.saveObject(cashieredInvoice);
 					
 					if (invoiceResult == InvoiceResult.CHARGED) {
+						AccountTransaction newTransaction = new AccountTransaction();
+						newTransaction.setAccountId(new Account().searchByPk(cashieredInvoice.getCustomerId()).getAccountId());
+						newTransaction.setInvoiceId(cashieredInvoice.getInvoiceNum());
+						newTransaction.setTransactionDate(Timestamp.from(Instant.now()));
+						newTransaction.setDescription("Invoice");
+						newTransaction.setAmount(BigDecimal.valueOf(22)/* amountDueDialog.getAmountCharged() */);	// if this is no longer valid, look into saving it in Invoice object, YES this is null
 						// create account entries
-						BigDecimal amountChargedToAccount = amountDueDialog.getAmountCharged();
 						// TODO send queries to DB to save account details
+						newTransaction.save();
+						
+						// TODO get Account, calculate new balance, build BalanceHx row, update Account
 					}
 					
 					clearInvoiceGui();

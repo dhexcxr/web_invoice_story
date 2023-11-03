@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import objects.Account;
+import objects.AccountTransaction;
 import objects.Customer;
 import objects.DbObjectSavable;
 import objects.DbObjectSearchable;
@@ -498,6 +499,8 @@ public class DbServices {
 			results = buildJobParts(queryResultSet);
 		} else if (object instanceof Account) {
 			results = buildAccounts(queryResultSet);
+		} else if (object instanceof AccountTransaction) {
+			results = buildAccountTransactions(queryResultSet);
 		}
 		return results;
 	}
@@ -745,6 +748,24 @@ public class DbServices {
 			// TODO maybe query for accountTransactions here so we can add them to the List<AccountTransactions>
 			
 			results.add(i, account);
+			i++;
+		}
+		return results;
+	}
+	
+	private static List<DbObjectSearchable> buildAccountTransactions(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+		int i = 0;
+		while (queryResultSet.next()) {
+			AccountTransaction accountTransaction = new AccountTransaction();
+			accountTransaction.setTransactionId(queryResultSet.getLong(1));
+			accountTransaction.setAccountId(queryResultSet.getLong(2));
+			accountTransaction.setInvoiceId(queryResultSet.getLong(3));
+			accountTransaction.setTransactionDate(queryResultSet.getTimestamp(4));
+			accountTransaction.setDescription(queryResultSet.getString(5));
+			accountTransaction.setAmount(queryResultSet.getBigDecimal(6));
+			
+			results.add(i, accountTransaction);
 			i++;
 		}
 		return results;

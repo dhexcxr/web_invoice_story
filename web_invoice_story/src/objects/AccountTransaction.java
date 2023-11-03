@@ -92,6 +92,10 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 	public BigDecimal getAmount() {
 		return amount == null ? BigDecimal.valueOf(0) : amount;
 	}
+	
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
 
 	
 	public Map<String, String> getDataMap() {
