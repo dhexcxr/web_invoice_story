@@ -47,7 +47,7 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 	@Override
 	public String getTableName() {
 		// get Customer table's name
-		return "customer";
+		return "account";
 	}
 	
 	public long getAccountId() {

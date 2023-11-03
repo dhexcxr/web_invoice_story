@@ -186,16 +186,16 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 				SELECT invoice.invoicenum, invoice.customerid, customer.lastname, customer.firstname,
 				customer.address, customer.city, customer.state, customer.zipcode,
 				customer.homephone, customer.cellphone, customer.email, invoice.notes, invoice.tax,
-				invoice.cashiereddate, invoice.cashiered, invoicePart.count, invoicePart.total + invoice.tax 
+				invoice.cashiereddate, invoice.cashiered, invoicelineitem.count, invoicelineitem.total + invoice.tax 
 				FROM web_invoice_story.invoice
 				JOIN web_invoice_story.customer ON invoice.customerid = customer.customerid 
 				JOIN (SELECT invoicenum, COUNT(partid) AS count, SUM(quantity * soldprice) AS total
-				\tFROM web_invoice_story.invoicepart GROUP BY invoicenum) AS invoicePart ON invoice.invoicenum = invoicePart.invoicenum
+				\tFROM web_invoice_story.invoicelineitem GROUP BY invoicenum) AS invoicelineitem ON invoice.invoicenum = invoicelineitem.invoicenum
 				WHERE customer.lastname LIKE ? OR customer.firstname LIKE ? OR invoice.invoicenum LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND invoice.invoicenum IN (";
 		super.querySubStringIndices[0] = 25;
 		super.querySubStringIndices[1] = 330;
-		
+
 		return packObjects(DbServices.searchForObject(this));
 	}
 	

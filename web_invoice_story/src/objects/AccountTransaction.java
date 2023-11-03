@@ -46,7 +46,7 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 	@Override
 	public String getTableName() {
 		// get Customer table's name
-		return "customer";
+		return "accounttransaction";
 	}
 	
 	public long getTransactionId() {
@@ -61,8 +61,8 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 		return accountId;
 	}
 
-	public void setAccountId(long customerId) {
-		this.accountId = customerId;
+	public void setAccountId(long accountId) {
+		this.accountId = accountId;
 	}
 
 	public long getInvoiceId() {
@@ -77,7 +77,7 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 		return transactionDate;
 	}
 
-	public void setAccountNumber(Timestamp transactionDate) {
+	public void setTransactionDate(Timestamp transactionDate) {
 		this.transactionDate = transactionDate;
 	}
 

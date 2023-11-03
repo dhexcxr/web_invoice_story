@@ -297,7 +297,7 @@ public class DbServices {
 		// update onHand of each part on invoice [invoiceNumber]
 			// TODO add prefix to these database fields, see if I can combine with sellRoPartsOutOfInventory() below
 		// update onHand of each part on invoice [invoiceNumber]
-		StringBuilder query = new StringBuilder("UPDATE part p JOIN invoicepart ip ON p.partid = ip.partid "
+		StringBuilder query = new StringBuilder("UPDATE part p JOIN invoicelineitem ip ON p.partid = ip.partid "
 				+ "SET p.onhand = p.onhand - ip.quantity WHERE ip.invoicenum = ?;");
 		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(invoiceNumber))));
 	}
