@@ -638,15 +638,6 @@ public class Gui extends Composite {
 					DbServices.saveObject(cashieredInvoice);
 					
 					if (invoiceResult == InvoiceResult.CHARGED) {
-						AccountTransaction newTransaction = new AccountTransaction();
-						newTransaction.setAccountId(new Account().searchByPk(cashieredInvoice.getCustomerId()).getAccountId());
-						newTransaction.setInvoiceId(cashieredInvoice.getInvoiceNum());
-						newTransaction.setTransactionDate(Timestamp.from(Instant.now()));
-						newTransaction.setDescription("Invoice");
-						newTransaction.setAmount(BigDecimal.valueOf(22)/* amountDueDialog.getAmountCharged() */);	// if this is no longer valid, look into saving it in Invoice object, YES this is null
-						// create account entries
-						// TODO send queries to DB to save account details
-						newTransaction.save();
 						// NOTE we might do this by first getting the Account, then, via new Account methods I will hafta make
 							// simply pass it the invoice (or the cashiered Project/RO in that case)
 							// the Account object will then take the responsibility of creating the new transaciton
@@ -664,8 +655,12 @@ public class Gui extends Composite {
 						
 							// i think in this case we really need to save the ammountCharged onto the Invoice
 								// like I had tentativly postulated at one point
+						cashieredInvoice.setAmountCharged(BigDecimal.valueOf(Long.parseLong(txtFinalTotal.getText())));
 						
-						// TODO get Account, calculate new balance, build BalanceHx row, update Account
+						Account accountChargedTo = new Account().searchByPk(cashieredInvoice.getCustomerId());
+						accountChargedTo.chargeNewTransaction(cashieredInvoice);
+
+						accountChargedTo.save();		// since we've already saved the new Transaction above, this is really only saving the new balance on the Account
 					}
 					
 					clearInvoiceGui();
