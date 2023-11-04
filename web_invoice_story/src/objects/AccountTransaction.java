@@ -194,6 +194,30 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AccountTransaction other = (AccountTransaction) obj;
+		if (this.transactionId != other.getTransactionId())
+			return false;
+		if (this.accountId != other.getAccountId())
+			return false;
+		if (this.invoiceId != other.getInvoiceId())
+			return false;
+		if (!this.transactionDate.equals(other.getTransactionDate()))
+			return false;
+		if (!this.description.equals(other.getDescription()))
+			return false;
+		if (!this.amount.equals(other.getAmount()))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "Account Transacion [transactionId=" + transactionId + ", accountId=" + accountId + ", invoiceId=" + invoiceId + ", transactionDate=" + transactionDate + ", description=" + description + ", amount=" + amount + "]";
 	}

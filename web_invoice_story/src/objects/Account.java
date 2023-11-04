@@ -1,6 +1,8 @@
 package objects;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,6 +109,37 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 
 	public void setTransactions(List<AccountTransaction> transactions) {
 		this.transactions = transactions;
+	}
+	
+	public void chargeNewTransaction(Invoice cashieredInvoice) {
+		AccountTransaction newTransaction = new AccountTransaction();
+		newTransaction.setAccountId(this.getAccountId());
+		newTransaction.setInvoiceId(cashieredInvoice.getInvoiceNum());
+		newTransaction.setTransactionDate(Timestamp.from(Instant.now()));
+		newTransaction.setDescription("Invoice");
+		newTransaction.setAmount(cashieredInvoice.getAmountCharged());
+//		newTransaction.save();
+		
+		// make sure newTransaction is not already in this.transactions
+		if (this.transactions.contains(newTransaction)) {
+			// maybe tell the dev/calling method that this Transaction is already a part of this Account
+			return;
+		}
+		
+		// save the transaction to this Account object and to the database
+		this.transactions.add(newTransaction);
+		newTransaction.save();
+		
+		// calculate the new Account balance
+		this.setBalance(this.getBalance().add(newTransaction.getAmount()));
+		
+		// create new Account Balance History row for database
+		AccountBalanceHx newBalanceHxLine = new AccountBalanceHx();
+		newBalanceHxLine.setAccountId(this.getAccountId());
+		newBalanceHxLine.setDate(newTransaction.getTransactionDate());
+		newBalanceHxLine.setBalance(this.getBalance());
+		newBalanceHxLine.save();
+
 	}
 
 	public Map<String, String> getDataMap() {
