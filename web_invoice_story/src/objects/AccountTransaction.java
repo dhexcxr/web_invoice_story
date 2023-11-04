@@ -156,6 +156,21 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 		return packObject(DbServices.searchForObjectByPk(this));
 	}
 	
+	public List<AccountTransaction> searchTransactionsByAccount(long accountId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
+		// search for a Customer from the database using a primary key
+		super.searchString = Long.toString(accountId);
+		super.searchQuery = """
+				SELECT accountTransaction.transactionId, accountTransaction.accountId, accountTransaction.invoiceId, accountTransaction.transactionDate, accountTransaction.description, accountTransaction.amount
+				FROM web_invoice_story.accountTransaction
+				WHERE accountTransaction.accountId = ?
+				ORDER BY accountTransaction.transactionDate;""";
+		super.outerSearchQueryAppendix = "";
+		super.querySubStringIndices[0] = 0;
+		super.querySubStringIndices[1] = 0;
+
+		return packObjects(DbServices.searchForObject(this));
+	}
+	
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on

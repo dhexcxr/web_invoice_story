@@ -745,7 +745,7 @@ public class DbServices {
 			account.setAccountName(queryResultSet.getString(6));
 			account.setBalance(queryResultSet.getBigDecimal(7));
 			
-			// TODO maybe query for accountTransactions here so we can add them to the List<AccountTransactions>
+			account.setTransactions(new AccountTransaction().searchTransactionsByAccount(account.getAccountId()));
 			
 			results.add(i, account);
 			i++;
