@@ -31,8 +31,30 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	private BigDecimal total;
 //	private boolean cashiered;		// we might be able to use the presence of closedDate to tell if it has been cashiered
 	
+	private BigDecimal amountCharged;
+	
 	
 	public Project() {
+	}
+	
+	@Override
+	public long getDbPk() {
+		return getProjectId();
+	}
+	
+	@Override
+	public void setDbPk(long dbPk) {
+		projectId = dbPk;
+	}
+	
+	@Override
+	public String getPkName() {
+		return "roid";
+	}
+
+	@Override
+	public String getTableName() {
+		return "ro";
 	}
 
 	public long getProjectId() {
@@ -136,6 +158,35 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public String getUnitData() {
 		return getUnitYear() + " " + getUnitMake() + " " + getUnitModel() + "\n" + getUnitVin();
 	}
+	
+	public List<Job> getJobs() {
+		if (jobs == null) {
+			jobs = new ArrayList<>();
+		}
+		return jobs;
+	}
+
+	public void setJobs(List<Job> jobs) {
+		this.jobs = jobs;
+	}
+	
+	public String getJobNames() {
+		StringBuilder jobNames = new StringBuilder();
+		for (Job job : getJobs()) {
+			if (jobNames.length() > 0) {
+				jobNames.append(", ");
+			}
+			jobNames.append(job.getJobName());
+		}
+		return jobNames.toString();
+	}
+	
+	public void addJob(Job job) {
+		if (jobs == null) {
+			jobs = new ArrayList<>();
+		}
+		jobs.add(job);
+	}
 
 	public Timestamp getCreatedDate() {
 		return createdDate;
@@ -168,54 +219,9 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-
-	public List<Job> getJobs() {
-		if (jobs == null) {
-			jobs = new ArrayList<>();
-		}
-		return jobs;
+	
 	}
 
-	public void setJobs(List<Job> jobs) {
-		this.jobs = jobs;
-	}
-	
-	public String getJobNames() {
-		StringBuilder jobNames = new StringBuilder();
-		for (Job job : getJobs()) {
-			if (jobNames.length() > 0) {
-				jobNames.append(", ");
-			}
-			jobNames.append(job.getJobName());
-		}
-		return jobNames.toString();
-	}
-	
-	public void addJob(Job job) {
-		if (jobs == null) {
-			jobs = new ArrayList<>();
-		}
-		jobs.add(job);
-	}
-
-	@Override
-	public long getDbPk() {
-		return getProjectId();
-	}
-	
-	@Override
-	public void setDbPk(long dbPk) {
-		projectId = dbPk;
-	}
-	
-	@Override
-	public String getPkName() {
-		return "roid";
-	}
-
-	@Override
-	public String getTableName() {
-		return "ro";
 	}
 	
 	public Map<String, String> getDataMap() {

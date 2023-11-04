@@ -11,8 +11,8 @@ import objects.ProjectSite;
 
 public class UnitSearchListener extends MouseAdapter{
 
-	MyText txtBox;
-	String txtBoxStartingText;
+	MyText txtUnitRepairOrder;
+	String txtUnitRepairOrderStartingText;
 
 	public UnitSearchListener(MyText txtBox) {
 		this.txtBox = txtBox;
@@ -23,19 +23,19 @@ public class UnitSearchListener extends MouseAdapter{
 	public void mouseDoubleClick(MouseEvent e) {
 		UnitSearchDialog unitSearchDialog = new UnitSearchDialog(Display.getDefault().getActiveShell(), SWT.NONE);
 		ProjectSite selectedUnit;
-		if (!txtBox.getText().equals(txtBoxStartingText)) {
+		if (!txtUnitRepairOrder.getText().equals(txtUnitRepairOrderStartingText)) {
 			// if we're editing a current unit, pass Search to ProjectSite Search Dialog
-			selectedUnit = (ProjectSite) unitSearchDialog.open(((ProjectSite) txtBox.getData()).getOwner());
+			selectedUnit = (ProjectSite) unitSearchDialog.open(((ProjectSite) txtUnitRepairOrder.getData()).getOwner());
 		} else {
 			// open normal, empty ProjectSite Search Dialog
-				selectedUnit = (ProjectSite) unitSearchDialog.open();
+			selectedUnit = (ProjectSite) unitSearchDialog.open();
 		}
 		if (selectedUnit instanceof ProjectSite) {
 			StringBuilder unitData = new StringBuilder(selectedUnit.getStateProjectSite() + " " + selectedUnit.getAddressProjectSite() + "\n" +
 														selectedUnit.getCityProjectSiteString() + "\nVin: " + 
 														selectedUnit.getNotesProjectSite() + "\nColor: " + selectedUnit.getZipCodeProjectSiteString() + "\n");
-			txtBox.setText(unitData.toString());
-			txtBox.setData(selectedUnit);
+			txtUnitRepairOrder.setText(unitData.toString());
+			txtUnitRepairOrder.setData(selectedUnit);
 		}
 	}
 }

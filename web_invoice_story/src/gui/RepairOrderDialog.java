@@ -492,7 +492,7 @@ public class RepairOrderDialog extends Dialog {
 		// LISTENERS
 		// RO Controls
 		shlRepairOrder.addListener(SWT.Traverse, event -> {		// disable pressing [Esc] to close the dialog
-			if (event.detail == SWT.TRAVERSE_ESCAPE) {
+			if (event.detail == SWT.TRAVERSE_ESCAPE) {	// this doesn't seem to be working in the web version
 				event.doit = false;
 			}
 		});
