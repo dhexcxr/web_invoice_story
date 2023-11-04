@@ -53,8 +53,8 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 		return transactionId;
 	}
 
-	public void setTransactionId(long customerId) {
-		this.transactionId = customerId;
+	public void setTransactionId(long transactionId) {
+		this.transactionId = transactionId;
 	}
 
 	public long getAccountId() {
@@ -142,9 +142,9 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 	}
 	
 	@Override
-	public AccountTransaction searchByPk(long customerId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
+	public AccountTransaction searchByPk(long transactionId) {		// NOTE when fixing that bug change the name of this to SearchByPk or something
 		// search for a Customer from the database using a primary key
-		super.searchString = Long.toString(customerId);
+		super.searchString = Long.toString(transactionId);
 		super.searchQuery = """
 				SELECT accountTransaction.transactionId, accountTransaction.accountId, accountTransaction.invoiceId, accountTransaction.transactionDate, accountTransaction.description, accountTransaction.amount
 				FROM web_invoice_story.accountTransaction
@@ -161,21 +161,21 @@ public class AccountTransaction extends DbObjectSearchable implements DbObjectSa
 			// from the super class and make them return objects of the Class they're called on
 	private List<AccountTransaction> packObjects(List<DbObjectSearchable> searchResults) {
 		// helper to cast List of DbObjectSearchable to List of Customer
-		List<AccountTransaction> customerSearchResults = new ArrayList<>();
+		List<AccountTransaction> transactionSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
-			customerSearchResults.add(packObject(object));
+			transactionSearchResults.add(packObject(object));
 		}
 		
-		return customerSearchResults;
+		return transactionSearchResults;
 	}
 	
 	private AccountTransaction packObject(DbObjectSearchable dbObjectSearchable) {
 		// helper to cast List of DbObjectSearchable to List of Customer
-			if (dbObjectSearchable instanceof AccountTransaction customer) {
-				return customer;
+			if (dbObjectSearchable instanceof AccountTransaction accountTransaction) {
+				return accountTransaction;
 			}
-			throw new IllegalArgumentException("objects.AccountTransaction.packObject(): dbObjectSearchable is not a AccountTransaction");
+			throw new IllegalArgumentException("objects.AccountTransaction.packObject(): dbObjectSearchable is not an AccountTransaction");
 	}
 
 	@Override

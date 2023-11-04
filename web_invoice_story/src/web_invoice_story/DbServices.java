@@ -754,7 +754,7 @@ public class DbServices {
 	}
 	
 	private static List<DbObjectSearchable> buildAccountTransactions(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);	// TODO probably take these MAX_RESULTS out of these instantiations
 		int i = 0;
 		while (queryResultSet.next()) {
 			AccountTransaction accountTransaction = new AccountTransaction();
