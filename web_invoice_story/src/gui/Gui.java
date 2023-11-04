@@ -616,7 +616,7 @@ public class Gui extends Composite {
 					return;
 				}
 				AmountDueDialog amountDueDialog = new AmountDueDialog(shell, getStyle());
-				Invoice.InvoiceResult invoiceResult = amountDueDialog.open(txtFinalTotal.getText());
+				Invoice.InvoiceResult invoiceResult = amountDueDialog.open(txtFinalTotal);
 				
 				if (invoiceResult != InvoiceResult.CANCELED) {
 					Invoice cashieredInvoice = new Invoice();
@@ -647,6 +647,23 @@ public class Gui extends Composite {
 						// create account entries
 						// TODO send queries to DB to save account details
 						newTransaction.save();
+						// NOTE we might do this by first getting the Account, then, via new Account methods I will hafta make
+							// simply pass it the invoice (or the cashiered Project/RO in that case)
+							// the Account object will then take the responsibility of creating the new transaciton
+							// and adding it to its current List<AccountTransactions> of transactions
+							// then either it will save it self, or after we pass it the Invoice/Project/RO
+							// we will call Account.save() here, and it will be saved
+							// then DbServices will see that it's an Account object and save the Transactions separately
+							// sorta like we do InvoiceParts/InvoiceLineItems now
+								// though in this case we'll need to figure out some way to save only the latest transaction
+								// not every single one that is in the List<AccountTransaction>
+							// this will probably be cleaner overall, but I think right now I'm
+							// more focused on getting this *working*
+
+							// hopefully this refactor won't be too expensive in the future
+						
+							// i think in this case we really need to save the ammountCharged onto the Invoice
+								// like I had tentativly postulated at one point
 						
 						// TODO get Account, calculate new balance, build BalanceHx row, update Account
 					}

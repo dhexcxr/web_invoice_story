@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import guiParts.MyText;
 import objects.Invoice;
 import objects.Invoice.InvoiceResult;
 
@@ -42,6 +43,8 @@ public class AmountDueDialog extends Dialog{
 	private Button btnChargeRemainderToAcct;
 	private Button btnCashier;
 	private Button btnCancel;
+	
+	private MyText finalTotalTextFromInvoice;
 
 	public AmountDueDialog(Shell parent, int style) {
 		super(parent, style);
@@ -53,6 +56,11 @@ public class AmountDueDialog extends Dialog{
 
 	public void setAmountCharged(BigDecimal amountCharged) {
 		this.amountCharged = amountCharged;
+	}
+	
+	public Invoice.InvoiceResult open(MyText finalTotalText) {
+		this.finalTotalTextFromInvoice = finalTotalText;
+		return open(finalTotalText.getText());
 	}
 
 	public Invoice.InvoiceResult open(String finalTotal) {
@@ -199,9 +207,14 @@ public class AmountDueDialog extends Dialog{
 				} else if (chageDue.compareTo(BigDecimal.valueOf(0)) == 0) {
 					changeDueMessageBox.setText("Change Due");
 					changeDueMessageBox.setMessage("No change due");
-					result = btnChargeRemainderToAcct.getSelection()
-							? InvoiceResult.CHARGED
-							: InvoiceResult.NOCHANGE;
+					if(btnChargeRemainderToAcct.getSelection()) {
+							// NOTE this is an absolutely, beautifully terrible hack way to return the amount charged back to the Gui
+								// now we can use it to set the AcountTransaction.ammount
+						finalTotalTextFromInvoice.setText(txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
+						result = InvoiceResult.CHARGED;
+					} else {
+						result = InvoiceResult.NOCHANGE;;
+					}
 				} else if (chageDue.compareTo(BigDecimal.valueOf(0)) < 0) {
 					changeDueMessageBox.setText("Change Due");
 					changeDueMessageBox.setMessage("Change due to Customer: $" + chageDue.toString().replace("-", ""));

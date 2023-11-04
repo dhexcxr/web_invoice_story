@@ -28,6 +28,8 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 	private TableItem[] tableLineItems;
 	private Part[] parts;
 	
+	private BigDecimal amountCharged;
+	
 	public enum InvoiceResult {
 		WITHCHANGE,
 		NOCHANGE,
@@ -180,6 +182,14 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
+	}
+
+	public BigDecimal getAmountCharged() {
+		return amountCharged;
+	}
+
+	public void setAmountCharged(BigDecimal amountCharged) {
+		this.amountCharged = amountCharged;
 	}
 
 	@Override
