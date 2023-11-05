@@ -52,12 +52,15 @@ import listeners.RepairOrderPartDeleteLineItemListener;
 import listeners.RequiredTextBoxModifyListener;
 import listeners.TextBoxFocusListener;
 import listeners.UnitSearchListener;
+import objects.Account;
 import objects.Customer;
+import objects.Invoice;
 import objects.Job;
 import objects.JobLabor;
 import objects.JobPart;
 import objects.Project;
 import objects.ProjectSite;
+import objects.Invoice.InvoiceResult;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
@@ -532,13 +535,23 @@ public class RepairOrderDialog extends Dialog {
 					return;
 				}
 				AmountDueDialog amountDueDialog = new AmountDueDialog(shlRepairOrder, getStyle());
-				boolean cashieredNow = amountDueDialog.open(textFinalTotalRepairOrder.getText());
+				Invoice.InvoiceResult cashieredNow = amountDueDialog.open(textFinalTotalRepairOrder);
 
-				if (cashieredNow) {
+				if (cashieredNow != InvoiceResult.CANCELED) {
 					Application.getLogger().log(Level.INFO, "RO Cashiered");
 					currentRepairOrder.setClosedDate(Timestamp.from(Instant.now()));
 					cashiered = true;
 					saveRo(currentRepairOrder);
+					
+					if (cashieredNow == InvoiceResult.CHARGED) {
+						currentRepairOrder.setAmountCharged(BigDecimal.valueOf(Long.parseLong(textFinalTotalRepairOrder.getText())));
+						
+						Account accountChargedTo = new Account().searchByPk(currentRepairOrder.getCustomerId());
+						accountChargedTo.chargeNewTransaction(currentRepairOrder);
+
+						accountChargedTo.save();		// since we've already saved the new Transaction above, this is really only saving the new balance on the Account
+					}
+					
 					shlRepairOrder.close();
 				}
 			}
