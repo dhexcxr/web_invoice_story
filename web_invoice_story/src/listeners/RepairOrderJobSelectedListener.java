@@ -95,7 +95,9 @@ public class RepairOrderJobSelectedListener extends SelectionAdapter {
 		tabFolderJobsRepairOrder.setData(selectedJob);
 		
 		jobDetailsText.get(JOB_NAME_TEXT).setText(selectedJob.getJobName().equals("") ? "Job Name..." : selectedJob.getJobName());
-		jobDetailsText.get(JOB_COMPLAINT_TEXT).setText(selectedJob.getComplaints().equals("") ? "Complaints..." : selectedJob.getComplaints());
+
+	// TODO change this text to "Enter Description..."
+		jobDetailsText.get(JOB_COMPLAINT_TEXT).setText(selectedJob.getDescription().equals("") ? "Complaints..." : selectedJob.getDescription());
 		jobDetailsText.get(JOB_RESOLUTION_TEXT).setText(selectedJob.getResolution().equals("") ? "Resolution..." : selectedJob.getResolution());
 		jobDetailsText.get(JOB_RECOMMENDATIONS_TEXT).setText(selectedJob.getReccomendations().equals("") ? "Reccomendations..." : selectedJob.getReccomendations());
 		

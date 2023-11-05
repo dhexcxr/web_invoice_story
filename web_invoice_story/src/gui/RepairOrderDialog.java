@@ -656,8 +656,8 @@ public class RepairOrderDialog extends Dialog {
 				txtCustomerRepairOrder.setText(project.getCustomerName() + "\n" + project.getCustomerData());
 			}
 
-			if (project.getUnitId() != 0) {
-				ProjectSite roUnit = new ProjectSite().searchByPk(project.getUnitId());
+			if (project.getProjectSiteId() != 0) {
+				ProjectSite roUnit = new ProjectSite().searchByPk(project.getProjectSiteId());
 				txtUnitRepairOrder.setData(roUnit);
 				txtUnitRepairOrder.setText(roUnit.getStateProjectSite() + " " + roUnit.getAddressProjectSite() + "\n" +
 						roUnit.getCityProjectSiteString() + "\nVin: " + roUnit.getNotesProjectSite() + "\nColor: " +
@@ -815,7 +815,7 @@ public class RepairOrderDialog extends Dialog {
 		
 		if (txtUnitRepairOrder.getData() != null && ((ProjectSite) txtUnitRepairOrder.getData()).getProjectSiteId() != -1) {
 			ProjectSite thisUnit = (ProjectSite) txtUnitRepairOrder.getData();
-			project.setUnitId(thisUnit.getProjectSiteId());
+			project.setProjectSiteId(thisUnit.getProjectSiteId());
 			project.setUnitYear(thisUnit.getStateProjectSite());
 			project.setUnitMake(thisUnit.getAddressProjectSite());
 			project.setUnitModel(thisUnit.getCityProjectSiteString());

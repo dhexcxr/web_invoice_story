@@ -12,7 +12,7 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 	private long jobId = -1;
 	private long projectId;
 	private	String jobName;
-	private String complaints;
+	private String description;
 	private String resolution;
 	private String reccomendations;
 	
@@ -27,11 +27,11 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Job(String jobName, String complaints, String resolution, String reccomendations, List<Part> parts,
+	public Job(String jobName, String description, String resolution, String reccomendations, List<Part> parts,
 			List<JobLabor> labor) {
 		super();
 		this.jobName = jobName;
-		this.complaints = complaints;
+		this.description = description;
 		this.resolution = resolution;
 		this.reccomendations = reccomendations;
 		this.parts = parts;
@@ -62,12 +62,12 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		this.jobName = jobName;
 	}
 
-	public String getComplaints() {
-		return complaints == null ? "" : complaints;
+	public String getDescription() {
+		return description == null ? "" : description;
 	}
 
-	public void setComplaints(String complaints) {
-		this.complaints = complaints;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getResolution() {
@@ -182,7 +182,7 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 				dataMap.put("jobid", Long.toString(jobId));
 			}
 			dataMap.put("name", jobName);
-			dataMap.put("complaint", complaints);
+			dataMap.put("description", description);
 			dataMap.put("resolution", resolution);
 			dataMap.put("recommendations", reccomendations);
 		}

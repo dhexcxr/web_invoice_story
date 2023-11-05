@@ -681,7 +681,7 @@ public class DbServices {
 			job.setJobId(queryResultSet.getLong(1));
 			job.setProjectId(queryResultSet.getLong(2));
 			job.setJobName(queryResultSet.getString(3));
-			job.setComplaints(queryResultSet.getString(4));
+			job.setDescription(queryResultSet.getString(4));
 			job.setResolution(queryResultSet.getString(5));
 			job.setReccomendations(queryResultSet.getString(6));
 			

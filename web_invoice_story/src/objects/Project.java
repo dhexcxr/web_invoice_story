@@ -18,7 +18,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	private Customer customer;
 	private String customerName;
 	private String customerData;
-	private long unitId;
+	private long projectSiteId;
 	private ProjectSite projectSite;
 	private String unitYear;
 	private String unitMake;
@@ -107,12 +107,12 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 		this.customerData = customerData;
 	}
 
-	public long getUnitId() {
-		return unitId;
+	public long getProjectSiteId() {
+		return projectSiteId;
 	}
 
-	public void setUnitId(long unitId) {
-		this.unitId = unitId;
+	public void setProjectSiteId(long projectSiteId) {
+		this.projectSiteId = projectSiteId;
 	}
 
 	public ProjectSite getUnit() {
