@@ -13,6 +13,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import guiParts.MyText;
+import objects.AmountDueResponse;
+import objects.AmountDueResponse.Result;
 import objects.Invoice;
 import objects.Invoice.InvoiceResult;
 
@@ -37,6 +39,8 @@ public class AmountDueDialog extends Dialog{
 	private Text txtFinalTotal;
 	private Text txtAmountTendered;
 	private Text txtAmountCharged;
+	Label lblTotalAmountDue;
+	Label lblAmountTendered;
 	
 	private BigDecimal amountCharged;
 	
@@ -45,6 +49,8 @@ public class AmountDueDialog extends Dialog{
 	private Button btnCancel;
 	
 	private MyText finalTotalTextFromInvoice;
+	
+	private AmountDueResponse response = new AmountDueResponse();		// NOTE this should allow to remove the hack txt fields i currently use to return the Ammount Charged
 
 	public AmountDueDialog(Shell parent, int style) {
 		super(parent, style);
@@ -79,6 +85,34 @@ public class AmountDueDialog extends Dialog{
 			}
 		}
 		return result;
+	}
+	
+	public AmountDueResponse open(BigDecimal accountBalance) {		// once we finish refactoring we'll go back to only 1 of these
+												// or maybe 2, this one with BigDecimal parameter for Account Payments
+					// make class properties to hold the Message and Dialog Title text
+		createContents();
+		response.setResult(Result.PAYMENT);
+		
+		lblTotalAmountDue.setText("Current Account Balance");
+		txtFinalTotal.setText("$" + accountBalance.toString());
+		btnChargeRemainderToAcct.setVisible(false);		// remove options to charge account payments to the account
+		txtAmountCharged.setVisible(false);
+		
+		btnCashier.setText("Payment");
+		
+		shlAmountDue.setTabList(new Control[]{txtFinalTotal, txtAmountTendered, btnChargeRemainderToAcct, txtAmountCharged, btnCancel, btnCashier});
+//		if (new BigDecimal(finalTotal.replaceAll("[^-.0-9]", "")).compareTo(BigDecimal.valueOf(0)) < 0) {
+//			txtAmountTendered.setText("$0");
+//		}
+		shlAmountDue.open();
+		shlAmountDue.layout();
+		Display display = getParent().getDisplay();
+		while (!shlAmountDue.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return response;
 	}
 	
 	private void createContents() {
@@ -124,7 +158,7 @@ public class AmountDueDialog extends Dialog{
 		fd_txtAmountTendered.top = new FormAttachment(txtFinalTotal);
 		txtAmountTendered.setLayoutData(fd_txtAmountTendered);
 
-		Label lblTotalAmountDue = new Label(shlAmountDue, SWT.NONE);
+		lblTotalAmountDue = new Label(shlAmountDue, SWT.NONE);
 		FormData fd_lblTotalAmountDue = new FormData();
 		fd_lblTotalAmountDue.right = new FormAttachment(txtAmountTendered, -10);
 		fd_lblTotalAmountDue.top = new FormAttachment(txtFinalTotal, 0, SWT.CENTER);
@@ -132,7 +166,7 @@ public class AmountDueDialog extends Dialog{
 		lblTotalAmountDue.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
 		lblTotalAmountDue.setText("Total Amount Due:");
 		
-		Label lblAmountTendered = new Label(shlAmountDue, SWT.NONE);
+		lblAmountTendered = new Label(shlAmountDue, SWT.NONE);
 		FormData fd_lblAmountTendered = new FormData();
 		fd_lblAmountTendered.right = new FormAttachment(lblTotalAmountDue, 0, SWT.RIGHT);
 		fd_lblAmountTendered.top = new FormAttachment(txtAmountTendered, 0, SWT.CENTER);
@@ -183,51 +217,72 @@ public class AmountDueDialog extends Dialog{
 		btnCashier.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				
-				// calculate any change
+
+				// prepare to tell the user the result
 				BigDecimal total = new BigDecimal(txtFinalTotal.getText().replaceAll("[^-.0-9]", ""));
 				BigDecimal tendered = new BigDecimal(txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
-				BigDecimal chageDue = total.subtract(tendered);
-				
-				if (btnChargeRemainderToAcct.getSelection()) {
-					chageDue = chageDue.subtract(new BigDecimal(txtAmountCharged.getText().replaceAll("[^-.0-9]", "")));
-					
-				}
-				
-				// prepare to tell the user the result
 				MessageBox changeDueMessageBox= new MessageBox(shlAmountDue, getStyle());
 				
-				// if not enough money tendered, complain
-				if (chageDue.compareTo(BigDecimal.valueOf(0)) > 0) {
-					MessageBox notEnoughTenderedMessageBox = new MessageBox(shlAmountDue, SWT.ICON_INFORMATION);
-					notEnoughTenderedMessageBox.setText("Notice");
-					notEnoughTenderedMessageBox.setMessage("Customer did not tender enough money...");
-					notEnoughTenderedMessageBox.open();
-					return;
-				} else if (chageDue.compareTo(BigDecimal.valueOf(0)) == 0) {
-					changeDueMessageBox.setText("Change Due");
-					changeDueMessageBox.setMessage("No change due");
-					if(btnChargeRemainderToAcct.getSelection()) {
-							// NOTE this is an absolutely, beautifully terrible hack way to return the amount charged back to the Gui
-								// now we can use it to set the AcountTransaction.ammount
-						finalTotalTextFromInvoice.setText(txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
-						result = InvoiceResult.CHARGED;
+				if (response.getResult() == Result.PAYMENT) {
+					if (tendered.compareTo(total) > 0) {
+						response.setAmountCharged(tendered.negate());
+						changeDueMessageBox.setText("Notice");
+						changeDueMessageBox.setMessage("Please enter a smaller amount\nYou can't pay off more than you owe...");
+					} else if (tendered.compareTo(BigDecimal.valueOf(0)) <= 0) {
+						MessageBox pleaseEnterAmountTenderedMessageBox = new MessageBox(shlAmountDue, SWT.ICON_INFORMATION);
+						pleaseEnterAmountTenderedMessageBox.setText("Notice");
+						pleaseEnterAmountTenderedMessageBox.setMessage("Please enter tendered amount...");
+						pleaseEnterAmountTenderedMessageBox.open();
+						return;
 					} else {
-						result = InvoiceResult.NOCHANGE;;
+						response.setAmountCharged(tendered.negate());
+						changeDueMessageBox.setText("Thank you");
+						changeDueMessageBox.setMessage("Thank you for the payment");
 					}
-				} else if (chageDue.compareTo(BigDecimal.valueOf(0)) < 0) {
-					changeDueMessageBox.setText("Change Due");
-					changeDueMessageBox.setMessage("Change due to Customer: $" + chageDue.toString().replace("-", ""));
-					result = InvoiceResult.WITHCHANGE;
+				} else {
+
+					// calculate any change
+					BigDecimal chageDue = total.subtract(tendered);
+
+					if (btnChargeRemainderToAcct.getSelection()) {
+						chageDue = chageDue.subtract(new BigDecimal(txtAmountCharged.getText().replaceAll("[^-.0-9]", "")));
+
+					}
+
+					// if not enough money tendered, complain
+					if (chageDue.compareTo(BigDecimal.valueOf(0)) > 0) {
+						MessageBox notEnoughTenderedMessageBox = new MessageBox(shlAmountDue, SWT.ICON_INFORMATION);
+						notEnoughTenderedMessageBox.setText("Notice");
+						notEnoughTenderedMessageBox.setMessage("Customer did not tender enough money...");
+						notEnoughTenderedMessageBox.open();
+						return;
+					} else if (chageDue.compareTo(BigDecimal.valueOf(0)) == 0) {
+						changeDueMessageBox.setText("Change Due");
+						changeDueMessageBox.setMessage("No change due");
+						if(btnChargeRemainderToAcct.getSelection()) {
+							// NOTE this is an absolutely, beautifully terrible hack way to return the amount charged back to the Gui
+							// now we can use it to set the AcountTransaction.ammount
+							finalTotalTextFromInvoice.setText(txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
+							result = InvoiceResult.CHARGED;
+							response.setResult(Result.CHARGED);
+						} else {
+							result = InvoiceResult.NOCHANGE;
+							response.setResult(Result.NOCHANGE);
+						}
+					} else if (chageDue.compareTo(BigDecimal.valueOf(0)) < 0) {
+						changeDueMessageBox.setText("Change Due");
+						changeDueMessageBox.setMessage("Change due to Customer: $" + chageDue.toString().replace("-", ""));
+						result = InvoiceResult.WITHCHANGE;
+						response.setResult(Result.WITHCHANGE);
+					}
 				}
-				
 				changeDueMessageBox.open();
 				shlAmountDue.close();
 			}
 		});
 		btnCashier.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
 		btnCashier.setText("Cashier");
-		
+
 		btnCancel = new Button(shlAmountDue, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.width = 160;
@@ -240,7 +295,8 @@ public class AmountDueDialog extends Dialog{
 			public void mouseDown(MouseEvent e) {
 				// close dialog
 				shlAmountDue.close();
-				result = InvoiceResult.CANCELED;
+//				result = InvoiceResult.CANCELED;
+//				response.setResult(Result.CANCELED);
 			}
 		});
 		btnCancel.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
