@@ -80,6 +80,14 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	
+	public String getFullName() {
+		String fullName = lastName;
+		if (firstName != null && firstName.length() != 0) {
+			fullName = fullName + ", " + firstName;
+		}
+		return fullName;
+	}
 
 	public String getAddress() {
 		return address == null ? "" : address;
