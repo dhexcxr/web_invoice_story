@@ -30,7 +30,7 @@
     <booleanAttribute key="org.eclipse.rap.launch.developmentMode" value="true"/>
     <booleanAttribute key="org.eclipse.rap.launch.openBrowser" value="true"/>
     <intAttribute key="org.eclipse.rap.launch.port" value="8080"/>
-    <stringAttribute key="org.eclipse.rap.launch.servletPath" value="/mail"/>
+    <stringAttribute key="org.eclipse.rap.launch.servletPath" value="/web_invoice_story"/>
     <intAttribute key="org.eclipse.rap.launch.sessionTimeout" value="0"/>
     <booleanAttribute key="org.eclipse.rap.launch.terminatePrevious" value="true"/>
     <booleanAttribute key="org.eclipse.rap.launch.useDefaultDataLocation" value="true"/>

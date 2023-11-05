@@ -7,7 +7,7 @@
          point="org.eclipse.rap.ui.entrypoint">
       <entrypoint
             id="mailapp.entrypoint"
-            path="/mail"
+            path="/web_invoice_story"
             
             class="web_invoice_story.Application">
             <!--applicationId="rap_mail_template.mailapp"-->
