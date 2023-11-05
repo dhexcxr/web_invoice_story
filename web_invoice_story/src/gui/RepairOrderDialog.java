@@ -53,6 +53,8 @@ import listeners.RequiredTextBoxModifyListener;
 import listeners.TextBoxFocusListener;
 import listeners.UnitSearchListener;
 import objects.Account;
+import objects.AmountDueResponse;
+import objects.AmountDueResponse.Result;
 import objects.Customer;
 import objects.Invoice;
 import objects.Job;
@@ -535,16 +537,16 @@ public class RepairOrderDialog extends Dialog {
 					return;
 				}
 				AmountDueDialog amountDueDialog = new AmountDueDialog(shlRepairOrder, getStyle());
-				Invoice.InvoiceResult cashieredNow = amountDueDialog.open(textFinalTotalRepairOrder);
+				AmountDueResponse cashieredNow = amountDueDialog.open(textFinalTotalRepairOrder);
 
-				if (cashieredNow != InvoiceResult.CANCELED) {
+				if (cashieredNow.getResult() != Result.CANCELED) {
 					Application.getLogger().log(Level.INFO, "RO Cashiered");
 					currentRepairOrder.setClosedDate(Timestamp.from(Instant.now()));
 					cashiered = true;
 					saveRo(currentRepairOrder);
 					
-					if (cashieredNow == InvoiceResult.CHARGED) {
-						currentRepairOrder.setAmountCharged(BigDecimal.valueOf(Long.parseLong(textFinalTotalRepairOrder.getText())));
+					if (cashieredNow.getResult() == Result.CHARGED) {
+						currentRepairOrder.setAmountCharged(cashieredNow.getAmountCharged());
 						
 						Account accountChargedTo = new Account().searchByPk(currentRepairOrder.getCustomerId());
 						accountChargedTo.chargeNewTransaction(currentRepairOrder);

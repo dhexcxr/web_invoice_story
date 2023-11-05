@@ -64,12 +64,12 @@ public class AmountDueDialog extends Dialog{
 		this.amountCharged = amountCharged;
 	}
 	
-	public Invoice.InvoiceResult open(MyText finalTotalText) {
+	public AmountDueResponse open(MyText finalTotalText) {
 		this.finalTotalTextFromInvoice = finalTotalText;
 		return open(finalTotalText.getText());
 	}
 
-	public Invoice.InvoiceResult open(String finalTotal) {
+	public AmountDueResponse open(String finalTotal) {
 		createContents();
 		txtFinalTotal.setText(finalTotal);
 		shlAmountDue.setTabList(new Control[]{txtFinalTotal, txtAmountTendered, btnChargeRemainderToAcct, txtAmountCharged, btnCancel, btnCashier});
@@ -84,7 +84,7 @@ public class AmountDueDialog extends Dialog{
 				display.sleep();
 			}
 		}
-		return result;
+		return response;
 	}
 	
 	public AmountDueResponse open(BigDecimal accountBalance) {		// once we finish refactoring we'll go back to only 1 of these
@@ -262,7 +262,7 @@ public class AmountDueDialog extends Dialog{
 						if(btnChargeRemainderToAcct.getSelection()) {
 							// NOTE this is an absolutely, beautifully terrible hack way to return the amount charged back to the Gui
 							// now we can use it to set the AcountTransaction.ammount
-							finalTotalTextFromInvoice.setText(txtAmountTendered.getText().replaceAll("[^-.0-9]", ""));
+							response.setAmountCharged(new BigDecimal(txtAmountCharged.getText().replaceAll("[^-.0-9]", "")));
 							result = InvoiceResult.CHARGED;
 							response.setResult(Result.CHARGED);
 						} else {

@@ -622,9 +622,9 @@ public class Gui extends Composite {
 					return;
 				}
 				AmountDueDialog amountDueDialog = new AmountDueDialog(shell, getStyle());
-				Invoice.InvoiceResult invoiceResult = amountDueDialog.open(txtFinalTotal);
+				AmountDueResponse invoiceResult = amountDueDialog.open(txtFinalTotal);
 				
-				if (invoiceResult != InvoiceResult.CANCELED) {
+				if (invoiceResult.getResult() != Result.CANCELED) {
 					Invoice cashieredInvoice = new Invoice();
 					cashieredInvoice.setCustomerId(((Customer) txtCustomerInvoice.getData()).getCustomerId());
 					cashieredInvoice.setCustomerData(txtCustomerInvoice.getText());
@@ -643,7 +643,7 @@ public class Gui extends Composite {
 					// TODO i think this can be done with the Invoice object now
 					DbServices.saveObject(cashieredInvoice);
 					
-					if (invoiceResult == InvoiceResult.CHARGED) {
+					if (invoiceResult.getResult() == Result.CHARGED) {
 						// NOTE we might do this by first getting the Account, then, via new Account methods I will hafta make
 							// simply pass it the invoice (or the cashiered Project/RO in that case)
 							// the Account object will then take the responsibility of creating the new transaciton
@@ -661,7 +661,7 @@ public class Gui extends Composite {
 						
 							// i think in this case we really need to save the ammountCharged onto the Invoice
 								// like I had tentativly postulated at one point
-						cashieredInvoice.setAmountCharged(BigDecimal.valueOf(Long.parseLong(txtFinalTotal.getText())));
+						cashieredInvoice.setAmountCharged(invoiceResult.getAmountCharged());
 						
 						Account accountChargedTo = new Account().searchByPk(cashieredInvoice.getCustomerId());
 						accountChargedTo.chargeNewTransaction(cashieredInvoice);
