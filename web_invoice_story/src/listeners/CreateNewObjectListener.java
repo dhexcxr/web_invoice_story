@@ -49,7 +49,7 @@ public class CreateNewObjectListener extends MouseAdapter{
 		} else if (table.getColumn(0).getText().equals("Part Number")) {
 			NewPartDialog addNewPartDialog = new NewPartDialog(shell, SWT.NONE);
 			newObject = addNewPartDialog.open();
-		} else if (table.getColumn(0).getText().equals("RO #")) {
+		} else if (table.getColumn(0).getText().equals("Project #")) {
 			RepairOrderDialog addNewRepairOrderDialog = new RepairOrderDialog(shell, SWT.NONE);
 			newObject = addNewRepairOrderDialog.open();
 		}
