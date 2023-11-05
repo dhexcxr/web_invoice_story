@@ -113,11 +113,19 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 	
 	public void chargeNewTransaction(Invoice cashieredInvoice) {
 		AccountTransaction newTransaction = new AccountTransaction();
-		newTransaction.setAccountId(this.getAccountId());
 		newTransaction.setInvoiceId(cashieredInvoice.getInvoiceNum());
-		newTransaction.setTransactionDate(Timestamp.from(Instant.now()));
-		newTransaction.setDescription("Invoice");
 		newTransaction.setAmount(cashieredInvoice.getAmountCharged());
+		if (cashieredInvoice instanceof AccountPayment) {
+			newTransaction.setDescription("Payment");
+		} else {
+			newTransaction.setDescription("Invoice");
+		}
+		chargeNewTransaction(newTransaction);
+	}
+	
+	public void chargeNewTransaction(AccountTransaction newTransaction) {
+		newTransaction.setAccountId(this.getAccountId());
+		newTransaction.setTransactionDate(Timestamp.from(Instant.now()));
 //		newTransaction.save();
 		
 		// make sure newTransaction is not already in this.transactions
