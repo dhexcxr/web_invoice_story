@@ -148,7 +148,7 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 	}
 
 	public Part[] getParts() {
-		return parts;
+		return parts == null ? new Part[0] : parts;
 	}
 
 	public void setParts(Part[] parts) {
