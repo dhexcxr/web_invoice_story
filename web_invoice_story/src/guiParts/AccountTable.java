@@ -1,5 +1,6 @@
 package guiParts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -38,6 +39,20 @@ public class AccountTable extends MyTable{
 	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 //		this.paint(new Object[] {customer});
+		List<Account> accounts = new ArrayList<>();
+		TableItem[] tableItems = this.getItems();
+		
+		int i = 0;
+		while (i < tableItems.length) {
+			if (i == selectedTableItemIndex) {
+				accounts.add((Account) object);
+			} else {
+				accounts.add((Account) tableItems[i].getData());				
+			}
+			i++;
+		}
+		this.removeAll();
+		paint(accounts);
 	}
 	
 	@Override
