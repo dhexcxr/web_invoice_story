@@ -1,7 +1,9 @@
 package listeners;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.widgets.Event;
 
 import guiParts.MyTable;
 import guiParts.MyText;
@@ -30,6 +32,8 @@ public class SearchTextBoxListeners implements ModifyListener {
 			table.removeAll();
 			table.paint(searchObject.search(searchBox.getText()));
 		} else if (queryLength == 0) {
+			table.deselectAll();
+			table.notifyListeners(SWT.Selection, new Event());
 			table.removeAll();
 		}
 	}
