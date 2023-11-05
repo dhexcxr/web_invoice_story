@@ -139,8 +139,8 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId 
 				WHERE customer.firstName LIKE ? OR customer.lastName LIKE ? OR projectSite.address LIKE ? OR projectSite.city LIKE ? OR projectSite.state LIKE ? OR projectSite.zipCode LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
-		super.querySubStringIndices[0] = 15;
-		super.querySubStringIndices[1] = 128;
+		super.querySubStringIndices[0] = 32;
+		super.querySubStringIndices[1] = 193;
 		
 		return packObjects(DbServices.searchForObject(this));
 	}
@@ -154,8 +154,8 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId
 				WHERE projectSiteId = ?;""";
 		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
-		super.querySubStringIndices[0] = 15;					// and move these 2 search() function implementations into the DbObjectSearchable too
-		super.querySubStringIndices[1] = 128;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
+		super.querySubStringIndices[0] = 32;					// and move these 2 search() function implementations into the DbObjectSearchable too
+		super.querySubStringIndices[1] = 193;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
 																	// and where can we give it the generic ? extends DbObjectSearchable
 																	// I thought of this because if this function here returns a List<? extends DbObjectSearchable instead
 		return packObject(DbServices.searchForObjectByPk(this));				// of a List<ProjectSite> nothing seems to complain, though I didn't actually test anything
