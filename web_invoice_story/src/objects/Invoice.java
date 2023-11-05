@@ -34,7 +34,8 @@ public class Invoice extends DbObjectSearchable implements DbObjectSavable {
 		WITHCHANGE,
 		NOCHANGE,
 		CHARGED,
-		CANCELED
+		CANCELED,
+		PAYMENT
 	}
 	
 	public Invoice() {
