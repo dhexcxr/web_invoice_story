@@ -14,8 +14,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -37,7 +39,10 @@ import listeners.SearchTextBoxListeners;
 import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
 import objects.Account;
+import objects.AccountPayment;
 import objects.AccountTransaction;
+import objects.AmountDueResponse;
+import objects.AmountDueResponse.Result;
 import objects.Customer;
 import objects.Invoice;
 import objects.InvoicePart;
@@ -65,6 +70,7 @@ import guiParts.UnitTable;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
@@ -947,12 +953,14 @@ public class Gui extends Composite {
 		fl_accountsDetailComposite.marginHeight = 5;
 		accountsDetailComposite.setLayout(fl_accountsDetailComposite);
 		
+		Button btnNewAccountPayment = new Button(accountsDetailComposite, SWT.NONE);
+		
 		MyText accountSearchTextBox = new MyText(accountsDetailComposite, SWT.BORDER);
 		
 		AccountTable accountTable = new AccountTable(accountsDetailComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_accountTable = new FormData();
 		fd_accountTable.top = new FormAttachment(accountSearchTextBox);
-		fd_accountTable.bottom = new FormAttachment(100);
+		fd_accountTable.bottom = new FormAttachment(90);
 		fd_accountTable.right = new FormAttachment(100);
 		fd_accountTable.left = new FormAttachment(0);
 		accountTable.setLayoutData(fd_accountTable);
@@ -960,6 +968,19 @@ public class Gui extends Composite {
 		accountTable.setLinesVisible(true);
 		accountTable.addMouseListener(new OpenExistingObjectMouseListener(accountTable, shell));
 		accountTable.addMenuDetectListener(new DeleteEnableListener(accountTable));
+		accountTable.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (accountTable.getSelectionIndex() >= 0 && accountTable.getSelectionIndex() < accountTable.getItemCount()
+						&& accountTable.getItem(accountTable.getSelectionIndex()).getData() != null
+						&& (!((Account) accountTable.getItem(accountTable.getSelectionIndex()).getData())
+							.getBalance().equals(BigDecimal.valueOf(0.00).setScale(2)))) {
+					btnNewAccountPayment.setEnabled(true);
+				} else {
+					btnNewAccountPayment.setEnabled(false);
+				}
+			}
+		});
 		
 		TableColumn tblclmnAccountNumber = new TableColumn(accountTable, SWT.NONE);
 		tblclmnAccountNumber.setWidth(100);
@@ -1004,7 +1025,7 @@ public class Gui extends Composite {
 		tblclmnEmailCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnEmailCustomer_1));
 		
 		// Delete right click menu
-		setupRightClickMenu(accountTable, "Account");
+//		setupRightClickMenu(accountTable, "Account");
 		
 		Button btnNewAccount = new Button(accountsDetailComposite, SWT.NONE);
 		FormData fd_btnNewAccount = new FormData();
@@ -1025,6 +1046,121 @@ public class Gui extends Composite {
 		accountSearchTextBox.setText("Search...");
 		accountSearchTextBox.addModifyListener(new SearchTextBoxListeners(accountSearchTextBox, accountTable, new Account()));
 		accountSearchTextBox.addFocusListener(new TextBoxFocusListener(accountSearchTextBox));
+		
+//		btnNewAccountPayment = new Button(accountsDetailComposite, SWT.NONE);
+		FormData fd_btnNewAccountPayment = new FormData();
+		fd_btnNewAccountPayment.top = new FormAttachment(accountTable);
+		fd_btnNewAccountPayment.bottom = new FormAttachment(100);
+		fd_btnNewAccountPayment.right = new FormAttachment(accountTable, 0, SWT.RIGHT);
+		btnNewAccountPayment.setLayoutData(fd_btnNewAccountPayment);
+		btnNewAccountPayment.addMouseListener(new MouseAdapter() {	// NOTE this needs to be its own class so we can add this listener to this
+			@Override											// the RO cashier button, and the AccountPayment button
+			public void mouseDown(MouseEvent e) {
+				// spawn amount due dialog box
+//				if (txtCustomerInvoice.getData() == null) {	// Invoice Cashier button
+//					MessageBox customerRequiredBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+//					customerRequiredBox.setText("Notice");
+//					customerRequiredBox.setMessage("Please select a Customer");
+//					customerRequiredBox.open();
+//					return;
+//				} else if (invoicePartsTable.getItemCount() == 1) {
+//					MessageBox noPartsBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+//					noPartsBox.setText("Notice");
+//					noPartsBox.setMessage("Enter a part to invoice");
+//					noPartsBox.open();
+//					return;
+//				}
+				
+				// RO Cashier has different conditionals
+				
+				// Account Payment
+				BigDecimal accountBalance = ((Account) accountTable.getItem(accountTable.getSelectionIndex()).getData()).getBalance();
+				AmountDueDialog amountDueDialog = new AmountDueDialog(shell, getStyle());
+				AmountDueResponse response = amountDueDialog.open(accountBalance);
+				
+				if (response.getResult() == Result.PAYMENT) {
+					// TODO make payment object, kinda link Invoice
+						// get Account we're paying and instantiate object
+					if (accountTable.getSelectionIndex() >= 0 && accountTable.getSelectionIndex() < accountTable.getItemCount()
+							&& accountTable.getItem(accountTable.getSelectionIndex()).getData() != null) {
+						Account account = (Account) accountTable.getItem(accountTable.getSelectionIndex()).getData();
+						
+						AccountPayment newPayment = new AccountPayment();
+						newPayment.setCustomerId(account.getCustomerId());
+						newPayment.setCustomerData(account.getAccountHolder());
+						newPayment.setLocationId(Application.getSettings().getCurrentLocation());
+						newPayment.setNotes("Account: " + account.getAccountNumber() + "\nPayment");
+						newPayment.setTax(BigDecimal.valueOf(0).setScale(2));
+						newPayment.setCashiereDateTime(Timestamp.from(Instant.now()));
+						newPayment.setCashiered(true);
+						newPayment.setAmountCharged(response.getAmountCharged());
+						
+						// don't bother saving the newPayment
+							// actually we might want to
+							// it depends on whether or not we want an
+							// i think we'll need to, the Transaction has Invoice as a foreign key
+						newPayment.save();
+						
+						account.chargeNewTransaction(newPayment);
+						account.save();
+						
+						// repaint
+							// TODO add a method to repaint just 1 item
+						accountTable.paint(account);
+					}
+						// thisAccount.chargeTransaction(thisPayment)
+						// thisAccount.save()
+				} else if (response.getResult() != Result.CANCELED) {
+					Invoice cashieredInvoice = new Invoice();
+					cashieredInvoice.setCustomerId(((Customer) txtCustomerInvoice.getData()).getCustomerId());
+					cashieredInvoice.setCustomerData(txtCustomerInvoice.getText());
+					cashieredInvoice.setLocationId(Application.getSettings().getCurrentLocation());
+					cashieredInvoice.setNotes(txtInvoiceNotes.getText());
+					cashieredInvoice.setTax(new BigDecimal(txtTaxInvoice.getText().replace("$", "")));
+					cashieredInvoice.setCashiereDateTime(Timestamp.from(Instant.now()));
+					cashieredInvoice.setCashiered(true);
+					
+					cashieredInvoice.setTableLineItems(invoicePartsTable.getItems());	// probably not needed anymore
+					cashieredInvoice.setPartsFromTableItems(invoicePartsTable.getItems());
+					
+//					cashieredInvoice.setCashierResult(invoiceResult);
+					
+					// send invoice obj to DbServices
+					// TODO i think this can be done with the Invoice object now
+					DbServices.saveObject(cashieredInvoice);
+					
+					if (response.getResult() == Result.CHARGED) {
+						// NOTE we might do this by first getting the Account, then, via new Account methods I will hafta make
+							// simply pass it the invoice (or the cashiered Project/RO in that case)
+							// the Account object will then take the responsibility of creating the new transaciton
+							// and adding it to its current List<AccountTransactions> of transactions
+							// then either it will save it self, or after we pass it the Invoice/Project/RO
+							// we will call Account.save() here, and it will be saved
+							// then DbServices will see that it's an Account object and save the Transactions separately
+							// sorta like we do InvoiceParts/InvoiceLineItems now
+								// though in this case we'll need to figure out some way to save only the latest transaction
+								// not every single one that is in the List<AccountTransaction>
+							// this will probably be cleaner overall, but I think right now I'm
+							// more focused on getting this *working*
+
+							// hopefully this refactor won't be too expensive in the future
+						
+							// i think in this case we really need to save the ammountCharged onto the Invoice
+								// like I had tentativly postulated at one point
+						cashieredInvoice.setAmountCharged(BigDecimal.valueOf(Long.parseLong(txtFinalTotal.getText())));
+						
+						Account accountChargedTo = new Account().searchByPk(cashieredInvoice.getCustomerId());
+						accountChargedTo.chargeNewTransaction(cashieredInvoice);
+
+						accountChargedTo.save();		// since we've already saved the new Transaction above, this is really only saving the new balance on the Account
+					}
+					
+					clearInvoiceGui();
+				}
+			}
+		});
+		btnNewAccountPayment.setText("New Payment");
+		btnNewAccountPayment.setEnabled(false);		// don't enable until we select an account
 	}
 	
 	private void reportsTab(TabFolder tabFolder) {
