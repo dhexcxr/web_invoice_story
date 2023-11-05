@@ -136,7 +136,7 @@ public class RepairOrderJobSelectedListener extends SelectionAdapter {
 	
 	private void addLaborToLaborTableItem(JobLabor jobLabor) {
 		JobLaborTableItem jobLaborTableItem = new JobLaborTableItem(jobLaborTable, roDialog.getStyle());
-		jobLaborTableItem.setText(new String[] {jobLabor.getTechnician(), jobLabor.getDescription(), jobLabor.getHours().toString(), jobLabor.getLaborRate().toString(),
+		jobLaborTableItem.setText(new String[] {jobLabor.getInstaller(), jobLabor.getDescription(), jobLabor.getHours().toString(), jobLabor.getLaborRate().toString(),
 							jobLabor.getHours().multiply(jobLabor.getLaborRate()).setScale(2, RoundingMode.CEILING).toString()});
 		jobLaborTableItem.setData(jobLabor);
 	}

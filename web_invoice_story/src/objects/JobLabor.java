@@ -14,7 +14,7 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 	
 	private long jobLaborId = -1;
 	private long jobId;
-	private String technician;
+	private String installer;
 	private String description;
 	private BigDecimal hours = BigDecimal.valueOf(0);
 	private BigDecimal laborRate = BigDecimal.valueOf(0);
@@ -25,9 +25,9 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 		this("", "", BigDecimal.valueOf(0), BigDecimal.valueOf(100));
 	}
 
-	public JobLabor(String technician, String description, BigDecimal hours, BigDecimal laborRate) {
+	public JobLabor(String installer, String description, BigDecimal hours, BigDecimal laborRate) {
 		super();
-		this.technician = technician;
+		this.installer = installer;
 		this.description = description;
 		this.hours = hours;
 		this.laborRate = laborRate;
@@ -49,12 +49,12 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 		this.jobId = jobId;
 	}
 
-	public String getTechnician() {
-		return technician;
+	public String getInstaller() {
+		return installer;
 	}
 
-	public void setTechnician(String technician) {
-		this.technician = technician;
+	public void setInstaller(String technician) {
+		this.installer = technician;
 	}
 
 	public String getDescription() {
@@ -110,7 +110,7 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 			dataMap.put("description", description);
 			dataMap.put("hours", hours.toString());
 			dataMap.put("hourrate", laborRate.toString());
-			dataMap.put("technician", technician);
+			dataMap.put("installer", installer);
 		}
 		return dataMap;
 	}
@@ -125,9 +125,9 @@ public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
 		throw new UnsupportedOperationException();
 	}
 	
-	public List<JobLabor> searchJobLaborByRoId(long roId) {
-		super.searchString = Long.toString(roId);
-		super.searchQuery = "SELECT joblaborid, jobid, description, hours, hourrate, technician FROM web_invoice_story.joblabor WHERE jobid = ?;";
+	public List<JobLabor> searchJobLaborByProjectId(long projectId) {
+		super.searchString = Long.toString(projectId);
+		super.searchQuery = "SELECT joblaborid, jobid, description, hours, hourrate, installer FROM web_invoice_story.joblabor WHERE jobid = ?;";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;
 		super.querySubStringIndices[1] = 0;

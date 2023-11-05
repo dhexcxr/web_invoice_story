@@ -10,7 +10,7 @@ import web_invoice_story.DbServices;
 public class Job extends DbObjectSearchable implements DbObjectSavable {
 	
 	private long jobId = -1;
-	private long roId;
+	private long projectId;
 	private	String jobName;
 	private String complaints;
 	private String resolution;
@@ -46,12 +46,12 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		this.jobId = jobId;
 	}
 
-	public long getRoId() {
-		return roId;
+	public long getProjectId() {
+		return projectId;
 	}
 
-	public void setRoId(long roId) {
-		this.roId = roId;
+	public void setProjectId(long projectId) {
+		this.projectId = projectId;
 	}
 
 	public String getJobName() {
@@ -199,12 +199,12 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		throw new UnsupportedOperationException();
 	}
 	
-	public List<Job> searchForJobsByRoId(long roId) {
-		super.searchString = Long.toString(roId);
+	public List<Job> searchForJobsByProjectId(long projectId) {
+		super.searchString = Long.toString(projectId);
 		super.searchQuery = """
-				SELECT job.jobid, job.roid, job.name, job.complaint, job.resolution, job.recommendations
+				SELECT job.jobid, job.projectId, job.name, job.complaint, job.resolution, job.recommendations
 				FROM web_invoice_story.job
-				WHERE job.roid = ?;
+				WHERE job.projectId = ?;
 				""";
 		super.outerSearchQueryAppendix = "";
 		super.querySubStringIndices[0] = 0;

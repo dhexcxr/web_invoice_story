@@ -214,7 +214,7 @@ public class DbServices {
 
 	private static int getLastRoNum() {
 		ResultSet results = null;
-		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(roid) FROM web_invoice_story.ro;")) {
+		try (PreparedStatement lastInvoiceNumStatement = DbServices.getDbConnection().prepareStatement("SELECT MAX(projectId) FROM web_invoice_story.project;")) {
 			results = lastInvoiceNumStatement.executeQuery();
 			while (results.next()) {
 				return results.getInt(1);		// we should always return here
@@ -265,7 +265,7 @@ public class DbServices {
 		}
 		List<Job> roJobs = ((Project) dbObject).getJobs();
 		for (Job job : roJobs) {
-			job.getDataMap().put("roid", Long.toString(roNum));
+			job.getDataMap().put("projectId", Long.toString(roNum));
 			DbServices.saveObject(job);
 		}
 	}
@@ -308,7 +308,7 @@ public class DbServices {
 	private static void sellRoPartsOutOfInventory(long roNumber) {
 		StringBuilder query = new StringBuilder("UPDATE web_invoice_story.part p JOIN web_invoice_story.jobpart jp ON p.partid = jp.partid "
 				+ "JOIN web_invoice_story.job j ON jp.jobid = j.jobid "
-				+ "SET p.onhand = p.onhand - jp.quantity WHERE j.roid = ?;");
+				+ "SET p.onhand = p.onhand - jp.quantity WHERE j.projectId = ?;");
 		sendQueryToDb(query, new ArrayList<>(List.of(Long.toString(roNumber))));
 		// TODO these need to go somewhere else, probably in JobPart 
 	}
@@ -662,7 +662,7 @@ public class DbServices {
 			project.setCreatedDate(queryResultSet.getTimestamp(17));
 			project.setClosedDate(queryResultSet.getTimestamp(18));
 			
-			List<Job> roJobs =  new Job().searchForJobsByRoId(project.getProjectId());
+			List<Job> roJobs =  new Job().searchForJobsByProjectId(project.getProjectId());
 			roJobs.removeAll(Collections.singleton(null));		// NOTE i don;t think we need this anymore
 			
 			project.setJobs(roJobs);
@@ -679,7 +679,7 @@ public class DbServices {
 		while (queryResultSet.next()) {
 			Job job = new Job();
 			job.setJobId(queryResultSet.getLong(1));
-			job.setRoId(queryResultSet.getLong(2));
+			job.setProjectId(queryResultSet.getLong(2));
 			job.setJobName(queryResultSet.getString(3));
 			job.setComplaints(queryResultSet.getString(4));
 			job.setResolution(queryResultSet.getString(5));
@@ -701,7 +701,7 @@ public class DbServices {
 			jobLabor.setDescription(queryResultSet.getString(3));
 			jobLabor.setHours(queryResultSet.getBigDecimal(4));
 			jobLabor.setLaborRate(queryResultSet.getBigDecimal(5));
-			jobLabor.setTechnician(queryResultSet.getString(6));
+			jobLabor.setInstaller(queryResultSet.getString(6));
 						
 			results.add(i, jobLabor);
 			i++;

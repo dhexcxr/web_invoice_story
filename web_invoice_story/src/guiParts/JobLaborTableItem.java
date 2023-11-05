@@ -24,12 +24,12 @@ public class JobLaborTableItem extends TableItem {
 	
 	// TODO create setData(Job job)
 	
-	public void setData(String technician, String description, BigDecimal hours, BigDecimal rate) {
+	public void setData(String installer, String description, BigDecimal hours, BigDecimal rate) {
 		if (this.getData() == null) {
-			super.setData(new JobLabor(technician, description, hours, rate));
+			super.setData(new JobLabor(installer, description, hours, rate));
 		} else {
 			JobLabor tableItemLabor = (JobLabor) this.getData();
-			tableItemLabor.setTechnician(technician);
+			tableItemLabor.setInstaller(installer);
 			tableItemLabor.setDescription(description);
 			tableItemLabor.setHours(hours);
 			tableItemLabor.setLaborRate(rate);

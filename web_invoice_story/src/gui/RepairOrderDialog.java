@@ -86,7 +86,7 @@ public class RepairOrderDialog extends Dialog {
 	private MyText textTaxRepairOrder;
 	private MyText textFinalTotalRepairOrder;
 	
-	private long roId = -1;
+	private long projectId = -1;
 	private Text textRoNum;
 	private Text textCreatedDate;
 	private Text textCashieredDate;
@@ -507,7 +507,7 @@ public class RepairOrderDialog extends Dialog {
 		btnSaveRo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (roId == -1) {
+				if (projectId == -1) {
 					saveNewRo();
 				} else {
 					saveRo(currentRepairOrder);
@@ -639,8 +639,8 @@ public class RepairOrderDialog extends Dialog {
 		// set Dialog boxes and stuff from repairOrder fields
 		if (project != null) {
 			currentRepairOrder = project;
-			roId = project.getProjectId();
-			textRoNum.setText(Long.toString(roId));
+			projectId = project.getProjectId();
+			textRoNum.setText(Long.toString(projectId));
 			
 			textCreatedDate.setText(project.getCreatedDate().toString());
 			textCashieredDate.setText(project.getClosedDate() == null ? "" : project.getClosedDate().toString());
@@ -699,7 +699,7 @@ public class RepairOrderDialog extends Dialog {
 	private List<Job> loadRoJobsFromDb() {
 		List<Job> roJobs = new ArrayList<>();
 		
-		for (Job job : new Job().searchForJobsByRoId(roId)) {
+		for (Job job : new Job().searchForJobsByProjectId(projectId)) {
 			
 			long jobId = job.getJobId();
 		
@@ -707,7 +707,7 @@ public class RepairOrderDialog extends Dialog {
 			RepairOrderJobTableItem jobTableItem = new RepairOrderJobTableItem(tableJobsRepairOrder, getStyle());
 
 			// find and build labor
-			job.setLabor(new JobLabor().searchJobLaborByRoId(jobId));
+			job.setLabor(new JobLabor().searchJobLaborByProjectId(jobId));
 
 			// find and build Parts
 			List<JobPart> listOfJobParts = new JobPart().searchJobLaborByJobId(jobId);
@@ -843,8 +843,8 @@ public class RepairOrderDialog extends Dialog {
 		
 		// send Project object to DbServices
 		DbServices.saveObject(project);
-		roId = project.getProjectId();
-		textRoNum.setText(Long.toString(roId));
+		projectId = project.getProjectId();
+		textRoNum.setText(Long.toString(projectId));
 		detailsToDelete = new HashMap<>();
 		currentRepairOrder = project;
 		result = project;
