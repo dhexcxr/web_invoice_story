@@ -75,6 +75,9 @@ public class InvoicePartEditorListener implements Listener {
 			if (selectedColumnIndex == InvoicePartTable.PART_NUMBER_COLUMN) {
 				ignoreFocusOut = true;
 				PartSearchDialog partSearchDialog = new PartSearchDialog(parent,SWT.NONE);
+					// NOTE TODO to fix bug in RO Job Parts, this needs to be a JobPart when we're opening the PartSearchDialog from an RO
+					// basically, we need to devise a way to tell that we're calling this from an RO
+					// we could just hack a new handleEvent() just for ROs kinda like we did for the InvoicePartTableListener constructor
 				InvoicePart selectedPart = new InvoicePart((Part) partSearchDialog.open(editorTxtBox.getText()));
 				if (selectedPart.getPart() != null) {
 					editorTxtBox.setText(selectedPart.getPartNumber());

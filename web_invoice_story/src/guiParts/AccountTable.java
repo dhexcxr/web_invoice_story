@@ -45,7 +45,7 @@ public class AccountTable extends MyTable{
 		// build each TableItem to fill Customer Table
 		for (DbObjectSearchable object : objectResults) {
 			if (object == null || !(object instanceof Account account)) {
-				break;
+				break;		// NOTE the null check might not be necessary now that we're passing in a List<> instead of the built-in array
 			}
 			TableItem tableItem = new TableItem(this, SWT.NONE);
 			tableItem.setText(new String[] {account.getAccountNumber(), account.getAccountHolder(), "0.00" /*last charge*/,

@@ -127,6 +127,11 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 		}
 		
 		// save the transaction to this Account object and to the database
+			// alternatively, I could just send the entire Account object to the DbServices
+			// and let it figure out which transactions are already saved in the DB via a query
+			// to see which ID its missing.....or I just look for the object with the ID set to -1
+			// like I've been doing this entire time.....duh
+				// we'll mess with that later
 		this.transactions.add(newTransaction);
 		newTransaction.save();
 		

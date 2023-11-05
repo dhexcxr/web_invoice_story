@@ -111,4 +111,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 		RepairOrderDialog modifyExistingRepairOrder= new RepairOrderDialog(shell, SWT.NONE);
 		modifyExistingRepairOrder.open(project);
 	}
+	
+	// TODO make one of these for Account except its probably not for much editing, just for displaying transactions and things
+		// it'll also make the repaint easier
 }

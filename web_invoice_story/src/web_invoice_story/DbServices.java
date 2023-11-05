@@ -243,8 +243,8 @@ public class DbServices {
 	}
 
 	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
-		long invoiceNumber = getLastSavedDbObjectPk(dbObject);
-		// insert individual part invoice line items into invoicepart table
+		long invoiceNumber = getLastSavedDbObjectPk(dbObject);	// NOTE it looks like I set the Invoice PK right before I call this
+		// insert individual part invoice line items into invoicepart table		// we probably don;t need this func call
 		// update onHand of part table
 		Part[] invoiceLineParts = ((Invoice) dbObject).getParts();
 		for (Part invoiceLinePart : invoiceLineParts) {

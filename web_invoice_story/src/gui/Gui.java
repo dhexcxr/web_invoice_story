@@ -598,8 +598,8 @@ public class Gui extends Composite {
 		fd_btnCashier.right = new FormAttachment(grpTotals);
 		fd_btnCashier.bottom = new FormAttachment(btnCancel);
 		btnCashier.setLayoutData(fd_btnCashier);
-		btnCashier.addMouseListener(new MouseAdapter() {
-			@Override
+		btnCashier.addMouseListener(new MouseAdapter() {	// NOTE this needs to be its own class so we can add this listener to this
+			@Override											// the RO cashier button, and the AccountPayment button
 			public void mouseDown(MouseEvent e) {
 				// spawn amount due dialog box
 				if (txtCustomerInvoice.getData() == null) {
@@ -936,7 +936,6 @@ public class Gui extends Composite {
 // END Job Site tab
 
 		// Accounts folder
-		// Customer Detail Tab
 		TabItem tbtmAccountsDetail = new TabItem(tabFolderCustomer, SWT.NONE);
 		tbtmAccountsDetail.setText("Accounts");
 

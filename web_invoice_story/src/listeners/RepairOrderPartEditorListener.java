@@ -47,8 +47,10 @@ public class RepairOrderPartEditorListener extends InvoicePartEditorListener {
 				partInvoiceTable.getItem(selectedTableItemIndex).setData(new JobPart());
 			}
 			super.handleEvent(event);
-			
-			InvoicePart newInvoicePart = (InvoicePart) partInvoiceTable.getItem(selectedTableItemIndex).getData(); 
+			// found a bug where if you double-click the parts line to open the Part Search dialog box, it adds an InvoicePart instead of JobPart
+				// and then line ~779 in RoDialog crashed trying to cast to (JobPart)
+				// change from InvoicePart to JobPart, didn;t work
+			JobPart newInvoicePart = (JobPart) partInvoiceTable.getItem(selectedTableItemIndex).getData(); 
 			if (newInvoicePart == null || newInvoicePart.getPart() == null) {
 				partInvoiceTable.getItem(selectedTableItemIndex).setData(null);
 			}
