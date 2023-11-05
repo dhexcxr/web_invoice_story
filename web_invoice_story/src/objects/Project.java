@@ -220,8 +220,12 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 		this.total = total;
 	}
 	
+	public BigDecimal getAmountCharged() {
+		return amountCharged;
 	}
 
+	public void setAmountCharged(BigDecimal amountCharged) {
+		this.amountCharged = amountCharged;
 	}
 	
 	public Map<String, String> getDataMap() {

@@ -111,6 +111,14 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 		this.transactions = transactions;
 	}
 	
+	public void chargeNewTransaction(Project cashieredProject) {
+		AccountTransaction newTransaction = new AccountTransaction();
+		newTransaction.setInvoiceId(cashieredProject.getProjectId());
+		newTransaction.setAmount(cashieredProject.getAmountCharged());
+		newTransaction.setDescription("Project");
+		chargeNewTransaction(newTransaction);
+	}
+	
 	public void chargeNewTransaction(Invoice cashieredInvoice) {
 		AccountTransaction newTransaction = new AccountTransaction();
 		newTransaction.setInvoiceId(cashieredInvoice.getInvoiceNum());
