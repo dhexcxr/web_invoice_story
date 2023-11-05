@@ -36,7 +36,7 @@ public class AccountTable extends MyTable{
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {		// NOTE not used
+	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 //		this.paint(new Object[] {customer});
 		List<Account> accounts = new ArrayList<>();
@@ -72,7 +72,7 @@ public class AccountTable extends MyTable{
 	
 	// TODO this and sort() can be moved into MyTable class, the only thing thats different in any Table Class' version of this method
 				// is the String[] values which could be moved into a custom MyTableItem class
-	private void initialSortOnPaint(int sortColumn, int sortDirection) {
+	private void initialSortOnPaint(int sortColumn, int sortDirection) {		// TODO rewrite this so it works correctly for Numbers, see below
 		// sort table results by 0-indexed column
 		TableItem[] items = this.getItems();
 		TableColumn column = this.getColumn(sortColumn);
@@ -98,6 +98,39 @@ public class AccountTable extends MyTable{
 		this.setSortColumn(column);
 		this.setSortDirection(sortDirection);
 	}
+	
+//	private void initialSortOnPaint(int sortColumn, int sortDirection) {		// NOTE half done version with BigDecimal sorting, need to do something about collator
+//		// sort table results by 0-indexed column
+//		TableItem[] items = this.getItems();
+//		TableColumn column = this.getColumn(sortColumn);
+//		int index = sortColumn;
+//		for (int i = 1; i < items.length; i++) {
+//			for (int j = 0; j < i; j++) {
+//				if (sortColumn == BALANCE_INDEX) {	// sort by number
+//					BigDecimal value1 = new BigDecimal(items[i].getText(index).replaceAll("[^-.0-9]", ""));
+//					BigDecimal value2 = new BigDecimal(items[j].getText(index).replaceAll("[^-.0-9]", ""));
+//				} else {		// sort by string value
+//					String value1 = items[i].getText(index);
+//					String value2 = items[j].getText(index);
+//				}
+//				
+//				if ((sortDirection ==  SWT.UP && collator.compare(value1, value2) < 0) ||
+//						(sortDirection ==  SWT.DOWN && collator.compare(value1, value2) > 0)) {
+//					String[] values = { items[i].getText(ACCOUNT_NUMBER_INDEX), items[i].getText(ACCOUNT_HOLDER_INDEX),
+//							items[i].getText(LAST_CHARGE_INDEX), items[i].getText(LAST_PAYMENT_INDEX), items[i].getText(BALANCE_INDEX)};
+//					Object tempPart = items[i].getData();
+//					items[i].dispose();
+//					TableItem item = new TableItem(this, SWT.NONE, j);
+//					item.setText(values);
+//					item.setData(tempPart);
+//					items = this.getItems();
+//					break;
+//				}
+//			}
+//		}
+//		this.setSortColumn(column);
+//		this.setSortDirection(sortDirection);
+//	}
 	
 	@Override
 	public void sort(int sortColumn) {

@@ -55,6 +55,7 @@ public class CreateNewObjectListener extends MouseAdapter{
 		}
 		
 		// repaint table - get current data in TableItems, insert the new data at the end, then call table.paint
+			// TODO if there is no search query in SearchBox do not add new object to table
 		for (int i = 0; i < table.getItems().length; i++) {
 			newTableContents.add((DbObjectSearchable) table.getItems()[i].getData());
 		}
