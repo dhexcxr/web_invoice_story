@@ -561,7 +561,8 @@ public class RepairOrderDialog extends Dialog {
 		txtCustomerRepairOrder.addMouseListener(customerSearchListener);
 		txtCustomerRepairOrder.addModifyListener(new RequiredTextBoxModifyListener(txtCustomerRepairOrder));
 
-		unitSearchListener = new UnitSearchListener(txtUnitRepairOrder);
+		unitSearchListener = new UnitSearchListener(txtUnitRepairOrder, txtCustomerRepairOrder);
+			// TODO make sure this doesn't break when there isn't a customer selected already
 		txtUnitRepairOrder.addMouseListener(unitSearchListener);
 		txtUnitRepairOrder.addModifyListener(new RequiredTextBoxModifyListener(txtUnitRepairOrder));
 		// END RO Controls
