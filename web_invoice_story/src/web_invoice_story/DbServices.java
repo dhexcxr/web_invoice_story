@@ -320,17 +320,19 @@ public class DbServices {
 	private static int sendQueryToDb(StringBuilder queryString, List<String> dbFields) {
 		// used when saving new objects or updating existing objects
 		int updateCount = 0;
-		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString.toString())) {
+		String statementString = queryString.toString();
+		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(statementString)) {
 			int parameterIndex = 1;
 			for(String fieldData : dbFields) {		// set query values
 				statement.setString(parameterIndex, fieldData);
 				parameterIndex++;
 			}
+			statementString = statement.toString();
 			statement.execute();		// execute save or update statement 
 			updateCount = statement.getUpdateCount();
-			Application.getLogger().log(Level.INFO, "Update Count: {0}", updateCount);
+			Application.getLogger().log(Level.INFO, "SQL Query: {0}\nUpdate Count: {1}", new Object[] {statementString, updateCount});
 		} catch (SQLException e) {
-			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", queryString);
+			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", statementString);
 			e.printStackTrace();
 		}
 		return updateCount;		// return number of database table rows that were saved or updated
@@ -390,11 +392,13 @@ public class DbServices {
 		
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(deleteQuery)) {
 			statement.setLong(1, primaryKey);
+			deleteQuery = statement.toString();
 			statement.execute();
 			updateCount = statement.getUpdateCount();
 			Application.getLogger().log(Level.INFO, "Delete from {0}. Count: {1}", new Object[] {tableName, updateCount});
 		} catch (SQLException e) {
 			// TODO print deleteQuery or statement
+			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", deleteQuery);
 			e.printStackTrace();
 		}
 		return updateCount;
@@ -429,11 +433,14 @@ public class DbServices {
 		
 		List<DbObjectSearchable> results = new ArrayList<>(1);		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
 											// this will allow us to make a polymorphic select by Primary Key search - MOSTLY DONE
-		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(object.getSearchQuery())) {
+		String queryString = object.getSearchQuery();
+		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString)) {
 			statement.setLong(1, Long.parseLong(object.getSearchString()));
+			queryString = statement.toString();	// fill queryString with completed query for debugging 
 			ResultSet queryResultSet = statement.executeQuery();
 			results = buildFoundObjects(queryResultSet, object);
 		} catch (SQLException e) {
+			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", queryString);
 			e.printStackTrace();
 		}
 		return results;	
@@ -449,12 +456,15 @@ public class DbServices {
 		}
 		
 		List<DbObjectSearchable> results = new ArrayList<>(1);
-		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(object.getSearchQuery())) {
+		String queryString = object.getSearchQuery();
+		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString)) {
 			statement.setMaxRows(MAX_RESULTS);
 			fillStatementParameters(statement, object);
+			queryString = statement.toString();
 			ResultSet queryResultSet = statement.executeQuery();
 			results = buildFoundObjects(queryResultSet, object);
 		} catch (SQLException e) {
+			Application.getLogger().log(Level.SEVERE, "SQL Error: {0}", queryString);
 			e.printStackTrace();
 		}
 //		return results;		// TODO make sure everything that calls this handles the null return condition
