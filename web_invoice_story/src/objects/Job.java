@@ -177,15 +177,14 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 
 	@Override
 	public Map<String, String> getDataMap() {
-		if (dataMap.isEmpty() ) {
-			if (jobId != -1) {
-				dataMap.put("jobid", Long.toString(jobId));
-			}
-			dataMap.put("name", jobName);
-			dataMap.put("description", description);
-			dataMap.put("resolution", resolution);
-			dataMap.put("recommendations", reccomendations);
+		if (jobId != -1) {
+			dataMap.put("jobid", Long.toString(jobId));
 		}
+		dataMap.put("name", jobName);
+		dataMap.put("description", description);
+		dataMap.put("resolution", resolution);
+		dataMap.put("recommendations", reccomendations);
+
 		return dataMap;
 	}
 	
