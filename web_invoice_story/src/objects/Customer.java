@@ -13,6 +13,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	
 	// might not need this
 	private long customerId = -1;
+	private long locationId;
 	private String firstName;
 	private String lastName;
 	private String address;
@@ -59,6 +60,14 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	
 	public long getCustomerId() {
 		return customerId;
+	}
+
+	public long getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(long locationId) {		// TODO need to set locationId when saving new customer
+		this.locationId = locationId;
 	}
 
 	public void setCustomerId(long customerId) {
@@ -162,6 +171,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		if (customerId != -1) {
 			dataMap.put("customerId", Long.toString(customerId));
 		}
+		dataMap.put("locationId", Long.toString(locationId));
 		dataMap.put("firstName", firstName);
 		dataMap.put("lastName", lastName);
 		dataMap.put("address", address);
@@ -172,7 +182,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		dataMap.put("workPhone", workPhone);
 		dataMap.put("cellPhone", cellPhone);
 		dataMap.put("email", email);
-				
+
 		return dataMap;
 	}
 
@@ -206,7 +216,7 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		super.searchString = searchString;
 		super.searchQuery = """
 				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode,
-				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId
+				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId, customer.locationId
 				FROM web_invoice_story.customer
 				WHERE customer.firstName LIKE ? OR customer.homePhone LIKE ? OR customer.lastName LIKE ? OR customer.workPhone LIKE ? OR customer.address LIKE ? OR customer.cellPhone LIKE ?
 				OR customer.city LIKE ? OR customer.zipcode LIKE ? OR customer.state LIKE ?;""";
@@ -222,7 +232,8 @@ public class Customer extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
-				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode, customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId
+				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode,
+				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId, customer.locationId
 				FROM web_invoice_story.customer
 				WHERE customer.customerId = ?;""";
 		super.outerSearchQueryAppendix = "";

@@ -14,6 +14,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	// TODO make a 1 line invoice when cashiering Projects
 	
 	private long projectId = -1;
+	private long locationId;
 	private long customerId;
 	private Customer customer;
 	private String customerName;
@@ -63,6 +64,14 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 
 	public void setProjectId(long repairOrderId) {
 		this.projectId = repairOrderId;
+	}
+
+	public long getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(long locationId) {
+		this.locationId = locationId;
 	}
 
 	public long getCustomerId() {
@@ -233,6 +242,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 		if (projectId != -1) {
 			dataMap.put("projectId", Long.toString(projectId));
 		}
+		dataMap.put("locationId", Long.toString(locationId));
 		dataMap.put("customerid", Long.toString(customerId));
 		dataMap.put("customerdata", customerData);
 		dataMap.put("unitid", Long.toString(unitId));
@@ -254,7 +264,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public List<Project> search(String searchString) {
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT project.projectId, project.customerId,
+				SELECT project.projectId, project.customerId, project.locationId,
 				customer.firstname, customer.lastname, customer.address, customer.city, customer.state, customer.zipcode, customer.homephone, customer.cellphone, customer.email,
 				project.projectSiteId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode,
 				project.createdTime, project.closedTime, project.cashiered
@@ -273,7 +283,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	public Project searchByPk(long primaryKey) {		// NOTE not used anywhere
 		super.searchString = Long.toString(primaryKey);
 		super.searchQuery = """
-				SELECT project.projectId, project.customerId,
+				SELECT project.projectId, project.customerId, project.locationId,
 				customer.firstname, customer.lastname, customer.address, customer.city, customer.state, customer.zipcode, customer.homephone, customer.cellphone, customer.email,
 				project.unitId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode,
 				project.createdTime, project.closedTime, project.cashiered

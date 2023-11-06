@@ -1089,7 +1089,9 @@ public class Gui extends Composite {
 						AccountPayment newPayment = new AccountPayment();
 						newPayment.setCustomerId(account.getCustomerId());
 						newPayment.setCustomerData(account.getAccountHolder());
-						newPayment.setLocationId(Application.getSettings().getCurrentLocation());
+						long currentLocationId = Application.getSettings().getCurrentLocation();
+						long locationId = currentLocationId != 0 ? currentLocationId : new Customer().searchByPk(account.getCustomerId()).getLocationId();
+						newPayment.setLocationId(locationId);
 						newPayment.setNotes("Account: " + account.getAccountNumber() + "\nPayment");
 						newPayment.setTax(BigDecimal.valueOf(0).setScale(2));
 						newPayment.setCashiereDateTime(Timestamp.from(Instant.now()));

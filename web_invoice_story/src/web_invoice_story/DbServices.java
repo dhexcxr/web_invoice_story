@@ -535,6 +535,7 @@ public class DbServices {
 			customer.setCellPhone(queryResultSet.getString(9));
 			customer.setEmail(queryResultSet.getString(10));
 			customer.setCustomerId(queryResultSet.getLong(11));
+			customer.setLocationId(queryResultSet.getLong(12));
 
 			results.add(i, customer);
 			i++;
@@ -652,25 +653,26 @@ public class DbServices {
 			Project project = new Project();
 			project.setProjectId(queryResultSet.getLong(1));
 			project.setCustomerId(queryResultSet.getLong(2));
+			project.setLocationId(queryResultSet.getLong(3));
 			
-			String lastname = queryResultSet.getString(3);
-			String firstname = queryResultSet.getString(4);
+			String lastname = queryResultSet.getString(4);
+			String firstname = queryResultSet.getString(5);
 			project.setCustomerName(lastname, firstname);
 			
 			// TODO see if we can use TextBlocks here
-			String customerData = queryResultSet.getString(5) + "\n" + queryResultSet.getString(6) + ", " +
-					queryResultSet.getString(7) + " " + queryResultSet.getString(8) + "\n" + queryResultSet.getString(9) + "\n" +
-					queryResultSet.getString(10) + "\n" + queryResultSet.getString(11);
+			String customerData = queryResultSet.getString(6) + "\n" + queryResultSet.getString(7) + ", " +
+					queryResultSet.getString(8) + " " + queryResultSet.getString(9) + "\n" + queryResultSet.getString(10) + "\n" +
+					queryResultSet.getString(11) + "\n" + queryResultSet.getString(12);
 			project.setCustomerData(customerData);
 			
-			project.setUnitId(queryResultSet.getLong(12));
-			project.setUnitYear(queryResultSet.getString(13));
-			project.setUnitMake(queryResultSet.getString(14));
-			project.setUnitModel(queryResultSet.getString(15));
-			project.setUnitVin(queryResultSet.getString(16));
+			project.setProjectSiteId(queryResultSet.getLong(13));
+			project.setUnitYear(queryResultSet.getString(14));
+			project.setUnitMake(queryResultSet.getString(15));
+			project.setUnitModel(queryResultSet.getString(16));
+			project.setUnitVin(queryResultSet.getString(17));
 			
-			project.setCreatedDate(queryResultSet.getTimestamp(17));
-			project.setClosedDate(queryResultSet.getTimestamp(18));
+			project.setCreatedDate(queryResultSet.getTimestamp(18));
+			project.setClosedDate(queryResultSet.getTimestamp(19));
 			
 			List<Job> roJobs =  new Job().searchForJobsByProjectId(project.getProjectId());
 			roJobs.removeAll(Collections.singleton(null));		// NOTE i don;t think we need this anymore

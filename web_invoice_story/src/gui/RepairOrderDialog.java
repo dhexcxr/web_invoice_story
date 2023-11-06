@@ -794,6 +794,10 @@ public class RepairOrderDialog extends Dialog {
 	
 	private void saveNewRo() {
 		Project project = new Project();
+//		project.setLocationId(Application.getSettings().getCurrentLocation());
+		long currentLocationId = Application.getSettings().getCurrentLocation();
+		long locationId = currentLocationId != 0 ? currentLocationId : ((Customer) txtCustomerRepairOrder.getData()).getLocationId();
+		project.setLocationId(locationId);
 		project.setCreatedDate(Timestamp.from(Instant.now()));
 		textCreatedDate.setText(project.getCreatedDate().toString());
 		saveRo(project);
