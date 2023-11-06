@@ -33,6 +33,7 @@ public class JobLaborTableItem extends TableItem {
 			tableItemLabor.setDescription(description);
 			tableItemLabor.setHours(hours);
 			tableItemLabor.setLaborRate(rate);
+			super.setData(tableItemLabor);	// fix bug where labor changes were not saved to DB
 		}
 	}
 	
