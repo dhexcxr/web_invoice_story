@@ -112,8 +112,21 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 	}
 	
 	public void chargeNewTransaction(Project cashieredProject) {
+		// TODO create invoice to charge Project to
+		
+		Invoice projectAccountChargeInvoice = new Invoice();
+		projectAccountChargeInvoice.setCustomerId(cashieredProject.getCustomerId());
+		projectAccountChargeInvoice.setCustomerData(cashieredProject.getCustomerData());
+		projectAccountChargeInvoice.setLocationId(cashieredProject.getLocationId());
+		projectAccountChargeInvoice.setNotes("Charge Project # " + cashieredProject.getProjectId() + " to account");
+		projectAccountChargeInvoice.setTax(BigDecimal.valueOf(0).setScale(2));
+		projectAccountChargeInvoice.setCashiereDateTime(cashieredProject.getClosedDate());
+		projectAccountChargeInvoice.setCashiered(true);
+		projectAccountChargeInvoice.setAmountCharged(cashieredProject.getAmountCharged());
+		projectAccountChargeInvoice.save();
+		
 		AccountTransaction newTransaction = new AccountTransaction();
-		newTransaction.setInvoiceId(cashieredProject.getProjectId());
+		newTransaction.setInvoiceId(projectAccountChargeInvoice.getInvoiceNum());
 		newTransaction.setAmount(cashieredProject.getAmountCharged());
 		newTransaction.setDescription("Project");
 		chargeNewTransaction(newTransaction);
