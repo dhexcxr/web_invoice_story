@@ -55,7 +55,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 
 	@Override
 	public String getTableName() {
-		return "ro";
+		return "project";
 	}
 
 	public long getProjectId() {
@@ -245,7 +245,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 		dataMap.put("locationId", Long.toString(locationId));
 		dataMap.put("customerid", Long.toString(customerId));
 		dataMap.put("customerdata", customerData);
-		dataMap.put("unitid", Long.toString(unitId));
+		dataMap.put("projectSiteId", Long.toString(projectSiteId));
 		
 		if (createdDate != null) {
 			dataMap.put("createdTime", createdDate.toString());
@@ -271,7 +271,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 				FROM web_invoice_story.project
 				JOIN web_invoice_story.customer ON project.customerid = customer.customerid
 				JOIN web_invoice_story.projectSite ON project.projectSiteId = projectSite.projectSiteId
-				WHERE project.projectId LIKE ? OR customer.lastname LIKE ? OR customer.firstname LIKE ? OR customer.homephone LIKE ? OR customer.cellphone LIKE ? OR u.year LIKE ? OR u.make LIKE ? OR u.model LIKE ? OR u.vin;""";
+				WHERE project.projectId LIKE ? OR customer.lastname LIKE ? OR customer.firstname LIKE ? OR customer.homephone LIKE ? OR customer.cellphone LIKE ? OR projectSite.address LIKE ? OR projectSite.city LIKE ? OR projectSite.state LIKE ? OR projectSite.zipCode LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND projectId IN (";
 		super.querySubStringIndices[0] = 13;
 		super.querySubStringIndices[1] = 210;

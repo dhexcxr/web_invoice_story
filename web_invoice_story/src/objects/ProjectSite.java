@@ -149,7 +149,7 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	public ProjectSite searchByPk(long primaryKey) {		// TODO NOTE actually looking at all of these, we could probably leave
 		super.searchString = Long.toString(primaryKey);				// all the super. declarations in the constructor, maybe addressProjectSite a separate var for the searchByPk query,
 		super.searchQuery = """
-				SELECT ps.projectSiteId, ps.customerId, ps.address, ps.city, ps.state, ps.zipCode, ps.notes, customer.lastName, customer.firstName 
+				SELECT projectSite.projectSiteId, projectSite.customerId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode, projectSite.notes, customer.lastName, customer.firstName 
 				FROM web_invoice_story.projectSite
 				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId
 				WHERE projectSiteId = ?;""";

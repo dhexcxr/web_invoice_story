@@ -55,7 +55,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 			openUnit(table);
 		} else if (table.getColumn(0).getText().equals("Part Number") && table.getSelection().length > 0) {
 			openPart(table);
-		} else if (table.getColumn(0).getText().equals("RO #") && table.getSelection().length > 0) {
+		} else if (table.getColumn(0).getText().equals("Project #") && table.getSelection().length > 0) {
 			openRo(table);
 		} else {		// if nothing is selected, return TODO i'd like to find a better way to do this than
 			return;			// checking for all other conditions first, like if (selection == null)
