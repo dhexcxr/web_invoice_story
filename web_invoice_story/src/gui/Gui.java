@@ -1081,9 +1081,10 @@ public class Gui extends Composite {
 				if (response.getResult() == Result.PAYMENT) {
 					// TODO make payment object, kinda link Invoice
 						// get Account we're paying and instantiate object
-					if (accountTable.getSelectionIndex() >= 0 && accountTable.getSelectionIndex() < accountTable.getItemCount()
-							&& accountTable.getItem(accountTable.getSelectionIndex()).getData() != null) {
-						Account account = (Account) accountTable.getItem(accountTable.getSelectionIndex()).getData();
+					int currentAccountSelectionIndex = accountTable.getSelectionIndex();
+					if (currentAccountSelectionIndex >= 0 && currentAccountSelectionIndex < accountTable.getItemCount()
+							&& accountTable.getItem(currentAccountSelectionIndex).getData() != null) {
+						Account account = (Account) accountTable.getItem(currentAccountSelectionIndex).getData();
 						
 						AccountPayment newPayment = new AccountPayment();
 						newPayment.setCustomerId(account.getCustomerId());
@@ -1107,6 +1108,16 @@ public class Gui extends Composite {
 						// repaint
 							// TODO add a method to repaint just 1 item
 						accountTable.paint(account);
+						accountTable.setSelection(currentAccountSelectionIndex);	// set selection after painting to same index we selected before
+																					// this breaks if sort column changes sort order
+//						int i = 0;	// go through all items, find where current item has now been placed, set that as selection
+//						TableItem[] currentItems = accountTable.getItems();
+//						while (i < currentItems.length) {
+//							if (currentItems[i].getData().equals(account)) {
+//								break;
+//							}
+//						}
+						
 					}
 						// thisAccount.chargeTransaction(thisPayment)
 						// thisAccount.save()
