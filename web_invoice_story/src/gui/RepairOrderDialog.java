@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Point;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -15,6 +16,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
@@ -22,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
@@ -56,57 +61,55 @@ import objects.Account;
 import objects.AmountDueResponse;
 import objects.AmountDueResponse.Result;
 import objects.Customer;
-import objects.Invoice;
 import objects.Job;
 import objects.JobLabor;
 import objects.JobPart;
 import objects.Project;
 import objects.ProjectSite;
-import objects.Invoice.InvoiceResult;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
 public class RepairOrderDialog extends Dialog {
 
+	private static final String ONLY_DECIMALS = "[^0-9.]";		// find a better name
 	protected transient Object result;
+	
 	protected Shell shlRepairOrder;
+	private Group grpTotals;
+	private Group grpRepairOrderNum;
+	private Group grpCreatedDate;
 	
+	private Group grpCashieredDate;
+	
+	private Composite roButtonsComposite;
 	private RepairOrderJobTable tableJobsRepairOrder;
+	private InvoicePartTable jobPartsTable;
 	
+	private JobLaborTable jobLaborTable;
 	private Button btnSaveRo;
 	private Button btnCancel;
 	private Button btnClose;
 	private Button btnAddJob;
 	private Button btnDeleteJob;
-	private Button btnCashierRo;
-	private Button btnDeleteLineItem; 
+	private Button btnCashierRo; 
+	private Button btnDeleteLineItem;
 	private Button btnAddLaborLine;
 	private Button btnDeleteLaborLine;
-	private TabFolder tabFolderJobsRepairOrder;
 
-	private MyText txtSubTotalRepairOrder;
-	private MyText textTaxRepairOrder;
-	private MyText textFinalTotalRepairOrder;
-	
-	private long projectId = -1;
-	private Text textRoNum;
-	private Text textCreatedDate;
-	private Text textCashieredDate;
+	private TabFolder tabFolderJobsRepairOrder;
+	private MyText textRoNum;
+	private MyText textCreatedDate;
+	private MyText textCashieredDate;
 	private MyText txtCustomerRepairOrder;
 	private MyText txtUnitRepairOrder;
 	private MyText txtJobName;
 	private MyText txtComplaints;
 	private MyText txtResolution;
 	private MyText txtReccomendations;
+	private MyText txtSubTotalRepairOrder;
+	private MyText textTaxRepairOrder;
 	
-	private InvoicePartTable jobPartsTable;
-	private JobLaborTable jobLaborTable;
-	
-	private Map<String, List<Long>> detailsToDelete = new HashMap<>();
-	
-	private transient Project currentRepairOrder;
-	private boolean cashiered = false;
-	
+	private MyText textFinalTotalRepairOrder;
 	private CustomerSearchListener customerSearchListener;
 	private UnitSearchListener unitSearchListener;
 	private JobNameModifiedListener jobNameModifiedListener;
@@ -116,51 +119,167 @@ public class RepairOrderDialog extends Dialog {
 	private TextBoxFocusListener jobNameFocusListener;
 	private TextBoxFocusListener complaintsFocusListener;
 	private TextBoxFocusListener resolutionFocusListener;
+	
 	private TextBoxFocusListener reccomendationsFocusListener;
+	private Label lblSubTotal;
+	private Label lblTax;
 	
+	private Label lblFinalTotal;
+	private FormData fd_tableJobsRepairOrder;
+	private FormData fd_btnClose;
 	
-	private static final String ONLY_DECIMALS = "[^0-9.]";		// find a better name
+	private FormData fd_btnCashierRo;
+	private long projectId = -1;
+	private Map<String, List<Long>> detailsToDelete = new HashMap<>();
+	private transient Project currentRepairOrder;
+
+	private boolean cashiered = false;
+	
 	
 	// TODO create isModified variable in this RepairOrderDialog object to track if ANYTHING in the underlying repairOrder has been modified
 		// so we can ask the user if they want to save before closing RepairOrderDialog
 	
-	// RO getters
-	public Shell getRoDialogShell() {
-		return shlRepairOrder;
+	public RepairOrderDialog(Shell parent, int style) {
+		super(parent, style);		// TODO set customer name or RO number in setText
+		setText("Repair Order Details");
 	}
 	
-	public Text getTextCashieredDate() {
-		return textCashieredDate;
+	public void addDetailsToDelete(String table, Long primaryKey) {
+		detailsToDelete.computeIfAbsent(table, t -> new ArrayList<>()).add(primaryKey);
 	}
 	
-	public MyText getTxtCustomerRepairOrder() {
-		return txtCustomerRepairOrder;
+	public void calcRoTotal() {
+		BigDecimal total = BigDecimal.valueOf(0);
+		for (TableItem currentItem: tableJobsRepairOrder.getItems()) {
+			String totalString = currentItem.getText(RepairOrderJobTable.JOB_TOTAL_COLUMN).replaceAll(ONLY_DECIMALS, "");
+			total = total.add(new BigDecimal(totalString));
+		}
+		txtSubTotalRepairOrder.setText("$" + total.setScale(2, RoundingMode.CEILING).toString());
+		BigDecimal tax = total.multiply(BigDecimal.valueOf(0.065));
+		textTaxRepairOrder.setText("$" + tax.setScale(2, RoundingMode.CEILING).toString());
+		textFinalTotalRepairOrder.setText("$" + total.add(tax).setScale(2, RoundingMode.CEILING).toString());
 	}
 
-	public MyText getTxtUnitRepairOrder() {
-		return txtUnitRepairOrder;
+	public boolean cashiered() {
+		return cashiered;
 	}
+	// END RO getters
 
-	public RepairOrderJobTable getTableJobsRepairOrder() {
-		return tableJobsRepairOrder;
+	private void checkPartsOnHand(Job job, List<JobPart> jobParts) {
+		// check each jobPart and see if current jobPart.quantity > jobPart.getPart.getOnHand, if so inform user
+			// with warning dialog and change quantity to onHand
+		boolean partsOnHandChanged = false;
+		Map<String, List<JobPart>> changedParts = new HashMap<>();
+
+		for (JobPart jobPart : jobParts) {
+			if (jobPart.getQuantity() > jobPart.getPart().getOnHand()) {
+				partsOnHandChanged = true;
+				changedParts.computeIfAbsent(job.getJobName(), jp -> new ArrayList<>()).add(jobPart);
+				jobPart.setQuantity(jobPart.getPart().getOnHand());
+			}
+		}
+		if (partsOnHandChanged) {
+			PartQuantityWarning partQuantityWarning = new PartQuantityWarning(shlRepairOrder, getStyle());
+			partQuantityWarning.setParts(changedParts);
+			partQuantityWarning.open();
+		}		
 	}
 	
-	public TabFolder getTabFolderJobsRepairOrder() {
-		return tabFolderJobsRepairOrder;
+	private void createContents() {
+		shlRepairOrder = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
+		shlRepairOrder.setSize(992, 736);
+		shlRepairOrder.setText(getText());
+		shlRepairOrder.addListener(SWT.Resize, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (shlRepairOrder.getSize().x < new Point(992, 736).x
+						|| shlRepairOrder.getSize().y < new Point(992, 736).y) {
+					shlRepairOrder.setSize(992, 736);	// set a minimum shell size
+				}
+				
+			}
+		});
+		
+		FormLayout fl_shlRepairOrder = new FormLayout();
+		fl_shlRepairOrder.spacing = 5;
+		fl_shlRepairOrder.marginWidth = 5;
+		fl_shlRepairOrder.marginHeight = 5;
+		shlRepairOrder.setLayout(fl_shlRepairOrder);
+				
+		Gui.setDialogAtCenter(shlRepairOrder);
+		
+//		roDetails();
+
+		roControls();
+		
+		jobTabs();
+		
+		roDetails();
+		
+		setLayout();
 	}
 	
-	public List<MyText> getJobDetailsText() {
-		return List.of(txtJobName, txtComplaints, txtResolution, txtReccomendations);
+	public void disableJobTabs() {
+		txtJobName.setEnabled(false);
+		txtJobName.setText("Job Name...");
+		txtComplaints.setEnabled(false);
+		txtComplaints.setText("Complaints...");
+		txtResolution.setEnabled(false);
+		txtResolution.setText("Resolution...");
+		txtReccomendations.setEnabled(false);
+		txtReccomendations.setText("Reccomendations...");
+		jobPartsTable.setEnabled(false);
+		jobPartsTable.removeAll();
+		jobLaborTable.setEnabled(false);
+		jobLaborTable.removeAll();
+		btnDeleteLineItem.setEnabled(false);
+		btnAddLaborLine.setEnabled(false);
+		btnDeleteLaborLine.setEnabled(false);
+	}
+	
+	private void disableRoControls() {
+		// disable editing of text boxes, disable buttons
+			// remove listeners from Customer and ProjectSite text box and from Parts and Labor tables
+		cashiered = true;
+		txtCustomerRepairOrder.removeMouseListener(customerSearchListener);
+		txtUnitRepairOrder.removeMouseListener(unitSearchListener);
+		btnCashierRo.setEnabled(false);
+		btnAddJob.setEnabled(false);
+		btnDeleteJob.setEnabled(false);
+		btnCancel.setEnabled(false);
+		btnSaveRo.setEnabled(false);
+		btnDeleteLineItem.setEnabled(false);
+		btnAddLaborLine.setEnabled(false);
+		btnDeleteLaborLine.setEnabled(false);
+		txtJobName.setEditable(false);
+		txtJobName.removeFocusListener(jobNameFocusListener);
+		txtComplaints.setEditable(false);
+		txtComplaints.removeFocusListener(complaintsFocusListener);
+		txtResolution.setEditable(false);
+		txtResolution.removeFocusListener(resolutionFocusListener);
+		txtReccomendations.setEditable(false);
+		txtReccomendations.removeFocusListener(reccomendationsFocusListener);
+		jobPartsTable.removeListener(SWT.MouseDown, repairOrderPartTableListener);
+		jobLaborTable.removeListener(SWT.MouseDown, repairOrderLaborTableListener);		
+	}
+	
+	public Map<String, List<Long>> getDetailsToDelete() {
+		return detailsToDelete;
 	}
 	
 	public List<Button> getJobDetailsButtons() {
 		return List.of(btnDeleteLineItem, btnAddLaborLine, btnDeleteLaborLine);
 	}
 	
-	public InvoicePartTable getJobPartsTable() {
-		return jobPartsTable;
+	public JobDetailsModifiedListener getJobDetailsModifiedListener() {
+		return jobDetailsModifiedListener;
 	}
-	
+
+	public List<MyText> getJobDetailsText() {
+		return List.of(txtJobName, txtComplaints, txtResolution, txtReccomendations);
+	}
+
 	public JobLaborTable getJobLaborTable() {
 		return jobLaborTable;
 	}
@@ -168,224 +287,46 @@ public class RepairOrderDialog extends Dialog {
 	public JobNameModifiedListener getJobNameModifiedListener() {
 		return jobNameModifiedListener;
 	}
-
-	public JobDetailsModifiedListener getJobDetailsModifiedListener() {
-		return jobDetailsModifiedListener;
-	}
-
-	public Map<String, List<Long>> getDetailsToDelete() {
-		return detailsToDelete;
+	
+	public InvoicePartTable getJobPartsTable() {
+		return jobPartsTable;
 	}
 	
-	public void setDetailsToDelete(Map<String, List<Long>> newDetailsToDelete) {
-		detailsToDelete = newDetailsToDelete;
+	// RO getters
+	public Shell getRoDialogShell() {
+		return shlRepairOrder;
+	}
+
+	public TabFolder getTabFolderJobsRepairOrder() {
+		return tabFolderJobsRepairOrder;
+	}
+
+	public RepairOrderJobTable getTableJobsRepairOrder() {
+		return tableJobsRepairOrder;
 	}
 	
-	public void addDetailsToDelete(String table, Long primaryKey) {
-		detailsToDelete.computeIfAbsent(table, t -> new ArrayList<>()).add(primaryKey);
-	}
-	
-	public boolean cashiered() {
-		return cashiered;
-	}
-	// END RO getters
-
-	public RepairOrderDialog(Shell parent, int style) {
-		super(parent, style);		// TODO set customer name or RO number in setText
-		setText("Repair Order Details");
+	public Text getTextCashieredDate() {
+		return textCashieredDate;
 	}
 
-	public Object open() {
-		createContents();
-		setupListeners();
-		shlRepairOrder.open();
-		shlRepairOrder.layout();
-		Display display = getParent().getDisplay();
-		while (!shlRepairOrder.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-	
-	public Object open(Project project) {
-		createContents();
-		setupListeners();
-		
-		loadRoFromDb(project);
-		
-		shlRepairOrder.open();
-		shlRepairOrder.layout();
-		Display display = getParent().getDisplay();
-		while (!shlRepairOrder.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
+	public MyText getTxtCustomerRepairOrder() {
+		return txtCustomerRepairOrder;
 	}
 
-	private void createContents() {
-		shlRepairOrder = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shlRepairOrder.setSize(992, 736);
-		shlRepairOrder.setText(getText());
-				
-		Gui.setDialogAtCenter(shlRepairOrder);
-		
-		roDetails();
-
-		roControls();
-		
-		jobTabs();
-	}
-	
-	private void roDetails() {
-		Group grpRepairOrderNum = new Group(shlRepairOrder, SWT.NONE);
-		grpRepairOrderNum.setText("Repair Order");
-		grpRepairOrderNum.setBounds(861, 10, 103, 61);
-		
-		textRoNum = new Text(grpRepairOrderNum, SWT.BORDER);
-		textRoNum.setEditable(false);
-		textRoNum.setBounds(10, 25, 83, 26);
-		
-		Group grpCreatedDate = new Group(shlRepairOrder, SWT.NONE);
-		grpCreatedDate.setText("Created Date");
-		grpCreatedDate.setBounds(676, 77, 288, 62);
-		
-		textCreatedDate = new Text(grpCreatedDate, SWT.BORDER);
-		textCreatedDate.setEditable(false);
-		textCreatedDate.setBounds(10, 26, 268, 26);
-		
-		Group grpCashieredDate = new Group(shlRepairOrder, SWT.NONE);
-		grpCashieredDate.setText("Cashiered Date");
-		grpCashieredDate.setBounds(676, 144, 288, 62);
-		
-		textCashieredDate = new Text(grpCashieredDate, SWT.BORDER);
-		textCashieredDate.setEditable(false);
-		textCashieredDate.setBounds(10, 26, 268, 26);
-		
-		// Customer Data
-		txtCustomerRepairOrder = new MyText(shlRepairOrder, SWT.BORDER | SWT.WRAP);
-		txtCustomerRepairOrder.setEditable(false);
-		txtCustomerRepairOrder.setText("Customer...");
-		txtCustomerRepairOrder.setBounds(10, 10, 334, 128);
-		txtCustomerRepairOrder.setBackground(SWTResourceManager.getColor(255, 102, 102));		// RED
-		
-		txtUnitRepairOrder = new MyText(shlRepairOrder, SWT.BORDER | SWT.WRAP);
-		txtUnitRepairOrder.setEditable(false);
-		txtUnitRepairOrder.setText("ProjectSite...");
-		txtUnitRepairOrder.setBounds(370, 10, 300, 128);
-		txtUnitRepairOrder.setBackground(SWTResourceManager.getColor(255, 102, 102));		// RED
-		// END Customer Data
-
-		// Totals
-		Group grpTotals = new Group(shlRepairOrder, SWT.NONE);
-		grpTotals.setText("Sub Total");
-		grpTotals.setBounds(540, 344, 424, 62);
-
-		txtSubTotalRepairOrder = new MyText(grpTotals, SWT.BORDER);
-		txtSubTotalRepairOrder.setBounds(10, 26, 128, 26);
-		txtSubTotalRepairOrder.setEditable(false);
-		txtSubTotalRepairOrder.setText("$0.00");
-
-		Label lblTax = new Label(grpTotals, SWT.NONE);
-		lblTax.setBounds(148, 0, 21, 20);
-		lblTax.setText("Tax");
-
-		textTaxRepairOrder = new MyText(grpTotals, SWT.BORDER);
-		textTaxRepairOrder.setBounds(148, 26, 128, 26);
-		textTaxRepairOrder.setText("$0.00");
-		textTaxRepairOrder.setEditable(false);
-
-		Label lblFinalTotal = new Label(grpTotals, SWT.NONE);
-		lblFinalTotal.setBounds(286, 0, 70, 20);
-		lblFinalTotal.setText("Final Total");
-
-		textFinalTotalRepairOrder = new MyText(grpTotals, SWT.BORDER);
-		textFinalTotalRepairOrder.setBounds(286, 26, 128, 26);
-		textFinalTotalRepairOrder.setText("$0.00");
-		textFinalTotalRepairOrder.setEditable(false);
-		// END Totals
-	}
-	
-	private void roControls() {
-		// Jobs table
-		tableJobsRepairOrder = new RepairOrderJobTable(shlRepairOrder, SWT.BORDER | SWT.FULL_SELECTION);
-		tableJobsRepairOrder.setBounds(10, 144, 660, 200);
-		tableJobsRepairOrder.setHeaderVisible(true);
-		tableJobsRepairOrder.setLinesVisible(true);
-		tableJobsRepairOrder.setFocus();
-
-		TableColumn tblclmnJobName = new TableColumn(tableJobsRepairOrder, SWT.NONE);
-		tblclmnJobName.setWidth(330);
-		tblclmnJobName.setText("Job Name");
-
-		TableColumn tblclmnPartsTotal = new TableColumn(tableJobsRepairOrder, SWT.NONE);
-		tblclmnPartsTotal.setWidth(100);
-		tblclmnPartsTotal.setText("Parts Total");
-
-		TableColumn tblclmnLaborTotal = new TableColumn(tableJobsRepairOrder, SWT.NONE);
-		tblclmnLaborTotal.setWidth(100);
-		tblclmnLaborTotal.setText("Labor Total");
-
-		TableColumn tblclmnJobTotal = new TableColumn(tableJobsRepairOrder, SWT.NONE);
-		tblclmnJobTotal.setWidth(111);
-		tblclmnJobTotal.setText("Job Total");
-
-		btnAddJob = new Button(shlRepairOrder, SWT.NONE);
-		btnAddJob.setBounds(676, 212, 140, 74);
-		btnAddJob.setText("Add Job");
-
-		btnDeleteJob = new Button(shlRepairOrder, SWT.NONE);
-		btnDeleteJob.setBounds(733, 292, 83, 52);
-		btnDeleteJob.setText("Delete Job");
-		// END Jobs table
-
-		// RO Controls
-		btnCashierRo = new Button(shlRepairOrder, SWT.NONE);
-		btnCashierRo.setBounds(676, 10, 103, 64);
-		btnCashierRo.setText("Cashier");
-
-		btnSaveRo = new Button(shlRepairOrder, SWT.NONE);
-		btnSaveRo.setBounds(822, 212, 142, 132);
-		btnSaveRo.setText("Save");
-
-		btnCancel = new Button(shlRepairOrder, SWT.NONE);
-		btnCancel.setBounds(676, 292, 53, 52);
-		btnCancel.setText("Cancel");
-		
-		btnClose = new Button(shlRepairOrder, SWT.NONE);
-		btnClose.setText("Close");
-		btnClose.setBounds(785, 10, 70, 64);
-		// END RO controls
+	public MyText getTxtUnitRepairOrder() {
+		return txtUnitRepairOrder;
 	}
 	
 	private void jobTabs() {
-		// Job Tabs Buttons
-		// These buttons need to be before the TabFolder to be painted over top of it
-		btnDeleteLineItem = new Button(shlRepairOrder, SWT.NONE);
-		btnDeleteLineItem.setBounds(386, 350, 121, 56);
-		btnDeleteLineItem.setText("Delete Line Item");
-		btnDeleteLineItem.setVisible(false);
-		btnDeleteLineItem.setEnabled(false);
-
-		btnAddLaborLine = new Button(shlRepairOrder, SWT.NONE);
-		btnAddLaborLine.setBounds(255, 350, 121, 56);
-		btnAddLaborLine.setText("Add Labor");
-		btnAddLaborLine.setVisible(false);
-		btnAddLaborLine.setEnabled(false);
-
-		btnDeleteLaborLine = new Button(shlRepairOrder, SWT.NONE);
-		btnDeleteLaborLine.setBounds(386, 350, 121, 56);
-		btnDeleteLaborLine.setText("Delete Labor");
-		btnDeleteLaborLine.setVisible(false);
-		btnDeleteLaborLine.setEnabled(false);
-		// END Job Tabs Buttons
 
 		// Job tabs
 		tabFolderJobsRepairOrder = new TabFolder(shlRepairOrder, SWT.NONE);
-		tabFolderJobsRepairOrder.setBounds(10, 383, 954, 296);
+		FormData fd_tabFolderJobsRepairOrder = new FormData();
+		fd_tabFolderJobsRepairOrder.top = new FormAttachment(65);
+		fd_tabFolderJobsRepairOrder.bottom = new FormAttachment(100);
+		fd_tabFolderJobsRepairOrder.right = new FormAttachment(100);
+		fd_tabFolderJobsRepairOrder.left = new FormAttachment(0);
+		tabFolderJobsRepairOrder.setLayoutData(fd_tabFolderJobsRepairOrder);
 
 		// Job Details Tab
 		TabItem tbtmJobDetails = new TabItem(tabFolderJobsRepairOrder, SWT.NONE);
@@ -393,25 +334,50 @@ public class RepairOrderDialog extends Dialog {
 
 		Composite jobDetailsComposite = new Composite(tabFolderJobsRepairOrder, SWT.NONE);
 		tbtmJobDetails.setControl(jobDetailsComposite);
+		FormLayout fl_jobDetailsComposite = new FormLayout();
+		fl_jobDetailsComposite.spacing = 5;
+		fl_jobDetailsComposite.marginWidth = 5;
+		fl_jobDetailsComposite.marginHeight = 5;
+		jobDetailsComposite.setLayout(fl_jobDetailsComposite);
 
 		txtJobName = new MyText(jobDetailsComposite, SWT.BORDER);
+		FormData fd_txtJobName = new FormData();
+		fd_txtJobName.height = 24;
+		fd_txtJobName.right = new FormAttachment(50, -5);
+		fd_txtJobName.top = new FormAttachment(0, 5);
+		fd_txtJobName.left = new FormAttachment(0);
+		txtJobName.setLayoutData(fd_txtJobName);
 		txtJobName.setText("Job Name...");
-		txtJobName.setBounds(10, 10, 460, 26);
 		txtJobName.setEnabled(false);
 
 		txtComplaints = new MyText(jobDetailsComposite, SWT.BORDER | SWT.WRAP);
+		FormData fd_txtComplaints = new FormData();
+		fd_txtComplaints.top = new FormAttachment(txtJobName);
+		fd_txtComplaints.bottom = new FormAttachment(100);
+		fd_txtComplaints.right = new FormAttachment(50, -5);
+		fd_txtComplaints.left = new FormAttachment(0);
+		txtComplaints.setLayoutData(fd_txtComplaints);
 		txtComplaints.setText("Complaints...");
-		txtComplaints.setBounds(10, 42, 460, 211);
 		txtComplaints.setEnabled(false);
 
 		txtResolution = new MyText(jobDetailsComposite, SWT.BORDER | SWT.WRAP);
+		FormData fd_txtResolution = new FormData();
+		fd_txtResolution.top = new FormAttachment(0, 5);
+		fd_txtResolution.left = new FormAttachment(txtComplaints, 5);
+		fd_txtResolution.bottom = new FormAttachment(50, -5);
+		fd_txtResolution.right = new FormAttachment(100);
+		txtResolution.setLayoutData(fd_txtResolution);
 		txtResolution.setText("Resolution...");
-		txtResolution.setBounds(476, 42, 460, 100);
 		txtResolution.setEnabled(false);
 
 		txtReccomendations = new MyText(jobDetailsComposite, SWT.BORDER | SWT.WRAP);
+		FormData fd_txtReccomendations = new FormData();
+		fd_txtReccomendations.left = new FormAttachment(txtComplaints, 5);
+		fd_txtReccomendations.bottom = new FormAttachment(100);
+		fd_txtReccomendations.right = new FormAttachment(100);
+		fd_txtReccomendations.top = new FormAttachment(50, 5);
+		txtReccomendations.setLayoutData(fd_txtReccomendations);
 		txtReccomendations.setText("Reccomendations...");
-		txtReccomendations.setBounds(476, 148, 460, 105);
 		txtReccomendations.setEnabled(false);
 		// END Job Details Tab
 
@@ -491,6 +457,491 @@ public class RepairOrderDialog extends Dialog {
 		tblclmnTotal.setText("Total");
 		// END Labor tab
 		// END Job tabs
+
+		// Job Tabs Buttons
+		// These buttons need to be before the TabFolder to be painted over top of it
+		btnDeleteLineItem = new Button(shlRepairOrder, SWT.NONE);
+		fd_tableJobsRepairOrder.bottom = new FormAttachment(btnDeleteLineItem, -4);
+		FormData fd_btnDeleteLineItem = new FormData();
+		fd_btnDeleteLineItem.height = 48;
+		fd_btnDeleteLineItem.width = 128;
+		fd_btnDeleteLineItem.right = new FormAttachment(60, -10);
+		fd_btnDeleteLineItem.bottom = new FormAttachment(tabFolderJobsRepairOrder);
+		btnDeleteLineItem.setLayoutData(fd_btnDeleteLineItem);
+		btnDeleteLineItem.setText("Delete Line Item");
+		btnDeleteLineItem.setVisible(false);
+		btnDeleteLineItem.setEnabled(false);
+
+		btnDeleteLaborLine = new Button(shlRepairOrder, SWT.NONE);
+		FormData fd_btnDeleteLaborLine = new FormData();
+		fd_btnDeleteLaborLine.height = 48;
+		fd_btnDeleteLaborLine.width = 128;
+		fd_btnDeleteLaborLine.right = new FormAttachment(60, -10);
+		fd_btnDeleteLaborLine.bottom = new FormAttachment(tabFolderJobsRepairOrder);
+		btnDeleteLaborLine.setLayoutData(fd_btnDeleteLaborLine);
+		btnDeleteLaborLine.setText("Delete Labor");
+		btnDeleteLaborLine.setVisible(false);
+		btnDeleteLaborLine.setEnabled(false);
+
+		btnAddLaborLine = new Button(shlRepairOrder, SWT.NONE);
+		FormData fd_btnAddLaborLine = new FormData();
+		fd_btnAddLaborLine.height = 48;
+		fd_btnAddLaborLine.width = 128;
+		fd_btnAddLaborLine.bottom = new FormAttachment(tabFolderJobsRepairOrder);
+		fd_btnAddLaborLine.right = new FormAttachment(btnDeleteLaborLine, -10);
+		btnAddLaborLine.setLayoutData(fd_btnAddLaborLine);
+		btnAddLaborLine.setText("Add Labor");
+		btnAddLaborLine.setVisible(false);
+		btnAddLaborLine.setEnabled(false);
+		// END Job Tabs Buttons
+	}
+	
+	private void loadRoFromDb(Project project) {
+		// set Dialog boxes and stuff from repairOrder fields
+		if (project != null) {
+			currentRepairOrder = project;
+			projectId = project.getProjectId();
+			textRoNum.setText(Long.toString(projectId));
+			
+			textCreatedDate.setText(project.getCreatedDate().toString());
+			textCashieredDate.setText(project.getClosedDate() == null ? "" : project.getClosedDate().toString());
+			
+			if (!textCashieredDate.getText().equals("")) {
+				disableRoControls();
+			}
+			
+			if (project.getCustomerId() != 0) {
+				txtCustomerRepairOrder.setData(new Customer().searchByPk(project.getCustomerId()));
+				txtCustomerRepairOrder.setText(project.getCustomerName() + "\n" + project.getCustomerData());
+			}
+
+			if (project.getProjectSiteId() != 0) {
+				ProjectSite roUnit = new ProjectSite().searchByPk(project.getProjectSiteId());
+				txtUnitRepairOrder.setData(roUnit);
+				txtUnitRepairOrder.setText(roUnit.getStateProjectSite() + " " + roUnit.getAddressProjectSite() + "\n" +
+						roUnit.getCityProjectSiteString() + "\nVin: " + roUnit.getNotesProjectSite() + "\nColor: " +
+						roUnit.getZipCodeProjectSiteString());
+			}
+
+			List<Job> roJobs = loadRoJobsFromDb();
+			project.setJobs(roJobs);
+			tableJobsRepairOrder.setSelection(0);
+			tableJobsRepairOrder.notifyListeners(SWT.Selection, new Event());
+			this.calcRoTotal();
+		}
+	}
+	
+	private List<Job> loadRoJobsFromDb() {
+		List<Job> roJobs = new ArrayList<>();
+		
+		for (Job job : new Job().searchForJobsByProjectId(projectId)) {
+			
+			long jobId = job.getJobId();
+		
+			// setup table item to hold RO Job
+			RepairOrderJobTableItem jobTableItem = new RepairOrderJobTableItem(tableJobsRepairOrder, getStyle());
+
+			// find and build labor
+			job.setLabor(new JobLabor().searchJobLaborByProjectId(jobId));
+
+			// find and build Parts
+			List<JobPart> listOfJobParts = new JobPart().searchJobLaborByJobId(jobId);
+			
+			if (!cashiered) {
+				checkPartsOnHand(job, listOfJobParts);
+			}
+
+			job.setJobParts(listOfJobParts);
+			roJobs.add(job);
+			jobTableItem.setData(job);
+		}
+		return roJobs;
+	}
+	
+	public Object open() {
+		createContents();
+		setupListeners();
+		shlRepairOrder.open();
+		shlRepairOrder.layout();
+		Display display = getParent().getDisplay();
+		while (!shlRepairOrder.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+	
+	public Object open(Project project) {
+		createContents();
+		setupListeners();
+		
+		loadRoFromDb(project);
+		
+		shlRepairOrder.open();
+		shlRepairOrder.layout();
+		Display display = getParent().getDisplay();
+		while (!shlRepairOrder.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+	
+	public void reloadRo() {
+		loadRoFromDb(currentRepairOrder);
+	}
+
+	private void roControls() {
+		// Jobs table
+		tableJobsRepairOrder = new RepairOrderJobTable(shlRepairOrder, SWT.BORDER | SWT.FULL_SELECTION);
+		fd_tableJobsRepairOrder = new FormData();
+		fd_tableJobsRepairOrder.right = new FormAttachment(68);
+		fd_tableJobsRepairOrder.left = new FormAttachment(0, 5);
+		fd_tableJobsRepairOrder.top = new FormAttachment(0, 144);
+		tableJobsRepairOrder.setLayoutData(fd_tableJobsRepairOrder);
+		tableJobsRepairOrder.setHeaderVisible(true);
+		tableJobsRepairOrder.setLinesVisible(true);
+		tableJobsRepairOrder.setFocus();
+
+		TableColumn tblclmnJobName = new TableColumn(tableJobsRepairOrder, SWT.NONE);
+		tblclmnJobName.setWidth(330);
+		tblclmnJobName.setText("Job Name");
+
+		TableColumn tblclmnPartsTotal = new TableColumn(tableJobsRepairOrder, SWT.NONE);
+		tblclmnPartsTotal.setWidth(100);
+		tblclmnPartsTotal.setText("Parts Total");
+
+		TableColumn tblclmnLaborTotal = new TableColumn(tableJobsRepairOrder, SWT.NONE);
+		tblclmnLaborTotal.setWidth(100);
+		tblclmnLaborTotal.setText("Labor Total");
+
+		TableColumn tblclmnJobTotal = new TableColumn(tableJobsRepairOrder, SWT.NONE);
+		tblclmnJobTotal.setWidth(111);
+		tblclmnJobTotal.setText("Job Total");
+		// END Jobs table
+
+		// RO Controls
+		btnCashierRo = new Button(shlRepairOrder, SWT.NONE);
+		btnCashierRo.setSize(128,  128);
+		fd_btnCashierRo = new FormData();
+		fd_btnCashierRo.top = new FormAttachment(0, 10);
+		btnCashierRo.setLayoutData(fd_btnCashierRo);
+		btnCashierRo.setText("Cashier");
+		
+		btnClose = new Button(shlRepairOrder, SWT.NONE);
+		fd_btnCashierRo.right = new FormAttachment(btnClose, -5);
+		fd_btnClose = new FormData();
+		fd_btnClose.top = new FormAttachment(0, 10);
+		fd_btnClose.width = 64;
+		btnClose.setLayoutData(fd_btnClose);
+		btnClose.setText("Close");
+		// END RO controls
+	}
+	
+	private void roDetails() {
+		
+		grpRepairOrderNum = new Group(shlRepairOrder, SWT.NONE);
+		grpRepairOrderNum.setText("Repair Order");
+		
+		textRoNum = new MyText(grpRepairOrderNum, SWT.BORDER);
+		textRoNum.setEditable(false);
+		
+		grpCreatedDate = new Group(shlRepairOrder, SWT.NONE);
+		grpCreatedDate.setText("Created Date");
+		
+		textCreatedDate = new MyText(grpCreatedDate, SWT.BORDER);
+		textCreatedDate.setEditable(false);
+		
+		grpCashieredDate = new Group(shlRepairOrder, SWT.NONE);
+		grpCashieredDate.setText("Cashiered Date");
+		
+		textCashieredDate = new MyText(grpCashieredDate, SWT.BORDER);
+		textCashieredDate.setEditable(false);
+		
+		// Customer Data
+		txtCustomerRepairOrder = new MyText(shlRepairOrder, SWT.BORDER | SWT.WRAP);
+		txtCustomerRepairOrder.setEditable(false);
+		txtCustomerRepairOrder.setText("Customer...");
+		txtCustomerRepairOrder.setBackground(SWTResourceManager.getColor(255, 102, 102));		// RED
+		
+		txtUnitRepairOrder = new MyText(shlRepairOrder, SWT.BORDER | SWT.WRAP);
+		txtUnitRepairOrder.setEditable(false);
+		txtUnitRepairOrder.setText("ProjectSite...");
+		txtUnitRepairOrder.setBackground(SWTResourceManager.getColor(255, 102, 102));		// RED
+		// END Customer Data
+
+		// Totals
+		grpTotals = new Group(shlRepairOrder, SWT.NONE);
+
+		txtSubTotalRepairOrder = new MyText(grpTotals, SWT.BORDER);
+		txtSubTotalRepairOrder.setEditable(false);
+		txtSubTotalRepairOrder.setText("$0.00");
+
+		textTaxRepairOrder = new MyText(grpTotals, SWT.BORDER);
+		textTaxRepairOrder.setText("$0.00");
+		textTaxRepairOrder.setEditable(false);
+
+		textFinalTotalRepairOrder = new MyText(grpTotals, SWT.BORDER);
+		textFinalTotalRepairOrder.setText("$0.00");
+		textFinalTotalRepairOrder.setEditable(false);
+
+		lblSubTotal = new Label(grpTotals, SWT.NONE);
+		lblSubTotal.setText("Sub Total");
+
+		lblTax = new Label(grpTotals, SWT.NONE);
+		lblTax.setText("Tax");
+
+		lblFinalTotal = new Label(grpTotals, SWT.NONE);
+		lblFinalTotal.setText("Final Total");
+
+		roButtonsComposite = new Composite(shlRepairOrder, SWT.NONE);
+
+		btnAddJob = new Button(roButtonsComposite, SWT.NONE);
+		btnAddJob.setText("Add Job");
+
+		btnCancel = new Button(roButtonsComposite, SWT.NONE);
+		btnCancel.setText("Cancel");
+
+		btnDeleteJob = new Button(roButtonsComposite, SWT.CENTER);
+		btnDeleteJob.setText("Delete Job");
+
+		btnSaveRo = new Button(roButtonsComposite, SWT.NONE);
+		btnSaveRo.setText("Save");
+		// END Totals
+	}
+
+	public void saveJob() {
+		Job currentJob = (Job) tabFolderJobsRepairOrder.getData();
+
+		for (TableItem currentPartTableItem : jobPartsTable.getItems()) {
+			JobPart currentTIPart = (JobPart) currentPartTableItem.getData();
+			List<JobPart> currentParts = currentJob.getJobParts();
+			if (currentTIPart != null && !currentParts.contains(currentTIPart)) {
+				currentJob.addJobPart((JobPart) currentPartTableItem.getData());
+			}
+		}
+
+		for (TableItem currentLaborTableItem : jobLaborTable.getItems()) {
+			if (!currentJob.getLabor().contains(currentLaborTableItem.getData()))
+				currentJob.addLabor((JobLabor) currentLaborTableItem.getData());
+		}
+	}
+
+	private void saveNewRo() {
+		Project project = new Project();
+//		project.setLocationId(Application.getSettings().getCurrentLocation());
+		long currentLocationId = Application.getSettings().getCurrentLocation();
+		long locationId = currentLocationId != 0 ? currentLocationId : ((Customer) txtCustomerRepairOrder.getData()).getLocationId();
+		project.setLocationId(locationId);
+		project.setCreatedDate(Timestamp.from(Instant.now()));
+		textCreatedDate.setText(project.getCreatedDate().toString());
+		saveRo(project);
+	}
+	
+	private void saveRo(Project project) {
+		if (txtCustomerRepairOrder.getData() != null && ((Customer) txtCustomerRepairOrder.getData()).getCustomerId() != -1) {
+			project.setCustomerId(((Customer) txtCustomerRepairOrder.getData()).getCustomerId());
+			project.setCustomerName(txtCustomerRepairOrder.getText(0, txtCustomerRepairOrder.getText().indexOf('\n')).split(","));
+			project.setCustomerData(txtCustomerRepairOrder.getText().substring(txtCustomerRepairOrder.getText().indexOf('\n')));
+		} else {
+			// if we haven't selected a Customer, complain - an RO Customer is required
+			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
+			customerRequiredBox.setText("Notice");
+			customerRequiredBox.setMessage("Please select a Customer");
+			customerRequiredBox.open();
+			return;
+		}
+		
+		if (txtUnitRepairOrder.getData() != null && ((ProjectSite) txtUnitRepairOrder.getData()).getProjectSiteId() != -1) {
+			ProjectSite thisUnit = (ProjectSite) txtUnitRepairOrder.getData();
+			project.setProjectSiteId(thisUnit.getProjectSiteId());
+			project.setUnitYear(thisUnit.getStateProjectSite());
+			project.setUnitMake(thisUnit.getAddressProjectSite());
+			project.setUnitModel(thisUnit.getCityProjectSiteString());
+			project.setUnitVin(thisUnit.getNotesProjectSite());
+		} else {
+			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
+			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
+			customerRequiredBox.setText("Notice");
+			customerRequiredBox.setMessage("Please select a ProjectSite");
+			customerRequiredBox.open();
+			return;
+		}
+		
+		// TODO do something with the returned updateCount
+		DbServices.deleteDetailsFromRo(detailsToDelete);
+		
+		if (tableJobsRepairOrder.getItemCount() > 0) {
+			for (TableItem jobTableItem : tableJobsRepairOrder.getItems()) {
+				if (!project.getJobs().contains(jobTableItem.getData())) {		// maybe use HashSet here
+					project.addJob((Job) jobTableItem.getData());
+				}
+			}
+		}
+		
+		project.setTax(new BigDecimal(textTaxRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
+		project.setTotal(new BigDecimal(textFinalTotalRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
+		
+		// send Project object to DbServices
+		DbServices.saveObject(project);
+		projectId = project.getProjectId();
+		textRoNum.setText(Long.toString(projectId));
+		detailsToDelete = new HashMap<>();
+		currentRepairOrder = project;
+		result = project;
+	}
+	
+	public void setDetailsToDelete(Map<String, List<Long>> newDetailsToDelete) {
+		detailsToDelete = newDetailsToDelete;
+	}
+	
+	private void setLayout() {
+		
+		grpRepairOrderNum.setLayout(new FormLayout());
+		FormData fd_grpRepairOrderNum = new FormData();
+		fd_grpRepairOrderNum.bottom = new FormAttachment(10);
+		fd_grpRepairOrderNum.right = new FormAttachment(100);
+		fd_grpRepairOrderNum.top = new FormAttachment(0, -5);
+		grpRepairOrderNum.setLayoutData(fd_grpRepairOrderNum);
+		
+		FormData fd_textRoNum = new FormData();
+		fd_textRoNum.bottom = new FormAttachment(100, -5);
+		fd_textRoNum.right = new FormAttachment(0, 100);
+		fd_textRoNum.top = new FormAttachment(0);
+		fd_textRoNum.left = new FormAttachment(0);
+		textRoNum.setLayoutData(fd_textRoNum);
+		
+		grpCreatedDate.setLayout(new FormLayout());
+		FormData fd_grpCreatedDate = new FormData();
+		fd_grpCreatedDate.height = 36;
+		fd_grpCreatedDate.right = new FormAttachment(100);
+		fd_grpCreatedDate.left = new FormAttachment(tableJobsRepairOrder);
+		fd_grpCreatedDate.bottom = new FormAttachment(grpCashieredDate, -6);
+		grpCreatedDate.setLayoutData(fd_grpCreatedDate);
+		
+		FormData fd_textCreatedDate = new FormData();
+		fd_textCreatedDate.bottom = new FormAttachment(100, -5);
+		fd_textCreatedDate.right = new FormAttachment(100);
+		fd_textCreatedDate.top = new FormAttachment(0);
+		fd_textCreatedDate.left = new FormAttachment(0);
+		textCreatedDate.setLayoutData(fd_textCreatedDate);
+		
+		grpCashieredDate.setLayout(new FormLayout());
+		FormData fd_grpCashieredDate = new FormData();
+		fd_grpCashieredDate.height = 36;
+		fd_grpCashieredDate.right = new FormAttachment(100);
+		fd_grpCashieredDate.left = new FormAttachment(tableJobsRepairOrder);
+		grpCashieredDate.setLayoutData(fd_grpCashieredDate);
+		
+		FormData fd_textCashieredDate = new FormData();
+		fd_textCashieredDate.bottom = new FormAttachment(100, -5);
+		fd_textCashieredDate.right = new FormAttachment(100);
+		fd_textCashieredDate.top = new FormAttachment(0);
+		fd_textCashieredDate.left = new FormAttachment(0);
+		textCashieredDate.setLayoutData(fd_textCashieredDate);
+		
+		FormData fd_txtCustomerRepairOrder = new FormData();
+		fd_txtCustomerRepairOrder.left = new FormAttachment(0, 5);
+		fd_txtCustomerRepairOrder.bottom = new FormAttachment(tableJobsRepairOrder, -6);
+		fd_txtCustomerRepairOrder.top = new FormAttachment(0, 5);
+		fd_txtCustomerRepairOrder.right = new FormAttachment(txtUnitRepairOrder, -5);
+		txtCustomerRepairOrder.setLayoutData(fd_txtCustomerRepairOrder);
+
+		fd_btnClose.right = new FormAttachment(grpRepairOrderNum, -16);
+		fd_btnClose.bottom = new FormAttachment(10, -5);
+		fd_btnCashierRo.bottom = new FormAttachment(10, -5);
+		fd_btnCashierRo.left = new FormAttachment(txtUnitRepairOrder, 11);
+		
+		FormData fd_txtUnitRepairOrder = new FormData();
+		fd_txtUnitRepairOrder.left = new FormAttachment(35, -2);
+		fd_txtUnitRepairOrder.bottom = new FormAttachment(txtCustomerRepairOrder, 0, SWT.BOTTOM);
+		fd_txtUnitRepairOrder.right = new FormAttachment(68);
+		fd_txtUnitRepairOrder.top = new FormAttachment(0, 5);
+		txtUnitRepairOrder.setLayoutData(fd_txtUnitRepairOrder);
+		
+		FormLayout fl_grpTotals = new FormLayout();
+		fl_grpTotals.marginWidth = 5;
+		fl_grpTotals.marginHeight = 5;
+		grpTotals.setLayout(fl_grpTotals);
+		FormData fd_grpTotals = new FormData();
+		fd_grpTotals.bottom = new FormAttachment(tabFolderJobsRepairOrder, 30);
+		fd_grpTotals.right = new FormAttachment(100);
+		fd_grpTotals.left = new FormAttachment(60);
+		grpTotals.setLayoutData(fd_grpTotals);
+		
+		FormData fd_txtSubTotalRepairOrder = new FormData();
+		fd_txtSubTotalRepairOrder.bottom = new FormAttachment(100);
+		fd_txtSubTotalRepairOrder.right = new FormAttachment(33, -2);
+		fd_txtSubTotalRepairOrder.top = new FormAttachment(0, 21);
+		fd_txtSubTotalRepairOrder.left = new FormAttachment(0);
+		txtSubTotalRepairOrder.setLayoutData(fd_txtSubTotalRepairOrder);
+		
+		FormData fd_textTaxRepairOrder = new FormData();
+		fd_textTaxRepairOrder.bottom = new FormAttachment(0, 47);
+		fd_textTaxRepairOrder.right = new FormAttachment(66, -2);
+		fd_textTaxRepairOrder.top = new FormAttachment(0, 21);
+		fd_textTaxRepairOrder.left = new FormAttachment(33, 2);
+		textTaxRepairOrder.setLayoutData(fd_textTaxRepairOrder);
+		
+		FormData fd_textFinalTotalRepairOrder = new FormData();
+		fd_textFinalTotalRepairOrder.bottom = new FormAttachment(0, 47);
+		fd_textFinalTotalRepairOrder.right = new FormAttachment(100);
+		fd_textFinalTotalRepairOrder.top = new FormAttachment(0, 21);
+		fd_textFinalTotalRepairOrder.left = new FormAttachment(66, 2);
+		textFinalTotalRepairOrder.setLayoutData(fd_textFinalTotalRepairOrder);
+		
+		FormData fd_lblSubTotal = new FormData();
+		fd_lblSubTotal.bottom = new FormAttachment(txtSubTotalRepairOrder, -6);
+		fd_lblSubTotal.left = new FormAttachment(txtSubTotalRepairOrder, 0, SWT.LEFT);
+		lblSubTotal.setLayoutData(fd_lblSubTotal);
+		
+		FormData fd_lblTax = new FormData();
+		fd_lblTax.left = new FormAttachment(textTaxRepairOrder, 0, SWT.LEFT);
+		lblTax.setLayoutData(fd_lblTax);
+		
+		FormData fd_lblFinalTotal = new FormData();
+		fd_lblFinalTotal.left = new FormAttachment(textFinalTotalRepairOrder, 0, SWT.LEFT);
+		lblFinalTotal.setLayoutData(fd_lblFinalTotal);
+		
+		fd_grpCashieredDate.bottom = new FormAttachment(roButtonsComposite, -6);
+		roButtonsComposite.setLayout(new FormLayout());
+		FormData fd_composite = new FormData();
+		fd_composite.bottom = new FormAttachment(grpTotals);
+		fd_composite.top = new FormAttachment(35);
+		fd_composite.left = new FormAttachment(tableJobsRepairOrder);
+		fd_composite.right = new FormAttachment(100);
+		roButtonsComposite.setLayoutData(fd_composite);
+		
+		FormData fd_btnAddJob = new FormData();
+		fd_btnAddJob.bottom = new FormAttachment(50, -5);
+		fd_btnAddJob.right = new FormAttachment(50, -5);
+		fd_btnAddJob.top = new FormAttachment(0, 10);
+		fd_btnAddJob.left = new FormAttachment(0, 10);
+		btnAddJob.setLayoutData(fd_btnAddJob);
+		
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnCancel.right = new FormAttachment(25, -5);
+		fd_btnCancel.top = new FormAttachment(50, 5);
+		fd_btnCancel.left = new FormAttachment(0, 10);
+		btnCancel.setLayoutData(fd_btnCancel);
+		
+		FormData fd_btnDeleteJob = new FormData();
+		fd_btnDeleteJob.bottom = new FormAttachment(100, -10);
+		fd_btnDeleteJob.right = new FormAttachment(50, -5);
+		fd_btnDeleteJob.top = new FormAttachment(50, 5);
+		fd_btnDeleteJob.left = new FormAttachment(25, 5);
+		btnDeleteJob.setLayoutData(fd_btnDeleteJob);
+		
+		FormData fd_btnSaveRo = new FormData();
+		fd_btnSaveRo.left = new FormAttachment(50, 5);
+		fd_btnSaveRo.bottom = new FormAttachment(100, -10);
+		fd_btnSaveRo.top = new FormAttachment(0, 10);
+		fd_btnSaveRo.right = new FormAttachment(100, -10);
+		btnSaveRo.setLayoutData(fd_btnSaveRo);
+		
 	}
 	
 	private void setupListeners() {
@@ -631,228 +1082,5 @@ public class RepairOrderDialog extends Dialog {
 		txtReccomendations.addModifyListener(jobDetailsModifiedListener);
 		
 		// END LISTENERS
-	}
-	
-	public void reloadRo() {
-		loadRoFromDb(currentRepairOrder);
-	}
-	
-	private void loadRoFromDb(Project project) {
-		// set Dialog boxes and stuff from repairOrder fields
-		if (project != null) {
-			currentRepairOrder = project;
-			projectId = project.getProjectId();
-			textRoNum.setText(Long.toString(projectId));
-			
-			textCreatedDate.setText(project.getCreatedDate().toString());
-			textCashieredDate.setText(project.getClosedDate() == null ? "" : project.getClosedDate().toString());
-			
-			if (!textCashieredDate.getText().equals("")) {
-				disableRoControls();
-			}
-			
-			if (project.getCustomerId() != 0) {
-				txtCustomerRepairOrder.setData(new Customer().searchByPk(project.getCustomerId()));
-				txtCustomerRepairOrder.setText(project.getCustomerName() + "\n" + project.getCustomerData());
-			}
-
-			if (project.getProjectSiteId() != 0) {
-				ProjectSite roUnit = new ProjectSite().searchByPk(project.getProjectSiteId());
-				txtUnitRepairOrder.setData(roUnit);
-				txtUnitRepairOrder.setText(roUnit.getStateProjectSite() + " " + roUnit.getAddressProjectSite() + "\n" +
-						roUnit.getCityProjectSiteString() + "\nVin: " + roUnit.getNotesProjectSite() + "\nColor: " +
-						roUnit.getZipCodeProjectSiteString());
-			}
-
-			List<Job> roJobs = loadRoJobsFromDb();
-			project.setJobs(roJobs);
-			tableJobsRepairOrder.setSelection(0);
-			tableJobsRepairOrder.notifyListeners(SWT.Selection, new Event());
-			this.calcRoTotal();
-		}
-	}
-
-	private void disableRoControls() {
-		// disable editing of text boxes, disable buttons
-			// remove listeners from Customer and ProjectSite text box and from Parts and Labor tables
-		cashiered = true;
-		txtCustomerRepairOrder.removeMouseListener(customerSearchListener);
-		txtUnitRepairOrder.removeMouseListener(unitSearchListener);
-		btnCashierRo.setEnabled(false);
-		btnAddJob.setEnabled(false);
-		btnDeleteJob.setEnabled(false);
-		btnCancel.setEnabled(false);
-		btnSaveRo.setEnabled(false);
-		btnDeleteLineItem.setEnabled(false);
-		btnAddLaborLine.setEnabled(false);
-		btnDeleteLaborLine.setEnabled(false);
-		txtJobName.setEditable(false);
-		txtJobName.removeFocusListener(jobNameFocusListener);
-		txtComplaints.setEditable(false);
-		txtComplaints.removeFocusListener(complaintsFocusListener);
-		txtResolution.setEditable(false);
-		txtResolution.removeFocusListener(resolutionFocusListener);
-		txtReccomendations.setEditable(false);
-		txtReccomendations.removeFocusListener(reccomendationsFocusListener);
-		jobPartsTable.removeListener(SWT.MouseDown, repairOrderPartTableListener);
-		jobLaborTable.removeListener(SWT.MouseDown, repairOrderLaborTableListener);		
-	}
-	
-	private List<Job> loadRoJobsFromDb() {
-		List<Job> roJobs = new ArrayList<>();
-		
-		for (Job job : new Job().searchForJobsByProjectId(projectId)) {
-			
-			long jobId = job.getJobId();
-		
-			// setup table item to hold RO Job
-			RepairOrderJobTableItem jobTableItem = new RepairOrderJobTableItem(tableJobsRepairOrder, getStyle());
-
-			// find and build labor
-			job.setLabor(new JobLabor().searchJobLaborByProjectId(jobId));
-
-			// find and build Parts
-			List<JobPart> listOfJobParts = new JobPart().searchJobLaborByJobId(jobId);
-			
-			if (!cashiered) {
-				checkPartsOnHand(job, listOfJobParts);
-			}
-
-			job.setJobParts(listOfJobParts);
-			roJobs.add(job);
-			jobTableItem.setData(job);
-		}
-		return roJobs;
-	}
-
-	private void checkPartsOnHand(Job job, List<JobPart> jobParts) {
-		// check each jobPart and see if current jobPart.quantity > jobPart.getPart.getOnHand, if so inform user
-			// with warning dialog and change quantity to onHand
-		boolean partsOnHandChanged = false;
-		Map<String, List<JobPart>> changedParts = new HashMap<>();
-
-		for (JobPart jobPart : jobParts) {
-			if (jobPart.getQuantity() > jobPart.getPart().getOnHand()) {
-				partsOnHandChanged = true;
-				changedParts.computeIfAbsent(job.getJobName(), jp -> new ArrayList<>()).add(jobPart);
-				jobPart.setQuantity(jobPart.getPart().getOnHand());
-			}
-		}
-		if (partsOnHandChanged) {
-			PartQuantityWarning partQuantityWarning = new PartQuantityWarning(shlRepairOrder, getStyle());
-			partQuantityWarning.setParts(changedParts);
-			partQuantityWarning.open();
-		}		
-	}
-
-	public void disableJobTabs() {
-		txtJobName.setEnabled(false);
-		txtJobName.setText("Job Name...");
-		txtComplaints.setEnabled(false);
-		txtComplaints.setText("Complaints...");
-		txtResolution.setEnabled(false);
-		txtResolution.setText("Resolution...");
-		txtReccomendations.setEnabled(false);
-		txtReccomendations.setText("Reccomendations...");
-		jobPartsTable.setEnabled(false);
-		jobPartsTable.removeAll();
-		jobLaborTable.setEnabled(false);
-		jobLaborTable.removeAll();
-		btnDeleteLineItem.setEnabled(false);
-		btnAddLaborLine.setEnabled(false);
-		btnDeleteLaborLine.setEnabled(false);
-	}
-	
-	public void calcRoTotal() {
-		BigDecimal total = BigDecimal.valueOf(0);
-		for (TableItem currentItem: tableJobsRepairOrder.getItems()) {
-			String totalString = currentItem.getText(RepairOrderJobTable.JOB_TOTAL_COLUMN).replaceAll(ONLY_DECIMALS, "");
-			total = total.add(new BigDecimal(totalString));
-		}
-		txtSubTotalRepairOrder.setText("$" + total.setScale(2, RoundingMode.CEILING).toString());
-		BigDecimal tax = total.multiply(BigDecimal.valueOf(0.065));
-		textTaxRepairOrder.setText("$" + tax.setScale(2, RoundingMode.CEILING).toString());
-		textFinalTotalRepairOrder.setText("$" + total.add(tax).setScale(2, RoundingMode.CEILING).toString());
-	}
-	
-	public void saveJob() {
-		Job currentJob = (Job) tabFolderJobsRepairOrder.getData();
-
-		for (TableItem currentPartTableItem : jobPartsTable.getItems()) {
-			JobPart currentTIPart = (JobPart) currentPartTableItem.getData();
-			List<JobPart> currentParts = currentJob.getJobParts();
-			if (currentTIPart != null && !currentParts.contains(currentTIPart)) {
-				currentJob.addJobPart((JobPart) currentPartTableItem.getData());
-			}
-		}
-
-		for (TableItem currentLaborTableItem : jobLaborTable.getItems()) {
-			if (!currentJob.getLabor().contains(currentLaborTableItem.getData()))
-				currentJob.addLabor((JobLabor) currentLaborTableItem.getData());
-		}
-	}
-	
-	private void saveNewRo() {
-		Project project = new Project();
-//		project.setLocationId(Application.getSettings().getCurrentLocation());
-		long currentLocationId = Application.getSettings().getCurrentLocation();
-		long locationId = currentLocationId != 0 ? currentLocationId : ((Customer) txtCustomerRepairOrder.getData()).getLocationId();
-		project.setLocationId(locationId);
-		project.setCreatedDate(Timestamp.from(Instant.now()));
-		textCreatedDate.setText(project.getCreatedDate().toString());
-		saveRo(project);
-	}
-	
-	private void saveRo(Project project) {
-		if (txtCustomerRepairOrder.getData() != null && ((Customer) txtCustomerRepairOrder.getData()).getCustomerId() != -1) {
-			project.setCustomerId(((Customer) txtCustomerRepairOrder.getData()).getCustomerId());
-			project.setCustomerName(txtCustomerRepairOrder.getText(0, txtCustomerRepairOrder.getText().indexOf('\n')).split(","));
-			project.setCustomerData(txtCustomerRepairOrder.getText().substring(txtCustomerRepairOrder.getText().indexOf('\n')));
-		} else {
-			// if we haven't selected a Customer, complain - an RO Customer is required
-			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
-			customerRequiredBox.setText("Notice");
-			customerRequiredBox.setMessage("Please select a Customer");
-			customerRequiredBox.open();
-			return;
-		}
-		
-		if (txtUnitRepairOrder.getData() != null && ((ProjectSite) txtUnitRepairOrder.getData()).getProjectSiteId() != -1) {
-			ProjectSite thisUnit = (ProjectSite) txtUnitRepairOrder.getData();
-			project.setProjectSiteId(thisUnit.getProjectSiteId());
-			project.setUnitYear(thisUnit.getStateProjectSite());
-			project.setUnitMake(thisUnit.getAddressProjectSite());
-			project.setUnitModel(thisUnit.getCityProjectSiteString());
-			project.setUnitVin(thisUnit.getNotesProjectSite());
-		} else {
-			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
-			MessageBox customerRequiredBox = new MessageBox(shlRepairOrder, SWT.ICON_INFORMATION);
-			customerRequiredBox.setText("Notice");
-			customerRequiredBox.setMessage("Please select a ProjectSite");
-			customerRequiredBox.open();
-			return;
-		}
-		
-		// TODO do something with the returned updateCount
-		DbServices.deleteDetailsFromRo(detailsToDelete);
-		
-		if (tableJobsRepairOrder.getItemCount() > 0) {
-			for (TableItem jobTableItem : tableJobsRepairOrder.getItems()) {
-				if (!project.getJobs().contains(jobTableItem.getData())) {		// maybe use HashSet here
-					project.addJob((Job) jobTableItem.getData());
-				}
-			}
-		}
-		
-		project.setTax(new BigDecimal(textTaxRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
-		project.setTotal(new BigDecimal(textFinalTotalRepairOrder.getText().replaceAll(ONLY_DECIMALS, "")));
-		
-		// send Project object to DbServices
-		DbServices.saveObject(project);
-		projectId = project.getProjectId();
-		textRoNum.setText(Long.toString(projectId));
-		detailsToDelete = new HashMap<>();
-		currentRepairOrder = project;
-		result = project;
 	}
 }
