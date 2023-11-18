@@ -1,11 +1,15 @@
 package gui;
 
+import java.awt.Point;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import listeners.SearchTextBoxListeners;
@@ -15,6 +19,9 @@ import objects.Invoice;
 import guiParts.InvoiceSearchResultsTable;
 import guiParts.MyText;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class InvoiceSearchDialog extends Dialog {
 	
@@ -41,12 +48,29 @@ public class InvoiceSearchDialog extends Dialog {
 	private void createContents() {
 		shlInvoiceSearch = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
 		shlInvoiceSearch.setText("Invoice Search");
-		shlInvoiceSearch.setSize(653, 410);
+		
+		int width = 653;
+		int height = 410;
+		shlInvoiceSearch.setSize(width, height);
+		shlInvoiceSearch.addListener(SWT.Resize, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (shlInvoiceSearch.getSize().x < new Point(width, height).x
+						|| shlInvoiceSearch.getSize().y < new Point(width, height).y) {
+					shlInvoiceSearch.setSize(width, height);	// set a minimum shell size
+				}
+				
+			}
+		});
 		
 		Gui.setDialogAtCenter(shlInvoiceSearch);
+		shlInvoiceSearch.setLayout(new FormLayout());
 		
 		InvoiceSearchResultsTable invoiceTable = new InvoiceSearchResultsTable(shlInvoiceSearch, SWT.BORDER | SWT.FULL_SELECTION);
-		invoiceTable.setBounds(10, 42, 614, 282);
+		FormData fd_invoiceTable = new FormData();
+		fd_invoiceTable.bottom = new FormAttachment(100, -64);
+		fd_invoiceTable.left = new FormAttachment(0, 10);
+		invoiceTable.setLayoutData(fd_invoiceTable);
 		invoiceTable.setLinesVisible(true);
 		invoiceTable.setHeaderVisible(true);
 		invoiceTable.addMouseListener(new MouseAdapter() {
@@ -61,8 +85,15 @@ public class InvoiceSearchDialog extends Dialog {
 		});
 				
 		MyText invoiceSearchTextBox = new MyText(shlInvoiceSearch, SWT.BORDER);
+		fd_invoiceTable.top = new FormAttachment(invoiceSearchTextBox, 6);
+		fd_invoiceTable.right = new FormAttachment(invoiceSearchTextBox, 0, SWT.RIGHT);
+		FormData fd_invoiceSearchTextBox = new FormData();
+		fd_invoiceSearchTextBox.bottom = new FormAttachment(0, 32);
+		fd_invoiceSearchTextBox.right = new FormAttachment(100, -10);
+		fd_invoiceSearchTextBox.top = new FormAttachment(0, 10);
+		fd_invoiceSearchTextBox.left = new FormAttachment(0, 10);
+		invoiceSearchTextBox.setLayoutData(fd_invoiceSearchTextBox);
 		invoiceSearchTextBox.setText("Search...");
-		invoiceSearchTextBox.setBounds(9, 10, 614, 26);
 		invoiceSearchTextBox.setFocus();
 		invoiceSearchTextBox.addFocusListener(new TextBoxFocusListener(invoiceSearchTextBox));
 		invoiceSearchTextBox.addModifyListener(new SearchTextBoxListeners(invoiceSearchTextBox, invoiceTable, new Invoice()));
@@ -94,8 +125,13 @@ public class InvoiceSearchDialog extends Dialog {
 
 		// dialog  controls
 		Button btnOpenInvoice = new Button(shlInvoiceSearch, SWT.NONE);
+		FormData fd_btnOpenInvoice = new FormData();
+		fd_btnOpenInvoice.top = new FormAttachment(invoiceTable, 6);
+		fd_btnOpenInvoice.left = new FormAttachment(invoiceTable, 0, SWT.LEFT);
+		fd_btnOpenInvoice.bottom = new FormAttachment(100, -10);
+		fd_btnOpenInvoice.right = new FormAttachment(0, 266);
+		btnOpenInvoice.setLayoutData(fd_btnOpenInvoice);
 		btnOpenInvoice.setText("Open Invoice");
-		btnOpenInvoice.setBounds(10, 330, 256, 26);
 		btnOpenInvoice.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -107,8 +143,13 @@ public class InvoiceSearchDialog extends Dialog {
 		});
 
 		Button btnCancel = new Button(shlInvoiceSearch, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.bottom = new FormAttachment(btnOpenInvoice, 0, SWT.BOTTOM);
+		fd_btnCancel.top = new FormAttachment(invoiceTable, 6);
+		fd_btnCancel.right = new FormAttachment(invoiceTable, 0, SWT.RIGHT);
+		fd_btnCancel.left = new FormAttachment(100, -266);
+		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		btnCancel.setBounds(368, 330, 256, 26);
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
