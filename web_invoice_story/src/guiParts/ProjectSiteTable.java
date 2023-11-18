@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.TableItem;
 import objects.DbObjectSearchable;
 import objects.ProjectSite;
 
-public class UnitTable extends MyTable{
+public class ProjectSiteTable extends MyTable{
 	
 		// TODO change these refs
 	private static final int OWNER_INDEX = 0;
@@ -25,7 +25,7 @@ public class UnitTable extends MyTable{
 	private int currentSortDirection = SWT.UP;
 	private int currentSortedColumn = OWNER_INDEX;
 
-	public UnitTable(Composite parent, int style) {
+	public ProjectSiteTable(Composite parent, int style) {
 		super(parent, style);
 		// TODO Auto-generated constructor stub
 	}
@@ -48,8 +48,8 @@ public class UnitTable extends MyTable{
 		for (DbObjectSearchable object : objectResults) {
 			if (object instanceof ProjectSite projectSite) {		// TODO remove all null chekcs with an instanceof
 				TableItem tableItem = new TableItem(this, SWT.NONE);
-				tableItem.setText(new String[] {projectSite.getOwner(), projectSite.getAddressProjectSite(), projectSite.getCityProjectSiteString(),
-						 projectSite.getStateProjectSite(), projectSite.getZipCodeProjectSiteString(), projectSite.getNotesProjectSite()});
+				tableItem.setText(new String[] {projectSite.getOwner(), projectSite.getProjectSiteAddress(), projectSite.getProjectSiteCity(),
+						 projectSite.getProjectSiteState(), projectSite.getProjectSiteZipCode(), projectSite.getProjectSiteNotes()});
 				tableItem.setData(projectSite);
 			} else {
 				break;

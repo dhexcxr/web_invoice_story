@@ -15,16 +15,16 @@ import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
 import guiParts.MyText;
 import objects.ProjectSite;
-import guiParts.UnitTable;
+import guiParts.ProjectSiteTable;
 
-public class UnitSearchDialog extends Dialog {
+public class ProjectSiteSearchDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shell;
-	private UnitTable unitTable;
-	private MyText unitSearchTextBox;
+	private ProjectSiteTable projectSiteTable;
+	private MyText projectSiteSearchTextBox;
 
-	public UnitSearchDialog(Shell parent, int style) {
+	public ProjectSiteSearchDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("ProjectSite Search");
 	}
@@ -46,7 +46,7 @@ public class UnitSearchDialog extends Dialog {
 		createContents();
 		
 		// populate Search Text Box with selected Owner
-		unitSearchTextBox.setText(owner);
+		projectSiteSearchTextBox.setText(owner);
 		shell.open();
 		shell.layout();
 		Display display = getParent().getDisplay();
@@ -66,67 +66,67 @@ public class UnitSearchDialog extends Dialog {
 		
 		Gui.setDialogAtCenter(shell);
 		
-		unitTable = new UnitTable(shell, SWT.BORDER | SWT.FULL_SELECTION);
-//		unitTable.addMouseListener(new OpenExistingObjectMouseListener(unitTable, shell));
-		unitTable.setBounds(10, 42, 976, 282);
-		unitTable.setHeaderVisible(true);
-		unitTable.setLinesVisible(true);
-		unitTable.addMouseListener(new MouseAdapter() {
+		projectSiteTable = new ProjectSiteTable(shell, SWT.BORDER | SWT.FULL_SELECTION);
+//		projectSiteTable.addMouseListener(new OpenExistingObjectMouseListener(projectSiteTable, shell));
+		projectSiteTable.setBounds(10, 42, 976, 282);
+		projectSiteTable.setHeaderVisible(true);
+		projectSiteTable.setLinesVisible(true);
+		projectSiteTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				if (unitTable.getSelection().length > 0) {
+				if (projectSiteTable.getSelection().length > 0) {
 					// return Customer selected from Customer Search Dialog table on double click
-					result =  unitTable.getSelection()[0].getData();
+					result =  projectSiteTable.getSelection()[0].getData();
 					shell.close();
 				}
 			}
 		});
 
-		TableColumn tblclmnOwnerUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnOwnerUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnOwnerUnit.setText("Owner");
 		tblclmnOwnerUnit.setWidth(165);
 
-		TableColumn tblclmnMakeUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnMakeUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnMakeUnit.setText("Make");
 		tblclmnMakeUnit.setWidth(119);
 		tblclmnMakeUnit.addSelectionListener(new TableColumnSortListener(tblclmnMakeUnit));
 
-		TableColumn tblclmnModelUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnModelUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnModelUnit.setText("Model");
 		tblclmnModelUnit.setWidth(138);
 		tblclmnModelUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelUnit));
 
-		TableColumn tblclmnModelNameUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnModelNameUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnModelNameUnit.setText("Model Name");
 		tblclmnModelNameUnit.setWidth(148);
 		tblclmnModelNameUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelNameUnit));
 
-		TableColumn tblclmnYearUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnYearUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnYearUnit.setText("Year");
 		tblclmnYearUnit.setWidth(50);
 		tblclmnYearUnit.addSelectionListener(new TableColumnSortListener(tblclmnYearUnit));
 
-		TableColumn tblclmnMileageUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnMileageUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnMileageUnit.setText("Mileage");
 		tblclmnMileageUnit.setWidth(85);
 		tblclmnMileageUnit.addSelectionListener(new TableColumnSortListener(tblclmnMileageUnit));
 
-		TableColumn tblclmnColorUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnColorUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnColorUnit.setText("Color");
 		tblclmnColorUnit.setWidth(49);
 		tblclmnColorUnit.addSelectionListener(new TableColumnSortListener(tblclmnColorUnit));
 
-		TableColumn tblclmnVinUnit = new TableColumn(unitTable, SWT.NONE);
+		TableColumn tblclmnVinUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnVinUnit.setText("VIN");
 		tblclmnVinUnit.setWidth(215);
 		tblclmnVinUnit.addSelectionListener(new TableColumnSortListener(tblclmnVinUnit));
 
-		unitSearchTextBox = new MyText(shell, SWT.BORDER);
-		unitSearchTextBox.setText("Search...");
-		unitSearchTextBox.setBounds(10, 10, 976, 26);
-		unitSearchTextBox.setFocus();
-		unitSearchTextBox.addModifyListener(new SearchTextBoxListeners(unitSearchTextBox, unitTable, new ProjectSite()));
-		unitSearchTextBox.addFocusListener(new TextBoxFocusListener(unitSearchTextBox));
+		projectSiteSearchTextBox = new MyText(shell, SWT.BORDER);
+		projectSiteSearchTextBox.setText("Search...");
+		projectSiteSearchTextBox.setBounds(10, 10, 976, 26);
+		projectSiteSearchTextBox.setFocus();
+		projectSiteSearchTextBox.addModifyListener(new SearchTextBoxListeners(projectSiteSearchTextBox, projectSiteTable, new ProjectSite()));
+		projectSiteSearchTextBox.addFocusListener(new TextBoxFocusListener(projectSiteSearchTextBox));
 		
 		// dialog  controls
 		Button btnSelectUnit = new Button(shell, SWT.NONE);
@@ -135,8 +135,8 @@ public class UnitSearchDialog extends Dialog {
 		btnSelectUnit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (unitTable.getSelection().length > 0) {
-					result =  unitTable.getSelection()[0].getData();
+				if (projectSiteTable.getSelection().length > 0) {
+					result =  projectSiteTable.getSelection()[0].getData();
 					shell.close();
 				}
 			}
@@ -145,7 +145,7 @@ public class UnitSearchDialog extends Dialog {
 		Button btnEditSelectedUnit = new Button(shell, SWT.NONE);
 		btnEditSelectedUnit.setBounds(342, 330, 317, 26);
 		btnEditSelectedUnit.setText("Edit Selected ProjectSite");
-		btnEditSelectedUnit.addMouseListener(new OpenExistingObjectMouseListener(unitTable, shell));
+		btnEditSelectedUnit.addMouseListener(new OpenExistingObjectMouseListener(projectSiteTable, shell));
 			
 		Button btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.setText("Cancel");

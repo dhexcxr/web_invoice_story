@@ -593,11 +593,11 @@ public class DbServices {
 			ProjectSite projectSite = new ProjectSite();
 			projectSite.setProjectSiteId(queryResultSet.getLong(1));
 			projectSite.setCustomerId(queryResultSet.getLong(2));
-			projectSite.setAddressProjectSite(queryResultSet.getString(3));
-			projectSite.setCityProjectSite(queryResultSet.getString(4));
-			projectSite.setStateProjectSite(queryResultSet.getString(5));
-			projectSite.setZipCodeProjectSite(queryResultSet.getString(6));
-			projectSite.setNotesProjectSite(queryResultSet.getString(7));
+			projectSite.setProjectSiteAddress(queryResultSet.getString(3));
+			projectSite.setProjectSiteCity(queryResultSet.getString(4));
+			projectSite.setProjectSiteState(queryResultSet.getString(5));
+			projectSite.setProjectSiteZipCode(queryResultSet.getString(6));
+			projectSite.setProjectSiteNotes(queryResultSet.getString(7));
 			
 			String lastName = queryResultSet.getString(8);
 			String firstName = queryResultSet.getString(9);
@@ -667,10 +667,10 @@ public class DbServices {
 			project.setCustomerData(customerData);
 			
 			project.setProjectSiteId(queryResultSet.getLong(13));
-			project.setUnitYear(queryResultSet.getString(14));
-			project.setUnitMake(queryResultSet.getString(15));
-			project.setUnitModel(queryResultSet.getString(16));
-			project.setUnitVin(queryResultSet.getString(17));
+			project.setProjectSiteAddress(queryResultSet.getString(14));
+			project.setProjectSiteCity(queryResultSet.getString(15));
+			project.setProjectSiteState(queryResultSet.getString(16));
+			project.setProjectSiteZip(queryResultSet.getString(17));
 			
 			project.setCreatedDate(queryResultSet.getTimestamp(18));
 			project.setClosedDate(queryResultSet.getTimestamp(19));

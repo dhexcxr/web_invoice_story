@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Table;
 
 import gui.NewCustomerDialog;
 import gui.NewPartDialog;
-import gui.NewUnitDialog;
+import gui.NewProjectSiteDialog;
 import gui.ProjectDialog;
 import guiParts.MyTable;
 import objects.Customer;
@@ -52,7 +52,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 		if (table.getColumn(0).getText().equals("First Name") && table.getSelection().length > 0) {
 			openCustomer(table);	// followup to LATER NOTE - the thing to do is push this method up to the tables as an abstract openObjects(), then just call table.openObjects()
 		} else if (table.getColumn(0).getText().equals("Owner") && table.getSelection().length > 0) {
-			openUnit(table);
+			openProjectSite(table);
 		} else if (table.getColumn(0).getText().equals("Part Number") && table.getSelection().length > 0) {
 			openPart(table);
 		} else if (table.getColumn(0).getText().equals("Project #") && table.getSelection().length > 0) {
@@ -82,15 +82,15 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 		modifyExistingCustomerDialog.open(customer);
 	}
 
-	private void openUnit(Table table) {
+	private void openProjectSite(Table table) {
 		// get object saved in TableItem Data
 		ProjectSite projectSite = (ProjectSite) table.getSelection()[0].getData();
-		Application.getLogger().log(Level.INFO, "Open unit: {0}", projectSite.getAddressProjectSite());
-		Application.getLogger().log(Level.INFO, "ProjectSite Model: {0}", projectSite.getCityProjectSiteString());
-		Application.getLogger().log(Level.INFO, "ProjectSite VIN: {0}", projectSite.getNotesProjectSite());
+		Application.getLogger().log(Level.INFO, "Open Project Site: {0}", projectSite.getProjectSiteAddress());
+		Application.getLogger().log(Level.INFO, "Project Site City: {0}", projectSite.getProjectSiteCity());
+		Application.getLogger().log(Level.INFO, "Project Site Notes: {0}", projectSite.getProjectSiteNotes());
 
-		NewUnitDialog modifyExistingUnitDialog = new NewUnitDialog(shell, SWT.NONE);
-		modifyExistingUnitDialog.open(projectSite);
+		NewProjectSiteDialog modifyExistingProjectSiteDialog = new NewProjectSiteDialog(shell, SWT.NONE);
+		modifyExistingProjectSiteDialog.open(projectSite);
 	}
 	
 	private void openPart(Table table) {

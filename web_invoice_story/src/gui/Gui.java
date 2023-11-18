@@ -65,7 +65,7 @@ import guiParts.MyText;
 import guiParts.PartInventoryTable;
 import guiParts.RepairOrderTable;
 import guiParts.StoreLocationCombo;
-import guiParts.UnitTable;
+import guiParts.ProjectSiteTable;
 
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.events.MouseAdapter;
@@ -863,7 +863,7 @@ public class Gui extends Composite {
 		MyText projectSiteSearchBox = new MyText(projectSiteComposite, SWT.BORDER);
 
 		// Table for ProjectSite search results
-		MyTable projectSiteTable = new UnitTable(projectSiteComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		MyTable projectSiteTable = new ProjectSiteTable(projectSiteComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_projectSiteTable = new FormData();
 		fd_projectSiteTable.top = new FormAttachment(projectSiteSearchBox);
 		fd_projectSiteTable.bottom = new FormAttachment(100);

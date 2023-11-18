@@ -521,9 +521,9 @@ public class ProjectDialog extends Dialog {
 			if (project.getProjectSiteId() != 0) {
 				ProjectSite roUnit = new ProjectSite().searchByPk(project.getProjectSiteId());
 				txtProjectSiteProject.setData(roUnit);
-				txtProjectSiteProject.setText(roUnit.getStateProjectSite() + " " + roUnit.getAddressProjectSite() + "\n" +
-						roUnit.getCityProjectSiteString() + "\nVin: " + roUnit.getNotesProjectSite() + "\nColor: " +
-						roUnit.getZipCodeProjectSiteString());
+				txtProjectSiteProject.setText(roUnit.getProjectSiteState() + " " + roUnit.getProjectSiteAddress() + "\n" +
+						roUnit.getProjectSiteCity() + "\nVin: " + roUnit.getProjectSiteNotes() + "\nColor: " +
+						roUnit.getProjectSiteZipCode());
 			}
 
 			List<Job> roJobs = loadRoJobsFromDb();
@@ -760,10 +760,10 @@ public class ProjectDialog extends Dialog {
 		if (txtProjectSiteProject.getData() != null && ((ProjectSite) txtProjectSiteProject.getData()).getProjectSiteId() != -1) {
 			ProjectSite thisUnit = (ProjectSite) txtProjectSiteProject.getData();
 			project.setProjectSiteId(thisUnit.getProjectSiteId());
-			project.setUnitYear(thisUnit.getStateProjectSite());
-			project.setUnitMake(thisUnit.getAddressProjectSite());
-			project.setUnitModel(thisUnit.getCityProjectSiteString());
-			project.setUnitVin(thisUnit.getNotesProjectSite());
+			project.setProjectSiteAddress(thisUnit.getProjectSiteState());
+			project.setProjectSiteCity(thisUnit.getProjectSiteAddress());
+			project.setProjectSiteState(thisUnit.getProjectSiteCity());
+			project.setProjectSiteZip(thisUnit.getProjectSiteNotes());
 		} else {
 			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
 			MessageBox customerRequiredBox = new MessageBox(shlProject, SWT.ICON_INFORMATION);

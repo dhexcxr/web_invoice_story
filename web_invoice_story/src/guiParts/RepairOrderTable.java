@@ -42,7 +42,7 @@ public class RepairOrderTable extends MyTable {
 		Project project= (Project) object;
 		TableItem tableItem = this.getItem(selectedTableItemIndex);	
 		tableItem.setText(new String[] {Long.toString(project.getProjectId()), project.getCustomerName(),
-				project.getUnitYear(), project.getUnitMake(), project.getUnitModel(), project.getUnitVin(), project.getJobNames()});
+				project.getProjectSiteAddress(), project.getProjectSiteCity(), project.getProjectSiteState(), project.getProjectSiteZip(), project.getJobNames()});
 		tableItem.setData(project);
 	}
 
@@ -52,7 +52,7 @@ public class RepairOrderTable extends MyTable {
 			if (object  instanceof Project project) {
 				TableItem tableItem =  new TableItem(this, SWT.NONE);	
 				tableItem.setText(new String[] {Long.toString(project.getProjectId()), project.getCustomerName(),
-						project.getUnitYear(), project.getUnitMake(), project.getUnitModel(), project.getUnitVin(), project.getJobNames()});
+						project.getProjectSiteAddress(), project.getProjectSiteCity(), project.getProjectSiteState(), project.getProjectSiteZip(), project.getJobNames()});
 				tableItem.setData(project);
 
 			} else {

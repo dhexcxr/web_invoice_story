@@ -5,7 +5,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Display;
 
-import gui.UnitSearchDialog;
+import gui.ProjectSiteSearchDialog;
 import guiParts.MyText;
 import objects.Customer;
 import objects.ProjectSite;
@@ -30,21 +30,21 @@ public class UnitSearchListener extends MouseAdapter{
 
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
-		UnitSearchDialog unitSearchDialog = new UnitSearchDialog(Display.getDefault().getActiveShell(), SWT.NONE);
+		ProjectSiteSearchDialog projectSiteSearchDialog = new ProjectSiteSearchDialog(Display.getDefault().getActiveShell(), SWT.NONE);
 		ProjectSite selectedUnit;
 		if (!txtUnitRepairOrder.getText().equals(txtUnitRepairOrderStartingText)) {
 			// if we're editing a current unit, pass Search to ProjectSite Search Dialog
-			selectedUnit = (ProjectSite) unitSearchDialog.open(((ProjectSite) txtUnitRepairOrder.getData()).getAddressProjectSite());
+			selectedUnit = (ProjectSite) projectSiteSearchDialog.open(((ProjectSite) txtUnitRepairOrder.getData()).getProjectSiteAddress());
 		} else if (!txtCustomerRepairOrder.getText().equals(txtCustomerRepairOrderStartingText)) {
-			selectedUnit = (ProjectSite) unitSearchDialog.open(((Customer) txtCustomerRepairOrder.getData()).getFullName());
+			selectedUnit = (ProjectSite) projectSiteSearchDialog.open(((Customer) txtCustomerRepairOrder.getData()).getFullName());
 		} else {
 			// open normal, empty ProjectSite Search Dialog
-			selectedUnit = (ProjectSite) unitSearchDialog.open();
+			selectedUnit = (ProjectSite) projectSiteSearchDialog.open();
 		}
 		if (selectedUnit instanceof ProjectSite) {
-			StringBuilder unitData = new StringBuilder(selectedUnit.getAddressProjectSite() + "\n" +
-														selectedUnit.getStateProjectSite() + ", " + selectedUnit.getCityProjectSiteString() + 
-														selectedUnit.getZipCodeProjectSiteString() + "\n");
+			StringBuilder unitData = new StringBuilder(selectedUnit.getProjectSiteAddress() + "\n" +
+														selectedUnit.getProjectSiteState() + ", " + selectedUnit.getProjectSiteCity() + 
+														selectedUnit.getProjectSiteZipCode() + "\n");
 			txtUnitRepairOrder.setText(unitData.toString());
 			txtUnitRepairOrder.setData(selectedUnit);
 		}

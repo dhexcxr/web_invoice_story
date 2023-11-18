@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import gui.NewCustomerDialog;
 import gui.NewPartDialog;
-import gui.NewUnitDialog;
+import gui.NewProjectSiteDialog;
 import gui.ProjectDialog;
 import guiParts.MyTable;
 import guiParts.MyText;
@@ -44,8 +44,8 @@ public class CreateNewObjectListener extends MouseAdapter{
 			NewCustomerDialog addNewCustomerDialog = new NewCustomerDialog(shell, SWT.NONE);
 			newObject = addNewCustomerDialog.open();
 		} else if (table.getColumn(0).getText().equals("Owner")) {
-			NewUnitDialog addNewUnitDialog = new NewUnitDialog(shell, SWT.NONE);
-			newObject = addNewUnitDialog.open();
+			NewProjectSiteDialog addNewProjectSiteDialog = new NewProjectSiteDialog(shell, SWT.NONE);
+			newObject = addNewProjectSiteDialog.open();
 		} else if (table.getColumn(0).getText().equals("Part Number")) {
 			NewPartDialog addNewPartDialog = new NewPartDialog(shell, SWT.NONE);
 			newObject = addNewPartDialog.open();

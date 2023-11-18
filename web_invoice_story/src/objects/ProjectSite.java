@@ -44,8 +44,8 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 		return projectSiteId;
 	}
 
-	public void setProjectSiteId(long unitId) {
-		this.projectSiteId = unitId;
+	public void setProjectSiteId(long projectSiteId) {
+		this.projectSiteId = projectSiteId;
 	}
 
 	public long getCustomerId() {
@@ -56,43 +56,43 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 		this.customerId = customerId;
 	}
 
-	public String getAddressProjectSite() {
+	public String getProjectSiteAddress() {
 		return addressProjectSite == null ? "" : addressProjectSite;
 	}
 
-	public void setAddressProjectSite(String addressProjectSiteString) {
+	public void setProjectSiteAddress(String addressProjectSiteString) {
 		this.addressProjectSite = addressProjectSiteString;
 	}
 
-	public String getCityProjectSiteString() {
+	public String getProjectSiteCity() {
 		return cityProjectSite == null ? "" : cityProjectSite;
 	}
 
-	public void setCityProjectSite(String cityProjectSite) {
+	public void setProjectSiteCity(String cityProjectSite) {
 		this.cityProjectSite = cityProjectSite;
 	}
 
-	public String getStateProjectSite() {
+	public String getProjectSiteState() {
 		return stateProjectSite;
 	}
 
-	public void setStateProjectSite(String stateProjectSite) {
+	public void setProjectSiteState(String stateProjectSite) {
 		this.stateProjectSite = stateProjectSite;
 	}
 
-	public String getZipCodeProjectSiteString() {
+	public String getProjectSiteZipCode() {
 		return zipCodeProjectSite == null ? "" : zipCodeProjectSite;
 	}
 
-	public void setZipCodeProjectSite(String zipCodeProjectSite) {
+	public void setProjectSiteZipCode(String zipCodeProjectSite) {
 		this.zipCodeProjectSite = zipCodeProjectSite;
 	}
 
-	public String getNotesProjectSite() {
+	public String getProjectSiteNotes() {
 		return notesProjectSite == null ? "" : notesProjectSite;
 	}
 
-	public void setNotesProjectSite(String notesProjectSite) {
+	public void setProjectSiteNotes(String notesProjectSite) {
 		this.notesProjectSite = notesProjectSite;
 	}
 
@@ -163,15 +163,15 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 	
 	private List<ProjectSite> packObjects(List<DbObjectSearchable> searchResults) {		// TODO NOTE look at how all of these are implemented
 		// helper to cast List of DbObjectSearchable to List of Customer				// this could probably go into DbObjectSearchable
-		List<ProjectSite> unitSearchResults = new ArrayList<>();
+		List<ProjectSite> projectSiteSearchResults = new ArrayList<>();
 		
 		for (DbObjectSearchable object : searchResults) {
 			if (object instanceof ProjectSite projectSite) {
-				unitSearchResults.add(projectSite);
+				projectSiteSearchResults.add(projectSite);
 			}
 		}
 		
-		return unitSearchResults;
+		return projectSiteSearchResults;
 	}
 	
 	private ProjectSite packObject(DbObjectSearchable searchResult) {

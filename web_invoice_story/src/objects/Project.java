@@ -21,10 +21,10 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 	private String customerData;
 	private long projectSiteId;
 	private ProjectSite projectSite;
-	private String unitYear;
-	private String unitMake;
-	private String unitModel;
-	private String unitVin;
+	private String projectSiteAddress;
+	private String projectSiteCity;
+	private String projectSiteState;
+	private String projectSiteZip;
 	private List<Job> jobs;
 	private Timestamp createdDate;
 	private Timestamp closedDate;
@@ -124,48 +124,48 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 		this.projectSiteId = projectSiteId;
 	}
 
-	public ProjectSite getUnit() {
+	public ProjectSite getProjectSite() {
 		return projectSite;
 	}
 
-	public void setUnit(ProjectSite projectSite) {
+	public void setProjectSite(ProjectSite projectSite) {
 		this.projectSite = projectSite;
 	}
 
-	public String getUnitYear() {
-		return unitYear == null ? "" : unitYear;
+	public String getProjectSiteAddress() {
+		return projectSiteAddress == null ? "" : projectSiteAddress;
 	}
 
-	public void setUnitYear(String unitYear) {
-		this.unitYear = unitYear;
+	public void setProjectSiteAddress(String projectSiteAddress) {
+		this.projectSiteAddress = projectSiteAddress;
 	}
 
-	public String getUnitMake() {
-		return unitMake == null ? "" : unitMake;
+	public String getProjectSiteCity() {
+		return projectSiteCity == null ? "" : projectSiteCity;
 	}
 
-	public void setUnitMake(String unitMake) {
-		this.unitMake = unitMake;
+	public void setProjectSiteCity(String projectSiteCity) {
+		this.projectSiteCity = projectSiteCity;
 	}
 
-	public String getUnitModel() {
-		return unitModel == null ? "" : unitModel;
+	public String getProjectSiteState() {
+		return projectSiteState == null ? "" : projectSiteState;
 	}
 
-	public void setUnitModel(String unitModel) {
-		this.unitModel = unitModel;
+	public void setProjectSiteState(String projectSiteState) {
+		this.projectSiteState = projectSiteState;
 	}
 
-	public String getUnitVin() {
-		return unitVin == null ? "" : unitVin;
+	public String getProjectSiteZip() {
+		return projectSiteZip == null ? "" : projectSiteZip;
 	}
 
-	public void setUnitVin(String unitVin) {
-		this.unitVin = unitVin;
+	public void setProjectSiteZip(String projectSiteZip) {
+		this.projectSiteZip = projectSiteZip;
 	}
 
-	public String getUnitData() {
-		return getUnitYear() + " " + getUnitMake() + " " + getUnitModel() + "\n" + getUnitVin();
+	public String getProjectSiteData() {
+		return getProjectSiteAddress() + " " + getProjectSiteCity() + " " + getProjectSiteState() + "\n" + getProjectSiteZip();
 	}
 	
 	public List<Job> getJobs() {
@@ -285,7 +285,7 @@ public class Project extends DbObjectSearchable implements DbObjectSavable{
 		super.searchQuery = """
 				SELECT project.projectId, project.customerId, project.locationId,
 				customer.firstname, customer.lastname, customer.address, customer.city, customer.state, customer.zipcode, customer.homephone, customer.cellphone, customer.email,
-				project.unitId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode,
+				project.projectSiteId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode,
 				project.createdTime, project.closedTime, project.cashiered
 				FROM web_invoice_story.project
 				WHERE project.projectId = ?;""";
