@@ -101,7 +101,7 @@ public class NewPartDialog extends Dialog {
 	}
 
 	private void createContents() {
-		shlAddPart = new Shell(getParent(), SWT.DIALOG_TRIM);
+		shlAddPart = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shlAddPart.setSize(592, 408);
 		shlAddPart.setText("Add Part");
 		
