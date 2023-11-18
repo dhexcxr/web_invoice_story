@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
+import listeners.OpenExistingObjectMouseListener;
 import listeners.SearchTextBoxListeners;
 import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
@@ -173,6 +174,16 @@ public class PartSearchDialog extends Dialog{
 				}
 			}
 		});
+		
+		Button btnEditPart = new Button(shlPartSearch, SWT.NONE);
+		btnEditPart.setText("Edit Selected Part");
+		FormData fd_btnEditPart = new FormData();
+		fd_btnEditPart.top = new FormAttachment(partTable, 10);
+		fd_btnEditPart.left = new FormAttachment(btnSelectPart, 48);
+		fd_btnEditPart.bottom = new FormAttachment(100, -10);
+		fd_btnEditPart.right = new FormAttachment(0, 631);
+		btnEditPart.setLayoutData(fd_btnEditPart);
+		btnEditPart.addMouseListener(new OpenExistingObjectMouseListener(partTable, shlPartSearch));
 
 		Button btnCancel = new Button(shlPartSearch, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
