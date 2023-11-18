@@ -12,6 +12,7 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TableColumn;
 
+import listeners.OpenExistingObjectMouseListener;
 import listeners.SearchTextBoxListeners;
 import listeners.TableColumnSortListener;
 import listeners.TextBoxFocusListener;
@@ -194,6 +195,16 @@ public class CustomerSearchDialog extends Dialog {
 				}
 			}
 		});
+		
+		Button btnEditCustomer = new Button(shlCustomerSearch, SWT.NONE);
+		btnEditCustomer.setText("Edit Selected Customer");
+		FormData fd_btnEditCustomer = new FormData();
+		fd_btnEditCustomer.top = new FormAttachment(customerTable, 10);
+		fd_btnEditCustomer.left = new FormAttachment(btnSelectCustomer, 48);
+		fd_btnEditCustomer.bottom = new FormAttachment(100, -10);
+		fd_btnEditCustomer.right = new FormAttachment(0, 631);
+		btnEditCustomer.setLayoutData(fd_btnEditCustomer);
+		btnEditCustomer.addMouseListener(new OpenExistingObjectMouseListener(customerTable, shlCustomerSearch));
 
 		Button btnCancel = new Button(shlCustomerSearch, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
