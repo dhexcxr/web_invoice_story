@@ -142,23 +142,23 @@ public class Gui extends Composite {
 		tblclmnCustomerRo.addSelectionListener(new TableColumnSortListener(tblclmnCustomerRo));
 
 		TableColumn tblclmnYearRo = new TableColumn(projectTable, SWT.NONE);
-		tblclmnYearRo.setText("Year (n/a)");
-		tblclmnYearRo.setWidth(65);
+		tblclmnYearRo.setText("Job Site Address");
+		tblclmnYearRo.setWidth(204);
 		tblclmnYearRo.addSelectionListener(new TableColumnSortListener(tblclmnYearRo));
 
 		TableColumn tblclmnMakeRo = new TableColumn(projectTable, SWT.NONE);
-		tblclmnMakeRo.setText("Make (n/a)");
-		tblclmnMakeRo.setWidth(109);
+		tblclmnMakeRo.setText("City");
+		tblclmnMakeRo.setWidth(165);
 		tblclmnMakeRo.addSelectionListener(new TableColumnSortListener(tblclmnMakeRo));
 
 		TableColumn tblclmnModelRo = new TableColumn(projectTable, SWT.NONE);
-		tblclmnModelRo.setText("Model (n/a)");
-		tblclmnModelRo.setWidth(113);
+		tblclmnModelRo.setText("State");
+		tblclmnModelRo.setWidth(79);
 		tblclmnModelRo.addSelectionListener(new TableColumnSortListener(tblclmnModelRo));
 
 		TableColumn tblclmnJobSiteRo = new TableColumn(projectTable, SWT.NONE);
-		tblclmnJobSiteRo.setText("Job Site Address");
-		tblclmnJobSiteRo.setWidth(222);
+		tblclmnJobSiteRo.setText("Zip");
+		tblclmnJobSiteRo.setWidth(90);
 		tblclmnJobSiteRo.addSelectionListener(new TableColumnSortListener(tblclmnJobSiteRo));
 
 		TableColumn tblclmnJobsRo = new TableColumn(projectTable, SWT.NONE);
@@ -789,7 +789,7 @@ public class Gui extends Composite {
 
 		TableColumn tblclmnAddressCustomer = new TableColumn(customerTable, SWT.NONE);
 		tblclmnAddressCustomer.setText("Address");
-		tblclmnAddressCustomer.setWidth(100);
+		tblclmnAddressCustomer.setWidth(171);
 		tblclmnAddressCustomer.addSelectionListener(new TableColumnSortListener(tblclmnAddressCustomer));
 		
 
@@ -800,17 +800,17 @@ public class Gui extends Composite {
 
 		TableColumn tblclmnStateCustomer = new TableColumn(customerTable, SWT.NONE);
 		tblclmnStateCustomer.setText("State");
-		tblclmnStateCustomer.setWidth(100);
+		tblclmnStateCustomer.setWidth(59);
 		tblclmnStateCustomer.addSelectionListener(new TableColumnSortListener(tblclmnStateCustomer));
 
 		TableColumn tblclmnZipCustomer = new TableColumn(customerTable, SWT.NONE);
 		tblclmnZipCustomer.setText("Zip");
-		tblclmnZipCustomer.setWidth(100);
+		tblclmnZipCustomer.setWidth(79);
 		tblclmnZipCustomer.addSelectionListener(new TableColumnSortListener(tblclmnZipCustomer));
 
 		TableColumn tblclmnHomePhoneCustomer = new TableColumn(customerTable, SWT.NONE);
 		tblclmnHomePhoneCustomer.setText("Home Phone");
-		tblclmnHomePhoneCustomer.setWidth(100);
+		tblclmnHomePhoneCustomer.setWidth(131);
 		tblclmnHomePhoneCustomer.addSelectionListener(new TableColumnSortListener(tblclmnHomePhoneCustomer));
 
 		TableColumn tblclmnCellPhoneCustomer = new TableColumn(customerTable, SWT.NONE);
@@ -877,42 +877,42 @@ public class Gui extends Composite {
 
 		TableColumn tblclmnOwnerJobSite = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnOwnerJobSite.setText("Owner");
-		tblclmnOwnerJobSite.setWidth(165);
+		tblclmnOwnerJobSite.setWidth(180);
 		tblclmnOwnerJobSite.addSelectionListener(new TableColumnSortListener(tblclmnOwnerJobSite));
 
 		TableColumn tblclmnMakeUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnMakeUnit.setText("Make");
-		tblclmnMakeUnit.setWidth(119);
+		tblclmnMakeUnit.setText("Address");
+		tblclmnMakeUnit.setWidth(201);
 		tblclmnMakeUnit.addSelectionListener(new TableColumnSortListener(tblclmnMakeUnit));
 
 		TableColumn tblclmnModelUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnModelUnit.setText("Model");
-		tblclmnModelUnit.setWidth(135);
+		tblclmnModelUnit.setText("City");
+		tblclmnModelUnit.setWidth(147);
 		tblclmnModelUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelUnit));
 
 		TableColumn tblclmnModelNameUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnModelNameUnit.setText("Model Name");
-		tblclmnModelNameUnit.setWidth(135);
+		tblclmnModelNameUnit.setText("State");
+		tblclmnModelNameUnit.setWidth(60);
 		tblclmnModelNameUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelNameUnit));
 
 		TableColumn tblclmnYearUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnYearUnit.setText("Year");
-		tblclmnYearUnit.setWidth(50);
+		tblclmnYearUnit.setText("Zip");
+		tblclmnYearUnit.setWidth(59);
 		tblclmnYearUnit.addSelectionListener(new TableColumnSortListener(tblclmnYearUnit));
 
 		TableColumn tblclmnMileageUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnMileageUnit.setText("Mileage");
-		tblclmnMileageUnit.setWidth(85);
+		tblclmnMileageUnit.setText("Notes");
+		tblclmnMileageUnit.setWidth(223);
 		tblclmnMileageUnit.addSelectionListener(new TableColumnSortListener(tblclmnMileageUnit));
 
 		TableColumn tblclmnColorUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnColorUnit.setText("Color");
-		tblclmnColorUnit.setWidth(92);
+		tblclmnColorUnit.setText("-");
+		tblclmnColorUnit.setWidth(20);
 		tblclmnColorUnit.addSelectionListener(new TableColumnSortListener(tblclmnColorUnit));
 
 		TableColumn tblclmnAddressJobSite = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnAddressJobSite.setText("Address");
-		tblclmnAddressJobSite.setWidth(188);
+		tblclmnAddressJobSite.setText("-");
+		tblclmnAddressJobSite.setWidth(20);
 		tblclmnAddressJobSite.addSelectionListener(new TableColumnSortListener(tblclmnAddressJobSite));
 
 		// Delete right click menu
@@ -983,46 +983,36 @@ public class Gui extends Composite {
 		});
 		
 		TableColumn tblclmnAccountNumber = new TableColumn(accountTable, SWT.NONE);
-		tblclmnAccountNumber.setWidth(100);
-		tblclmnAccountNumber.setText("Account Number");
+		tblclmnAccountNumber.setWidth(94);
+		tblclmnAccountNumber.setText("Account #");
 		tblclmnAccountNumber.addSelectionListener(new TableColumnSortListener(tblclmnAccountNumber));
 
 		
 		
 		TableColumn tblclmnAccountHolderName = new TableColumn(accountTable, SWT.NONE);
-		tblclmnAccountHolderName.setWidth(100);
+		tblclmnAccountHolderName.setWidth(165);
 		tblclmnAccountHolderName.setText("Account Holder");
 		tblclmnAccountHolderName.addSelectionListener(new TableColumnSortListener(tblclmnAccountHolderName));
 		
 		TableColumn tblclmnLastCharge = new TableColumn(accountTable, SWT.NONE);
-		tblclmnLastCharge.setWidth(100);
-		tblclmnLastCharge.setText("Last Charge");
+		tblclmnLastCharge.setWidth(189);
+		tblclmnLastCharge.setText("Account Name");
 		tblclmnLastCharge.addSelectionListener(new TableColumnSortListener(tblclmnLastCharge));
 		
 		TableColumn tblclmnLastPayment = new TableColumn(accountTable, SWT.NONE);
-		tblclmnLastPayment.setWidth(100);
-		tblclmnLastPayment.setText("Last Payment");
+		tblclmnLastPayment.setWidth(214);
+		tblclmnLastPayment.setText("Last Charge");
 		tblclmnLastPayment.addSelectionListener(new TableColumnSortListener(tblclmnLastPayment));
 		
 		TableColumn tblclmnBalance = new TableColumn(accountTable, SWT.NONE);
-		tblclmnBalance.setWidth(100);
-		tblclmnBalance.setText("Balance");
+		tblclmnBalance.setWidth(220);
+		tblclmnBalance.setText("Last Payment");
 		tblclmnBalance.addSelectionListener(new TableColumnSortListener(tblclmnBalance));
 		
 		TableColumn tblclmnHomePhoneCustomer_1 = new TableColumn(accountTable, SWT.NONE);
-		tblclmnHomePhoneCustomer_1.setWidth(100);
-		tblclmnHomePhoneCustomer_1.setText("Home Phone");
+		tblclmnHomePhoneCustomer_1.setWidth(110);
+		tblclmnHomePhoneCustomer_1.setText("Balance");
 		tblclmnHomePhoneCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnHomePhoneCustomer_1));
-		
-		TableColumn tblclmnCellPhoneCustomer_1 = new TableColumn(accountTable, SWT.NONE);
-		tblclmnCellPhoneCustomer_1.setWidth(100);
-		tblclmnCellPhoneCustomer_1.setText("Cell Phone");
-		tblclmnCellPhoneCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnCellPhoneCustomer_1));
-		
-		TableColumn tblclmnEmailCustomer_1 = new TableColumn(accountTable, SWT.NONE);
-		tblclmnEmailCustomer_1.setWidth(100);
-		tblclmnEmailCustomer_1.setText("E-mail");
-		tblclmnEmailCustomer_1.addSelectionListener(new TableColumnSortListener(tblclmnEmailCustomer_1));
 		
 		// Delete right click menu
 //		setupRightClickMenu(accountTable, "Account");
