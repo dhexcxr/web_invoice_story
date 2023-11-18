@@ -22,6 +22,9 @@ import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 import guiParts.MyText;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class NewCustomerDialog extends Dialog {
 
@@ -104,86 +107,202 @@ public class NewCustomerDialog extends Dialog {
 	}
 
 	private void createContents() {
-		shlNewCustomer = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
+		shlNewCustomer = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shlNewCustomer.setSize(592, 389);
 		shlNewCustomer.setText("New Customer");
 		
 		Gui.setDialogAtCenter(shlNewCustomer);
+		shlNewCustomer.setLayout(new FormLayout());
 		
 		// customer detail text boxes
 		Label lblFirstname = new Label(shlNewCustomer, SWT.NONE);
-		lblFirstname.setBounds(10, 10, 192, 20);
+		FormData fd_lblFirstname = new FormData();
+		fd_lblFirstname.bottom = new FormAttachment(0, 30);
+		fd_lblFirstname.right = new FormAttachment(0, 202);
+		fd_lblFirstname.top = new FormAttachment(0, 10);
+		fd_lblFirstname.left = new FormAttachment(0, 10);
+		lblFirstname.setLayoutData(fd_lblFirstname);
 		lblFirstname.setText("FirstName:");
 		txtFirstName = new MyText(shlNewCustomer, SWT.BORDER);
-		txtFirstName.setBounds(10, 36, 272, 26);
+		FormData fd_txtFirstName = new FormData();
+		fd_txtFirstName.bottom = new FormAttachment(0, 62);
+		fd_txtFirstName.right = new FormAttachment(0, 282);
+		fd_txtFirstName.top = new FormAttachment(0, 36);
+		fd_txtFirstName.left = new FormAttachment(0, 10);
+		txtFirstName.setLayoutData(fd_txtFirstName);
 				
 		Label lblLastNameCompanyName = new Label(shlNewCustomer, SWT.NONE);
-		lblLastNameCompanyName.setBounds(292, 10, 192, 20);
+		FormData fd_lblLastNameCompanyName = new FormData();
+		fd_lblLastNameCompanyName.bottom = new FormAttachment(0, 30);
+		fd_lblLastNameCompanyName.right = new FormAttachment(0, 484);
+		fd_lblLastNameCompanyName.top = new FormAttachment(0, 10);
+		fd_lblLastNameCompanyName.left = new FormAttachment(0, 292);
+		lblLastNameCompanyName.setLayoutData(fd_lblLastNameCompanyName);
 		lblLastNameCompanyName.setText("Last Name/Company Name:");
 		txtLastName = new MyText(shlNewCustomer, SWT.BORDER);
+		FormData fd_txtLastName = new FormData();
+		fd_txtLastName.bottom = new FormAttachment(0, 62);
+		fd_txtLastName.right = new FormAttachment(0, 582);
+		fd_txtLastName.top = new FormAttachment(0, 36);
+		fd_txtLastName.left = new FormAttachment(0, 292);
+		txtLastName.setLayoutData(fd_txtLastName);
 		txtLastName.setBackground(SWTResourceManager.getColor(255, 102, 102));
-		txtLastName.setBounds(292, 36, 272, 26);
 		
 		Label lblAddress = new Label(shlNewCustomer, SWT.NONE);
-		lblAddress.setBounds(10, 68, 56, 20);
+		FormData fd_lblAddress = new FormData();
+		fd_lblAddress.bottom = new FormAttachment(0, 88);
+		fd_lblAddress.right = new FormAttachment(0, 66);
+		fd_lblAddress.top = new FormAttachment(0, 68);
+		fd_lblAddress.left = new FormAttachment(0, 10);
+		lblAddress.setLayoutData(fd_lblAddress);
 		lblAddress.setText("Address:");
 		txtAddress = new MyText(shlNewCustomer, SWT.BORDER);
-		txtAddress.setBounds(10, 94, 554, 26);
+		FormData fd_txtAddress = new FormData();
+		fd_txtAddress.right = new FormAttachment(txtLastName, 0, SWT.RIGHT);
+		fd_txtAddress.bottom = new FormAttachment(0, 120);
+		fd_txtAddress.top = new FormAttachment(0, 94);
+		fd_txtAddress.left = new FormAttachment(0, 10);
+		txtAddress.setLayoutData(fd_txtAddress);
 		
 		Label lblCity = new Label(shlNewCustomer, SWT.NONE);
-		lblCity.setBounds(10, 126, 192, 20);
+		FormData fd_lblCity = new FormData();
+		fd_lblCity.bottom = new FormAttachment(0, 146);
+		fd_lblCity.right = new FormAttachment(0, 202);
+		fd_lblCity.top = new FormAttachment(0, 126);
+		fd_lblCity.left = new FormAttachment(0, 10);
+		lblCity.setLayoutData(fd_lblCity);
 		lblCity.setText("City:");
 		txtCity = new MyText(shlNewCustomer, SWT.BORDER);
-		txtCity.setBounds(10, 152, 272, 26);
+		FormData fd_txtCity = new FormData();
+		fd_txtCity.bottom = new FormAttachment(0, 178);
+		fd_txtCity.right = new FormAttachment(0, 282);
+		fd_txtCity.top = new FormAttachment(0, 152);
+		fd_txtCity.left = new FormAttachment(0, 10);
+		txtCity.setLayoutData(fd_txtCity);
 		
 		Label lblState = new Label(shlNewCustomer, SWT.NONE);
-		lblState.setBounds(292, 126, 37, 20);
+		FormData fd_lblState = new FormData();
+		fd_lblState.bottom = new FormAttachment(0, 146);
+		fd_lblState.right = new FormAttachment(0, 329);
+		fd_lblState.top = new FormAttachment(0, 126);
+		fd_lblState.left = new FormAttachment(0, 292);
+		lblState.setLayoutData(fd_lblState);
 		lblState.setText("State:");
 		txtState = new MyText(shlNewCustomer, SWT.BORDER);
-		txtState.setBounds(292, 152, 74, 26);
+		FormData fd_txtState = new FormData();
+		fd_txtState.bottom = new FormAttachment(0, 178);
+		fd_txtState.top = new FormAttachment(0, 152);
+		fd_txtState.left = new FormAttachment(0, 292);
+		txtState.setLayoutData(fd_txtState);
 		
 		Label lblZipCode = new Label(shlNewCustomer, SWT.NONE);
-		lblZipCode.setBounds(372, 126, 192, 20);
+		FormData fd_lblZipCode = new FormData();
+		fd_lblZipCode.top = new FormAttachment(txtAddress, 6);
+		fd_lblZipCode.right = new FormAttachment(txtLastName, 0, SWT.RIGHT);
+		fd_lblZipCode.bottom = new FormAttachment(0, 146);
+		fd_lblZipCode.left = new FormAttachment(0, 390);
+		lblZipCode.setLayoutData(fd_lblZipCode);
 		lblZipCode.setText("Zip Code:");
 		txtZipCode = new MyText(shlNewCustomer, SWT.BORDER);
-		txtZipCode.setBounds(372, 152, 192, 26);
+		fd_txtState.right = new FormAttachment(txtZipCode, -6);
+		FormData fd_txtZipCode = new FormData();
+		fd_txtZipCode.top = new FormAttachment(txtCity, 0, SWT.TOP);
+		fd_txtZipCode.right = new FormAttachment(txtLastName, 0, SWT.RIGHT);
+		fd_txtZipCode.bottom = new FormAttachment(0, 178);
+		fd_txtZipCode.left = new FormAttachment(0, 390);
+		txtZipCode.setLayoutData(fd_txtZipCode);
 		
 		Label lblHomePhone = new Label(shlNewCustomer, SWT.NONE);
-		lblHomePhone.setBounds(10, 184, 192, 20);
+		FormData fd_lblHomePhone = new FormData();
+		fd_lblHomePhone.bottom = new FormAttachment(0, 204);
+		fd_lblHomePhone.right = new FormAttachment(0, 202);
+		fd_lblHomePhone.top = new FormAttachment(0, 184);
+		fd_lblHomePhone.left = new FormAttachment(0, 10);
+		lblHomePhone.setLayoutData(fd_lblHomePhone);
 		lblHomePhone.setText("Home Phone:");
 		txtHomePhone = new MyText(shlNewCustomer, SWT.BORDER);
-		txtHomePhone.setBounds(10, 210, 272, 26);
+		FormData fd_txtHomePhone = new FormData();
+		fd_txtHomePhone.bottom = new FormAttachment(0, 236);
+		fd_txtHomePhone.right = new FormAttachment(0, 282);
+		fd_txtHomePhone.top = new FormAttachment(0, 210);
+		fd_txtHomePhone.left = new FormAttachment(0, 10);
+		txtHomePhone.setLayoutData(fd_txtHomePhone);
 		
 		Label lblWorkPhone = new Label(shlNewCustomer, SWT.NONE);
-		lblWorkPhone.setBounds(292, 184, 192, 20);
+		FormData fd_lblWorkPhone = new FormData();
+		fd_lblWorkPhone.bottom = new FormAttachment(0, 204);
+		fd_lblWorkPhone.right = new FormAttachment(0, 484);
+		fd_lblWorkPhone.top = new FormAttachment(0, 184);
+		fd_lblWorkPhone.left = new FormAttachment(0, 292);
+		lblWorkPhone.setLayoutData(fd_lblWorkPhone);
 		lblWorkPhone.setText("Work Phone:");
 		txtWorkPhone = new MyText(shlNewCustomer, SWT.BORDER);
-		txtWorkPhone.setBounds(292, 210, 272, 26);
+		FormData fd_txtWorkPhone = new FormData();
+		fd_txtWorkPhone.right = new FormAttachment(txtLastName, 0, SWT.RIGHT);
+		fd_txtWorkPhone.bottom = new FormAttachment(0, 236);
+		fd_txtWorkPhone.top = new FormAttachment(0, 210);
+		fd_txtWorkPhone.left = new FormAttachment(0, 292);
+		txtWorkPhone.setLayoutData(fd_txtWorkPhone);
 		
 		Label lblCellPhone = new Label(shlNewCustomer, SWT.NONE);
-		lblCellPhone.setBounds(10, 242, 192, 20);
+		FormData fd_lblCellPhone = new FormData();
+		fd_lblCellPhone.bottom = new FormAttachment(0, 262);
+		fd_lblCellPhone.right = new FormAttachment(0, 202);
+		fd_lblCellPhone.top = new FormAttachment(0, 242);
+		fd_lblCellPhone.left = new FormAttachment(0, 10);
+		lblCellPhone.setLayoutData(fd_lblCellPhone);
 		lblCellPhone.setText("Cell Phone:");
 		txtCellPhone = new MyText(shlNewCustomer, SWT.BORDER);
-		txtCellPhone.setBounds(10, 268, 272, 26);
+		FormData fd_txtCellPhone = new FormData();
+		fd_txtCellPhone.bottom = new FormAttachment(0, 294);
+		fd_txtCellPhone.right = new FormAttachment(0, 282);
+		fd_txtCellPhone.top = new FormAttachment(0, 268);
+		fd_txtCellPhone.left = new FormAttachment(0, 10);
+		txtCellPhone.setLayoutData(fd_txtCellPhone);
 		
 		
 		Label lblEmail = new Label(shlNewCustomer, SWT.NONE);
-		lblEmail.setBounds(292, 242, 192, 20);
+		FormData fd_lblEmail = new FormData();
+		fd_lblEmail.bottom = new FormAttachment(0, 262);
+		fd_lblEmail.right = new FormAttachment(0, 484);
+		fd_lblEmail.top = new FormAttachment(0, 242);
+		fd_lblEmail.left = new FormAttachment(0, 292);
+		lblEmail.setLayoutData(fd_lblEmail);
 		lblEmail.setText("E-Mail:");
 		txtEmail = new MyText(shlNewCustomer, SWT.BORDER);
-		txtEmail.setBounds(292, 268, 272, 26);
+		FormData fd_txtEmail = new FormData();
+		fd_txtEmail.right = new FormAttachment(txtLastName, 0, SWT.RIGHT);
+		fd_txtEmail.bottom = new FormAttachment(0, 294);
+		fd_txtEmail.top = new FormAttachment(0, 268);
+		fd_txtEmail.left = new FormAttachment(0, 292);
+		txtEmail.setLayoutData(fd_txtEmail);
 		
 		// New Customer dialog controls
 		Label label = new Label(shlNewCustomer, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label.setBounds(10, 300, 554, 2);
+		FormData fd_label = new FormData();
+		fd_label.bottom = new FormAttachment(txtCellPhone, 8, SWT.BOTTOM);
+		fd_label.top = new FormAttachment(txtCellPhone, 6);
+		fd_label.right = new FormAttachment(txtLastName, 0, SWT.RIGHT);
+		fd_label.left = new FormAttachment(0, 10);
+		label.setLayoutData(fd_label);
 		
 		btnSaveCustomerButton = new Button(shlNewCustomer, SWT.NONE);
+		FormData fd_btnSaveCustomerButton = new FormData();
+		fd_btnSaveCustomerButton.right = new FormAttachment(0, 355);
+		fd_btnSaveCustomerButton.top = new FormAttachment(0, 308);
+		fd_btnSaveCustomerButton.left = new FormAttachment(0, 10);
+		btnSaveCustomerButton.setLayoutData(fd_btnSaveCustomerButton);
 		btnSaveCustomerButton.setText("Save Customer");
-		btnSaveCustomerButton.setBounds(10, 308, 345, 26);
 		
 		btnCancel = new Button(shlNewCustomer, SWT.NONE);
+		fd_btnSaveCustomerButton.bottom = new FormAttachment(btnCancel, 0, SWT.BOTTOM);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.left = new FormAttachment(btnSaveCustomerButton, 6);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnCancel.top = new FormAttachment(0, 308);
+		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		btnCancel.setBounds(361, 308, 203, 26);
 		
 		shlNewCustomer.setTabList(new Control[]{txtFirstName, txtLastName, txtAddress, txtCity, txtState, txtZipCode, txtHomePhone, txtWorkPhone, txtCellPhone, txtEmail, btnSaveCustomerButton, btnCancel});
 	}
