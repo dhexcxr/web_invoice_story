@@ -16,12 +16,13 @@ public class AccountTable extends MyTable{
 	// TODO maybe turn these into a AccountTable.Columns enum
 	public static final int ACCOUNT_NUMBER_INDEX = 0;
 	public static final int ACCOUNT_HOLDER_INDEX = 1;
-	public static final int LAST_CHARGE_INDEX = 2;
-	public static final int LAST_PAYMENT_INDEX = 3;
-	public static final int BALANCE_INDEX = 4;
-	public static final int ZIP_INDEX = 5;
-	public static final int HOME_PHONE_INDEX = 6;
-	public static final int CELL_PHONE_INDEX = 7;
+	public static final int ACCOUNT_NAME_INDEX = 2;
+	public static final int LAST_CHARGE_INDEX = 3;
+	public static final int LAST_PAYMENT_INDEX = 4;
+	public static final int BALANCE_INDEX = 5;
+	public static final int ZIP_INDEX = 6;
+	public static final int HOME_PHONE_INDEX = 7;
+	public static final int CELL_PHONE_INDEX = 8;
 	private int currentSortDirection = SWT.UP;
 	private int currentSortedColumn = ACCOUNT_HOLDER_INDEX;
 
@@ -63,8 +64,8 @@ public class AccountTable extends MyTable{
 				break;		// NOTE the null check might not be necessary now that we're passing in a List<> instead of the built-in array
 			}
 			TableItem tableItem = new TableItem(this, SWT.NONE);
-			tableItem.setText(new String[] {account.getAccountNumber(), account.getAccountHolder(), "0.00" /*last charge*/,
-					"0.00" /*last payment*/, "$" + account.getBalance().toString()} );
+			tableItem.setText(new String[] {account.getAccountNumber(), account.getAccountHolder(), account.getAccountName(),
+					account.getLastCharge(), account.getLastPayment(), "$" + account.getBalance().toString()} );
 			tableItem.setData(account);
 		}
 		initialSortOnPaint(currentSortedColumn, currentSortDirection);
@@ -83,7 +84,7 @@ public class AccountTable extends MyTable{
 				String value2 = items[j].getText(index);
 				if ((sortDirection ==  SWT.UP && collator.compare(value1, value2) < 0) ||
 						(sortDirection ==  SWT.DOWN && collator.compare(value1, value2) > 0)) {
-					String[] values = { items[i].getText(ACCOUNT_NUMBER_INDEX), items[i].getText(ACCOUNT_HOLDER_INDEX),
+					String[] values = { items[i].getText(ACCOUNT_NUMBER_INDEX), items[i].getText(ACCOUNT_HOLDER_INDEX), items[i].getText(ACCOUNT_NAME_INDEX),
 							items[i].getText(LAST_CHARGE_INDEX), items[i].getText(LAST_PAYMENT_INDEX), items[i].getText(BALANCE_INDEX)};
 					Object tempPart = items[i].getData();
 					items[i].dispose();

@@ -22,6 +22,9 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 	private String accountName;
 	private BigDecimal balance;
 	
+	private String lastCharge;
+	private String lastPayment;
+	
 	private List<AccountTransaction> transactions;
 
 	
@@ -103,6 +106,22 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 		this.balance = balance;
 	}
 	
+	public String getLastCharge() {
+		return lastCharge;
+	}
+
+	public void setLastCharge(String lastCharge) {
+		this.lastCharge = lastCharge;
+	}
+
+	public String getLastPayment() {
+		return lastPayment;
+	}
+
+	public void setLastPayment(String lastPayment) {
+		this.lastPayment = lastPayment;
+	}
+
 	public List<AccountTransaction> getTransactions() {
 		return transactions;
 	}
@@ -203,9 +222,19 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Customer from the database using a search string
 		super.searchString = searchString;
 		super.searchQuery = """
-				SELECT account.accountId, account.customerId, customer.lastname, customer.firstname, account.accountNumber, account.accountName, account.balance
+				SELECT account.accountId, account.customerId, customer.lastname, customer.firstname, account.accountNumber, account.accountName, account.balance, lastPayDetails.transactionDate, lastPayDetails.amount, lastChargeDetails.transactionDate, lastChargeDetails.amount
 				FROM web_invoice_story.account
 				LEFT JOIN web_invoice_story.customer on customer.customerId = account.customerId
+				LEFT JOIN (select max(transactionId) as transactionId, accountId
+				FROM web_invoice_story.accountTransaction
+				WHERE description = 'Payment'
+				GROUP BY accountId) lastPayId on lastPayId.accountId = account.accountId
+				LEFT JOIN web_invoice_story.accountTransaction lastPayDetails ON lastPayDetails.transactionId = lastPayId.transactionId 
+				LEFT JOIN (select max(transactionId) as transactionId, accountId
+				FROM web_invoice_story.accountTransaction
+				WHERE description <> 'Payment'
+				GROUP BY accountId) lastChargeId on lastChargeId.accountId = account.accountId
+				LEFT JOIN web_invoice_story.accountTransaction lastChargeDetails ON lastChargeDetails.transactionId = lastChargeId.transactionId
 				WHERE customer.firstName LIKE ? OR customer.lastName LIKE ? OR customer.homePhone LIKE ? OR account.accountNumber LIKE ? OR account.accountName LIKE ?;""";
 		super.outerSearchQueryAppendix = " AND account.accountId IN (";
 		super.querySubStringIndices[0] = 24;
@@ -219,9 +248,19 @@ public class Account extends DbObjectSearchable implements DbObjectSavable {
 		// search for a Customer from the database using a primary key
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
-				SELECT account.accountId, account.customerId, customer.lastname, customer.firstname, account.accountNumber, account.accountName, account.balance
+				SELECT account.accountId, account.customerId, customer.lastname, customer.firstname, account.accountNumber, account.accountName, account.balance, lastPayDetails.transactionDate, lastPayDetails.amount, lastChargeDetails.transactionDate, lastChargeDetails.amount
 				FROM web_invoice_story.account
 				LEFT JOIN web_invoice_story.customer on customer.customerId = account.customerId
+				LEFT JOIN (select max(transactionId) as transactionId, accountId
+				FROM web_invoice_story.accountTransaction
+				WHERE description = 'Payment'
+				GROUP BY accountId) lastPayId on lastPayId.accountId = account.accountId
+				LEFT JOIN web_invoice_story.accountTransaction lastPayDetails ON lastPayDetails.transactionId = lastPayId.transactionId 
+				LEFT JOIN (select max(transactionId) as transactionId, accountId
+				FROM web_invoice_story.accountTransaction
+				WHERE description <> 'Payment'
+				GROUP BY accountId) lastChargeId on lastChargeId.accountId = account.accountId
+				LEFT JOIN web_invoice_story.accountTransaction lastChargeDetails ON lastChargeDetails.transactionId = lastChargeId.transactionId
 				WHERE account.customerId = ?;""";	// NOTE this is searching by customerId, not the actual PK
 		super.outerSearchQueryAppendix = "";		// i'm not following precendent and I should probably make a new method for this
 		super.querySubStringIndices[0] = 0;

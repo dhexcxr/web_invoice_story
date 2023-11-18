@@ -6,6 +6,7 @@ import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -756,6 +757,23 @@ public class DbServices {
 			account.setAccountNumber(queryResultSet.getString(5));
 			account.setAccountName(queryResultSet.getString(6));
 			account.setBalance(queryResultSet.getBigDecimal(7));
+			
+			
+			Timestamp lastChargeDate = queryResultSet.getTimestamp(8);
+			if (lastChargeDate != null) {
+				StringBuilder lastCharge = new StringBuilder(lastChargeDate.toLocalDateTime().toLocalDate().toString());
+				lastCharge.append(": $");
+				lastCharge.append(queryResultSet.getBigDecimal(9).toString());
+				account.setLastCharge(lastCharge.toString());
+			}
+			
+			Timestamp lastPaymentDate = queryResultSet.getTimestamp(10);
+			if (lastPaymentDate != null) {
+				StringBuilder lastPayment = new StringBuilder(lastPaymentDate.toLocalDateTime().toLocalDate().toString());
+				lastPayment.append(": $");
+				lastPayment.append(queryResultSet.getBigDecimal(11).toString());
+				account.setLastPayment(lastPayment.toString());
+			}
 			
 			account.setTransactions(new AccountTransaction().searchTransactionsByAccount(account.getAccountId()));
 			
