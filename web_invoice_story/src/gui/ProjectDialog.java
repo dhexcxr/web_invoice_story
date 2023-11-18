@@ -187,15 +187,18 @@ public class ProjectDialog extends Dialog {
 	
 	private void createContents() {
 		shlProject = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shlProject.setSize(992, 736);
 		shlProject.setText(getText());
+		
+		int width = 992;
+		int height = 736;
+		shlProject.setSize(width, height);
 		shlProject.addListener(SWT.Resize, new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
-				if (shlProject.getSize().x < new Point(992, 736).x
-						|| shlProject.getSize().y < new Point(992, 736).y) {
-					shlProject.setSize(992, 736);	// set a minimum shell size
+				if (shlProject.getSize().x < new Point(width, height).x
+						|| shlProject.getSize().y < new Point(width, height).y) {
+					shlProject.setSize(width, height);	// set a minimum shell size
 				}
 				
 			}
