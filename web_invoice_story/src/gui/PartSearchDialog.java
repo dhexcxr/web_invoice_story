@@ -1,11 +1,15 @@
 package gui;
 
+import java.awt.Point;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -15,6 +19,9 @@ import listeners.TextBoxFocusListener;
 import guiParts.MyText;
 import objects.Part;
 import guiParts.PartInventoryTable;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class PartSearchDialog extends Dialog{
 
@@ -61,15 +68,46 @@ public class PartSearchDialog extends Dialog{
 	private void createContents() {
 		shlPartSearch = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
 		shlPartSearch.setText("Part Search");
-		shlPartSearch.setSize(946, 410);
+		
+		int width = 946;
+		int height = 410;
+		shlPartSearch.setSize(width, height);
+		shlPartSearch.addListener(SWT.Resize, new Listener() {
+			@Override
+			public void handleEvent(Event event) {		// TODO i have this in like 4 places, just make it it's own class already
+				if (shlPartSearch.getSize().x < new Point(width, height).x
+						|| shlPartSearch.getSize().y < new Point(width, height).y) {
+					shlPartSearch.setSize(width, height);	// set a minimum shell size
+				}
+				
+			}
+		});
 		
 		Gui.setDialogAtCenter(shlPartSearch);
+		shlPartSearch.setLayout(new FormLayout());
+		
+		partSearchTextBox = new MyText(shlPartSearch, SWT.BORDER);
+		FormData fd_partSearchTextBox = new FormData();
+		fd_partSearchTextBox.bottom = new FormAttachment(0, 32);
+		fd_partSearchTextBox.right = new FormAttachment(100, -10);
+		fd_partSearchTextBox.top = new FormAttachment(0, 10);
+		fd_partSearchTextBox.left = new FormAttachment(0, 10);
+		partSearchTextBox.setLayoutData(fd_partSearchTextBox);
+		partSearchTextBox.setText("Search...");
+		partSearchTextBox.setFocus();
+		partSearchTextBox.addModifyListener(new SearchTextBoxListeners(partSearchTextBox, partTableSearchDialog, new Part()));
+		partSearchTextBox.addFocusListener(new TextBoxFocusListener(partSearchTextBox));
 
 		// search results table						
 		partTableSearchDialog = new PartInventoryTable(shlPartSearch, SWT.BORDER | SWT.FULL_SELECTION);
+		FormData fd_partTableSearchDialog = new FormData();
+		fd_partTableSearchDialog.bottom = new FormAttachment(100, -64);
+		fd_partTableSearchDialog.right = new FormAttachment(100, -10);
+		fd_partTableSearchDialog.top = new FormAttachment(partSearchTextBox, 6);
+		fd_partTableSearchDialog.left = new FormAttachment(0, 10);
+		partTableSearchDialog.setLayoutData(fd_partTableSearchDialog);
 		partTableSearchDialog.setLinesVisible(true);
 		partTableSearchDialog.setHeaderVisible(true);
-		partTableSearchDialog.setBounds(10, 42, 908, 282);
 		partTableSearchDialog.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -118,8 +156,13 @@ public class PartSearchDialog extends Dialog{
 
 		// dialog  controls
 		Button btnSelectPart = new Button(shlPartSearch, SWT.NONE);
+		FormData fd_btnSelectPart = new FormData();
+		fd_btnSelectPart.top = new FormAttachment(partTableSearchDialog, 10);
+		fd_btnSelectPart.left = new FormAttachment(0, 10);
+		fd_btnSelectPart.bottom = new FormAttachment(100, -10);
+		fd_btnSelectPart.right = new FormAttachment(0, 266);
+		btnSelectPart.setLayoutData(fd_btnSelectPart);
 		btnSelectPart.setText("Select Part");
-		btnSelectPart.setBounds(10, 330, 256, 26);
 		btnSelectPart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -131,8 +174,13 @@ public class PartSearchDialog extends Dialog{
 		});
 
 		Button btnCancel = new Button(shlPartSearch, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.top = new FormAttachment(partTableSearchDialog, 10);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.left = new FormAttachment(100, -266);
+		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		btnCancel.setBounds(662, 330, 256, 26);
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -141,12 +189,5 @@ public class PartSearchDialog extends Dialog{
 				shlPartSearch.close();
 			}
 		});
-
-		partSearchTextBox = new MyText(shlPartSearch, SWT.BORDER);
-		partSearchTextBox.setText("Search...");
-		partSearchTextBox.setBounds(10, 10, 909, 26);
-		partSearchTextBox.setFocus();
-		partSearchTextBox.addModifyListener(new SearchTextBoxListeners(partSearchTextBox, partTableSearchDialog, new Part()));
-		partSearchTextBox.addFocusListener(new TextBoxFocusListener(partSearchTextBox));
 	}
 }
