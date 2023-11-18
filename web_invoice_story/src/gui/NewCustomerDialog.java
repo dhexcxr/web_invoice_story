@@ -134,7 +134,6 @@ public class NewCustomerDialog extends Dialog {
 		Label lblLastNameCompanyName = new Label(shlNewCustomer, SWT.NONE);
 		FormData fd_lblLastNameCompanyName = new FormData();
 		fd_lblLastNameCompanyName.bottom = new FormAttachment(0, 30);
-		fd_lblLastNameCompanyName.right = new FormAttachment(0, 484);
 		fd_lblLastNameCompanyName.top = new FormAttachment(0, 10);
 		fd_lblLastNameCompanyName.left = new FormAttachment(0, 292);
 		lblLastNameCompanyName.setLayoutData(fd_lblLastNameCompanyName);
@@ -151,7 +150,7 @@ public class NewCustomerDialog extends Dialog {
 		Label lblAddress = new Label(shlNewCustomer, SWT.NONE);
 		FormData fd_lblAddress = new FormData();
 		fd_lblAddress.bottom = new FormAttachment(0, 88);
-		fd_lblAddress.right = new FormAttachment(0, 66);
+		fd_lblAddress.right = new FormAttachment(0, 110);
 		fd_lblAddress.top = new FormAttachment(0, 68);
 		fd_lblAddress.left = new FormAttachment(0, 10);
 		lblAddress.setLayoutData(fd_lblAddress);
@@ -183,7 +182,7 @@ public class NewCustomerDialog extends Dialog {
 		Label lblState = new Label(shlNewCustomer, SWT.NONE);
 		FormData fd_lblState = new FormData();
 		fd_lblState.bottom = new FormAttachment(0, 146);
-		fd_lblState.right = new FormAttachment(0, 329);
+		fd_lblState.right = new FormAttachment(0, 356);
 		fd_lblState.top = new FormAttachment(0, 126);
 		fd_lblState.left = new FormAttachment(0, 292);
 		lblState.setLayoutData(fd_lblState);
@@ -229,6 +228,7 @@ public class NewCustomerDialog extends Dialog {
 		txtHomePhone.setLayoutData(fd_txtHomePhone);
 		
 		Label lblWorkPhone = new Label(shlNewCustomer, SWT.NONE);
+		fd_lblLastNameCompanyName.right = new FormAttachment(lblWorkPhone, 29, SWT.RIGHT);
 		FormData fd_lblWorkPhone = new FormData();
 		fd_lblWorkPhone.bottom = new FormAttachment(0, 204);
 		fd_lblWorkPhone.right = new FormAttachment(0, 484);
