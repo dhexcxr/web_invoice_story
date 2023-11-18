@@ -14,6 +14,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class ConfirmDialog extends Dialog {
 
@@ -55,7 +58,7 @@ public class ConfirmDialog extends Dialog {
 	 */
 	private void createContents() {
 		shlClose = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shlClose.setSize(224, 144);
+		shlClose.setSize(224, 166);
 		shlClose.setText(titlebarText);
 		
 		Gui.setDialogAtCenter(shlClose);
@@ -66,8 +69,12 @@ public class ConfirmDialog extends Dialog {
 				result[1] = true;
 			}
 		});
+		shlClose.setLayout(new FormLayout());
 		
 		Button btnYes = new Button(shlClose, SWT.NONE);
+		FormData fd_btnYes = new FormData();
+		fd_btnYes.right = new FormAttachment(50, -5);
+		btnYes.setLayoutData(fd_btnYes);
 		btnYes.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -75,10 +82,15 @@ public class ConfirmDialog extends Dialog {
 				shlClose.close();
 			}
 		});
-		btnYes.setBounds(10, 36, 90, 30);
 		btnYes.setText("Yes");
 		
 		Button btnNo = new Button(shlClose, SWT.NONE);
+		fd_btnYes.bottom = new FormAttachment(btnNo, 0, SWT.BOTTOM);
+		fd_btnYes.top = new FormAttachment(0, 36);
+		FormData fd_btnNo = new FormData();
+		fd_btnNo.right = new FormAttachment(100, -10);
+		fd_btnNo.left = new FormAttachment(50, 10);
+		btnNo.setLayoutData(fd_btnNo);
 		btnNo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -86,16 +98,30 @@ public class ConfirmDialog extends Dialog {
 				shlClose.close();
 			}
 		});
-		btnNo.setBounds(109, 36, 90, 30);
 		btnNo.setText("No");
 		
-		btnDoNotAsk = new Button(shlClose, SWT.CHECK);
-		btnDoNotAsk.setBounds(37, 72, 143, 20);
+		btnDoNotAsk = new Button(shlClose, SWT.CHECK);		
 		btnDoNotAsk.setText("Do not ask again");
+		btnDoNotAsk.setAlignment(SWT.CENTER);
+		fd_btnNo.bottom = new FormAttachment(100, -50);
+		FormData fd_btnDoNotAsk = new FormData();
+		fd_btnDoNotAsk.top = new FormAttachment(btnYes, 10);
+//		int rightOffset = (btnDoNotAsk.getParent().computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 2) + (btnDoNotAsk.computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 2);
+		int rightOffset = (btnDoNotAsk.computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 2);
+		fd_btnDoNotAsk.right = new FormAttachment(50, rightOffset);
+		btnDoNotAsk.setLayoutData(fd_btnDoNotAsk);
+		
 		
 		Label lblReallyClose = new Label(shlClose, SWT.NONE);
+		fd_btnNo.top = new FormAttachment(lblReallyClose, 6);
+		fd_btnYes.left = new FormAttachment(lblReallyClose, 0, SWT.LEFT);
+		FormData fd_lblReallyClose = new FormData();
+		fd_lblReallyClose.bottom = new FormAttachment(0, 30);
+		fd_lblReallyClose.right = new FormAttachment(100, -10);
+		fd_lblReallyClose.top = new FormAttachment(0, 10);
+		fd_lblReallyClose.left = new FormAttachment(0, 10);
+		lblReallyClose.setLayoutData(fd_lblReallyClose);
 		lblReallyClose.setAlignment(SWT.CENTER);
-		lblReallyClose.setBounds(10, 10, 189, 20);
 		lblReallyClose.setText(message);
 	}
 	
