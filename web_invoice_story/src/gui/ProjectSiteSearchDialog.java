@@ -1,11 +1,15 @@
 package gui;
 
+import java.awt.Point;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -16,6 +20,9 @@ import listeners.TextBoxFocusListener;
 import guiParts.MyText;
 import objects.ProjectSite;
 import guiParts.ProjectSiteTable;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class ProjectSiteSearchDialog extends Dialog {
 
@@ -60,15 +67,34 @@ public class ProjectSiteSearchDialog extends Dialog {
 
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shell.setText("ProjectSite Search");
-		shell.setSize(1016, 410);
-		shell.setText(getText());
+		shell.setText("Project Site Search");
+//		shell.setSize(1016, 410);
+//		shell.setText(getText());
+		
+		int width = 946;
+		int height = 410;
+		shell.setSize(width, height);
+		shell.addListener(SWT.Resize, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (shell.getSize().x < new Point(width, height).x
+						|| shell.getSize().y < new Point(width, height).y) {
+					shell.setSize(width, height);	// set a minimum shell size
+				}
+				
+			}
+		});
 		
 		Gui.setDialogAtCenter(shell);
+		shell.setLayout(new FormLayout());
 		
 		projectSiteTable = new ProjectSiteTable(shell, SWT.BORDER | SWT.FULL_SELECTION);
-//		projectSiteTable.addMouseListener(new OpenExistingObjectMouseListener(projectSiteTable, shell));
-		projectSiteTable.setBounds(10, 42, 976, 282);
+		FormData fd_projectSiteTable = new FormData();
+		fd_projectSiteTable.bottom = new FormAttachment(100, -64);
+		fd_projectSiteTable.right = new FormAttachment(100, -10);
+		fd_projectSiteTable.left = new FormAttachment(0, 10);
+		projectSiteTable.setLayoutData(fd_projectSiteTable);
 		projectSiteTable.setHeaderVisible(true);
 		projectSiteTable.setLinesVisible(true);
 		projectSiteTable.addMouseListener(new MouseAdapter() {
@@ -87,51 +113,52 @@ public class ProjectSiteSearchDialog extends Dialog {
 		tblclmnOwnerUnit.setWidth(165);
 
 		TableColumn tblclmnMakeUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnMakeUnit.setText("Make");
-		tblclmnMakeUnit.setWidth(119);
+		tblclmnMakeUnit.setText("Address");
+		tblclmnMakeUnit.setWidth(192);
 		tblclmnMakeUnit.addSelectionListener(new TableColumnSortListener(tblclmnMakeUnit));
 
 		TableColumn tblclmnModelUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnModelUnit.setText("Model");
-		tblclmnModelUnit.setWidth(138);
+		tblclmnModelUnit.setText("City");
+		tblclmnModelUnit.setWidth(127);
 		tblclmnModelUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelUnit));
 
 		TableColumn tblclmnModelNameUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnModelNameUnit.setText("Model Name");
-		tblclmnModelNameUnit.setWidth(148);
+		tblclmnModelNameUnit.setText("State");
+		tblclmnModelNameUnit.setWidth(64);
 		tblclmnModelNameUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelNameUnit));
 
 		TableColumn tblclmnYearUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnYearUnit.setText("Year");
-		tblclmnYearUnit.setWidth(50);
+		tblclmnYearUnit.setText("Zip");
+		tblclmnYearUnit.setWidth(128);
 		tblclmnYearUnit.addSelectionListener(new TableColumnSortListener(tblclmnYearUnit));
 
 		TableColumn tblclmnMileageUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnMileageUnit.setText("Mileage");
-		tblclmnMileageUnit.setWidth(85);
+		tblclmnMileageUnit.setText("Notes");
+		tblclmnMileageUnit.setWidth(242);
 		tblclmnMileageUnit.addSelectionListener(new TableColumnSortListener(tblclmnMileageUnit));
 
-		TableColumn tblclmnColorUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnColorUnit.setText("Color");
-		tblclmnColorUnit.setWidth(49);
-		tblclmnColorUnit.addSelectionListener(new TableColumnSortListener(tblclmnColorUnit));
-
-		TableColumn tblclmnVinUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnVinUnit.setText("VIN");
-		tblclmnVinUnit.setWidth(215);
-		tblclmnVinUnit.addSelectionListener(new TableColumnSortListener(tblclmnVinUnit));
-
 		projectSiteSearchTextBox = new MyText(shell, SWT.BORDER);
+		fd_projectSiteTable.top = new FormAttachment(projectSiteSearchTextBox, 6);
+		FormData fd_projectSiteSearchTextBox = new FormData();
+		fd_projectSiteSearchTextBox.bottom = new FormAttachment(0, 32);
+		fd_projectSiteSearchTextBox.right = new FormAttachment(100, -10);
+		fd_projectSiteSearchTextBox.top = new FormAttachment(0, 10);
+		fd_projectSiteSearchTextBox.left = new FormAttachment(0, 10);
+		projectSiteSearchTextBox.setLayoutData(fd_projectSiteSearchTextBox);
 		projectSiteSearchTextBox.setText("Search...");
-		projectSiteSearchTextBox.setBounds(10, 10, 976, 26);
 		projectSiteSearchTextBox.setFocus();
 		projectSiteSearchTextBox.addModifyListener(new SearchTextBoxListeners(projectSiteSearchTextBox, projectSiteTable, new ProjectSite()));
 		projectSiteSearchTextBox.addFocusListener(new TextBoxFocusListener(projectSiteSearchTextBox));
 		
 		// dialog  controls
 		Button btnSelectUnit = new Button(shell, SWT.NONE);
-		btnSelectUnit.setText("Select ProjectSite");
-		btnSelectUnit.setBounds(10, 330, 256, 26);
+		FormData fd_btnSelectUnit = new FormData();
+		fd_btnSelectUnit.top = new FormAttachment(projectSiteTable, 10);
+		fd_btnSelectUnit.bottom = new FormAttachment(100, -10);
+		fd_btnSelectUnit.right = new FormAttachment(0, 266);
+		fd_btnSelectUnit.left = new FormAttachment(0, 10);
+		btnSelectUnit.setLayoutData(fd_btnSelectUnit);
+		btnSelectUnit.setText("Select Project Site");
 		btnSelectUnit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -143,13 +170,23 @@ public class ProjectSiteSearchDialog extends Dialog {
 		});
 		
 		Button btnEditSelectedUnit = new Button(shell, SWT.NONE);
-		btnEditSelectedUnit.setBounds(342, 330, 317, 26);
-		btnEditSelectedUnit.setText("Edit Selected ProjectSite");
+		FormData fd_btnEditSelectedUnit = new FormData();
+		fd_btnEditSelectedUnit.top = new FormAttachment(projectSiteTable, 10);
+		fd_btnEditSelectedUnit.left = new FormAttachment(btnSelectUnit, 48);
+		fd_btnEditSelectedUnit.bottom = new FormAttachment(100, -10);
+		fd_btnEditSelectedUnit.right = new FormAttachment(0, 631);
+		btnEditSelectedUnit.setLayoutData(fd_btnEditSelectedUnit);
+		btnEditSelectedUnit.setText("Edit Selected Project Site");
 		btnEditSelectedUnit.addMouseListener(new OpenExistingObjectMouseListener(projectSiteTable, shell));
 			
 		Button btnCancel = new Button(shell, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
+		fd_btnCancel.right = new FormAttachment(100, -10);
+		fd_btnCancel.top = new FormAttachment(projectSiteTable, 10);
+		fd_btnCancel.left = new FormAttachment(100, -266);
+		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		btnCancel.setBounds(730, 330, 256, 26);	
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
