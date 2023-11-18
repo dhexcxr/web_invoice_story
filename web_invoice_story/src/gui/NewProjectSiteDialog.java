@@ -163,6 +163,7 @@ public class NewProjectSiteDialog extends Dialog {
 		
 		Label lblCity = new Label(shlNewProjectSite, SWT.NONE);
 		FormData fd_lblCity = new FormData();
+		fd_lblCity.bottom = new FormAttachment(txtAddress, 26, SWT.BOTTOM);
 		fd_lblCity.top = new FormAttachment(txtAddress, 6);
 		fd_lblCity.left = new FormAttachment(lblOwner, 0, SWT.LEFT);
 		fd_lblCity.right = new FormAttachment(100, -512);
@@ -170,9 +171,8 @@ public class NewProjectSiteDialog extends Dialog {
 		lblCity.setText("City:");
 		txtCity = new MyText(shlNewProjectSite, SWT.BORDER);
 		FormData fd_txtCity = new FormData();
-		fd_txtCity.top = new FormAttachment(lblCity, 6);
+		fd_txtCity.top = new FormAttachment(lblCity);
 		fd_txtCity.left = new FormAttachment(lblOwner, 0, SWT.LEFT);
-		fd_txtCity.bottom = new FormAttachment(0, 172);
 		fd_txtCity.right = new FormAttachment(0, 288);
 		txtCity.setLayoutData(fd_txtCity);
 		
@@ -211,7 +211,7 @@ public class NewProjectSiteDialog extends Dialog {
 		Label lblState = new Label(shlNewProjectSite, SWT.NONE);
 		FormData fd_lblState = new FormData();
 		fd_lblState.left = new FormAttachment(lblCity, 214);
-		fd_lblState.top = new FormAttachment(lblCity, 0, SWT.TOP);
+		fd_lblState.top = new FormAttachment(txtAddress, 6);
 		lblState.setLayoutData(fd_lblState);
 		lblState.setText("State:");
 		txtState = new MyText(shlNewProjectSite, SWT.BORDER);
@@ -223,12 +223,11 @@ public class NewProjectSiteDialog extends Dialog {
 		txtState.setLayoutData(fd_txtState);
 		
 		Label lblZipCode = new Label(shlNewProjectSite, SWT.NONE);
-		fd_lblState.right = new FormAttachment(lblZipCode, -24);
+		fd_lblState.right = new FormAttachment(100, -228);
 		FormData fd_lblZipCode = new FormData();
-		fd_lblZipCode.left = new FormAttachment(0, 388);
-		fd_lblZipCode.right = new FormAttachment(100, -134);
-		fd_lblZipCode.bottom = new FormAttachment(lblOwner, 120, SWT.BOTTOM);
-		fd_lblZipCode.top = new FormAttachment(txtAddress, 6);
+		fd_lblZipCode.top = new FormAttachment(lblCity, 0, SWT.TOP);
+		fd_lblZipCode.left = new FormAttachment(lblState, 6);
+		fd_lblZipCode.right = new FormAttachment(100, -152);
 		lblZipCode.setLayoutData(fd_lblZipCode);
 		lblZipCode.setText("Zip Code:");
 		txtZipCode = new MyText(shlNewProjectSite, SWT.BORDER);
@@ -256,8 +255,9 @@ public class NewProjectSiteDialog extends Dialog {
 //		txtNotes.setLayoutData(fd_txtVinNumber);
 				
 		Label lblNotes = new Label(shlNewProjectSite, SWT.NONE);
+		fd_txtCity.bottom = new FormAttachment(lblNotes, -6);
 		FormData fd_lblNotes = new FormData();
-		fd_lblNotes.top = new FormAttachment(txtCity, 6);
+		fd_lblNotes.top = new FormAttachment(0, 178);
 		fd_lblNotes.left = new FormAttachment(lblOwner, 0, SWT.LEFT);
 		fd_lblNotes.bottom = new FormAttachment(0, 198);
 		fd_lblNotes.right = new FormAttachment(0, 80);
@@ -306,8 +306,8 @@ public class NewProjectSiteDialog extends Dialog {
 		txtOwner.addMouseListener(new CustomerSearchListener(txtOwner));
 		txtAddress.addModifyListener(new RequiredTextBoxModifyListener(txtAddress));
 		txtCity.addModifyListener(new InfoTextBoxModifyListener(txtCity));
-		txtModelName.addModifyListener(new InfoTextBoxModifyListener(txtModelName));
-		txtYear.addModifyListener(new InfoTextBoxModifyListener(txtYear));
+//		txtModelName.addModifyListener(new InfoTextBoxModifyListener(txtModelName));
+//		txtYear.addModifyListener(new InfoTextBoxModifyListener(txtYear));
 		txtState.addModifyListener(new InfoTextBoxModifyListener(txtState));
 		txtZipCode.addModifyListener(new InfoTextBoxModifyListener(txtZipCode));
 //		txtNotes.addModifyListener(new VinModifyListener(txtNotes));		// note needed for general notes
