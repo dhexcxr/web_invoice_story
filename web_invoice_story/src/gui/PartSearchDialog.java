@@ -29,7 +29,7 @@ public class PartSearchDialog extends Dialog{
 
 	protected Object result;		// TODO probably change this to Part, wouldn't need cast for results
 	protected Shell shlPartSearch;
-	private PartInventoryTable partTableSearchDialog;
+	private PartInventoryTable partTable;
 	private MyText partSearchTextBox;
 
 	public PartSearchDialog(Shell parent, int style) {
@@ -87,6 +87,8 @@ public class PartSearchDialog extends Dialog{
 		shlPartSearch.setLayout(new FormLayout());
 		
 		partSearchTextBox = new MyText(shlPartSearch, SWT.BORDER);
+		partTable = new PartInventoryTable(shlPartSearch, SWT.BORDER | SWT.FULL_SELECTION);
+		
 		FormData fd_partSearchTextBox = new FormData();
 		fd_partSearchTextBox.bottom = new FormAttachment(0, 32);
 		fd_partSearchTextBox.right = new FormAttachment(100, -10);
@@ -95,61 +97,60 @@ public class PartSearchDialog extends Dialog{
 		partSearchTextBox.setLayoutData(fd_partSearchTextBox);
 		partSearchTextBox.setText("Search...");
 		partSearchTextBox.setFocus();
-		partSearchTextBox.addModifyListener(new SearchTextBoxListeners(partSearchTextBox, partTableSearchDialog, new Part()));
+		partSearchTextBox.addModifyListener(new SearchTextBoxListeners(partSearchTextBox, partTable, new Part()));
 		partSearchTextBox.addFocusListener(new TextBoxFocusListener(partSearchTextBox));
 
 		// search results table						
-		partTableSearchDialog = new PartInventoryTable(shlPartSearch, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_partTableSearchDialog = new FormData();
 		fd_partTableSearchDialog.bottom = new FormAttachment(100, -64);
 		fd_partTableSearchDialog.right = new FormAttachment(100, -10);
 		fd_partTableSearchDialog.top = new FormAttachment(partSearchTextBox, 6);
 		fd_partTableSearchDialog.left = new FormAttachment(0, 10);
-		partTableSearchDialog.setLayoutData(fd_partTableSearchDialog);
-		partTableSearchDialog.setLinesVisible(true);
-		partTableSearchDialog.setHeaderVisible(true);
-		partTableSearchDialog.addMouseListener(new MouseAdapter() {
+		partTable.setLayoutData(fd_partTableSearchDialog);
+		partTable.setLinesVisible(true);
+		partTable.setHeaderVisible(true);
+		partTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				if (partTableSearchDialog.getSelection().length > 0) {
+				if (partTable.getSelection().length > 0) {
 					// return Customer selected from Customer Search Dialog table on double click
-					result =  partTableSearchDialog.getSelection()[0].getData();
+					result =  partTable.getSelection()[0].getData();
 					shlPartSearch.close();
 				}
 			}
 		});
 
-		TableColumn tblclmnPartNumberInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnPartNumberInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnPartNumberInventory.setWidth(126);
 		tblclmnPartNumberInventory.setText("Part Number");
 		tblclmnPartNumberInventory.addSelectionListener(new TableColumnSortListener(tblclmnPartNumberInventory));
 
-		TableColumn tblclmnDescriptionInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnDescriptionInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnDescriptionInventory.setWidth(245);
 		tblclmnDescriptionInventory.setText("Description");
 		tblclmnDescriptionInventory.addSelectionListener(new TableColumnSortListener(tblclmnDescriptionInventory));
 
-		TableColumn tblclmnOnHandInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnOnHandInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnOnHandInventory.setWidth(100);
 		tblclmnOnHandInventory.setText("On Hand");
 		tblclmnOnHandInventory.addSelectionListener(new TableColumnSortListener(tblclmnOnHandInventory));
 
-		TableColumn tblclmnSupplierInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnSupplierInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnSupplierInventory.setWidth(109);
 		tblclmnSupplierInventory.setText("Supplier");
 		tblclmnSupplierInventory.addSelectionListener(new TableColumnSortListener(tblclmnSupplierInventory));
 
-		TableColumn tblclmnCategoryInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnCategoryInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnCategoryInventory.setWidth(115);
 		tblclmnCategoryInventory.setText("Category");
 		tblclmnCategoryInventory.addSelectionListener(new TableColumnSortListener(tblclmnCategoryInventory));
 
-		TableColumn tblclmnCostInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnCostInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnCostInventory.setWidth(100);
 		tblclmnCostInventory.setText("Cost");
 		tblclmnCostInventory.addSelectionListener(new TableColumnSortListener(tblclmnCostInventory));
 
-		TableColumn tblclmnRetailPriceInventory = new TableColumn(partTableSearchDialog, SWT.NONE);
+		TableColumn tblclmnRetailPriceInventory = new TableColumn(partTable, SWT.NONE);
 		tblclmnRetailPriceInventory.setWidth(110);
 		tblclmnRetailPriceInventory.setText("Retail Price");
 		tblclmnRetailPriceInventory.addSelectionListener(new TableColumnSortListener(tblclmnRetailPriceInventory));
@@ -157,7 +158,7 @@ public class PartSearchDialog extends Dialog{
 		// dialog  controls
 		Button btnSelectPart = new Button(shlPartSearch, SWT.NONE);
 		FormData fd_btnSelectPart = new FormData();
-		fd_btnSelectPart.top = new FormAttachment(partTableSearchDialog, 10);
+		fd_btnSelectPart.top = new FormAttachment(partTable, 10);
 		fd_btnSelectPart.left = new FormAttachment(0, 10);
 		fd_btnSelectPart.bottom = new FormAttachment(100, -10);
 		fd_btnSelectPart.right = new FormAttachment(0, 266);
@@ -166,8 +167,8 @@ public class PartSearchDialog extends Dialog{
 		btnSelectPart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (partTableSearchDialog.getSelection().length > 0) {
-					result =  partTableSearchDialog.getSelection()[0].getData();
+				if (partTable.getSelection().length > 0) {
+					result =  partTable.getSelection()[0].getData();
 					shlPartSearch.close();
 				}
 			}
@@ -175,7 +176,7 @@ public class PartSearchDialog extends Dialog{
 
 		Button btnCancel = new Button(shlPartSearch, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.top = new FormAttachment(partTableSearchDialog, 10);
+		fd_btnCancel.top = new FormAttachment(partTable, 10);
 		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		fd_btnCancel.right = new FormAttachment(100, -10);
 		fd_btnCancel.left = new FormAttachment(100, -266);
