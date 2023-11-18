@@ -41,6 +41,16 @@ public abstract class DbObjectSearchable {
 					+ " AND storeLocation.locationId = " + selectedLocation);
 //			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
 			searchQuery = searchQueryWithLoc.toString();
+		} else if (selectedLocation != 0 && (this instanceof ProjectSite)) {
+			// modify search query to only show results from selected location
+			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
+			
+			// add location details
+			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf("WHERE") - 1,
+					"\nINNER JOIN web_invoice_story.storeLocation on storeLocation.locationId = customer.locationId"
+					+ " AND storeLocation.locationId = " + selectedLocation);
+//			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
+			searchQuery = searchQueryWithLoc.toString();
 		}
 		
 		StringBuilder innserSearchQuery = new StringBuilder(searchQuery);

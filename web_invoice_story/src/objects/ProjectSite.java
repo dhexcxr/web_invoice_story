@@ -151,7 +151,7 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 		super.searchQuery = """
 				SELECT projectSite.projectSiteId, projectSite.customerId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode, projectSite.notes, customer.lastName, customer.firstName 
 				FROM web_invoice_story.projectSite
-				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId
+				INNER JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId
 				WHERE projectSiteId = ?;""";
 		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
 		super.querySubStringIndices[0] = 32;					// and move these 2 search() function implementations into the DbObjectSearchable too
