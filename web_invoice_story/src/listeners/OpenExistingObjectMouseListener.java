@@ -56,7 +56,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 		} else if (table.getColumn(0).getText().equals("Part Number") && table.getSelection().length > 0) {
 			openPart(table);
 		} else if (table.getColumn(0).getText().equals("Project #") && table.getSelection().length > 0) {
-			openRo(table);
+			openProject(table);
 		} else {		// if nothing is selected, return TODO i'd like to find a better way to do this than
 			return;			// checking for all other conditions first, like if (selection == null)
 		}
@@ -103,7 +103,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 		modifyExistingPartDialog.open(part);
 	}
 	
-	private void openRo(Table table) {
+	private void openProject(Table table) {
 		// get object saved in TableItem Data
 		Project project= (Project) table.getSelection()[0].getData();
 		Application.getLogger().log(Level.INFO, "Open RO: {0}", project.getProjectId());
