@@ -2,8 +2,13 @@ package gui;
 
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Button;
+
+import java.awt.Point;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -16,6 +21,9 @@ import guiParts.MyText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 // TODO copy most of Customer tab into here, i.e. search and table display, when a selection is made in table
 		// return Customer object to insert data into RO or unit info 
@@ -67,13 +75,31 @@ public class CustomerSearchDialog extends Dialog {
 	private void createContents() {
 		shlCustomerSearch = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
 		shlCustomerSearch.setText("Customer Search");
-		shlCustomerSearch.setSize(946, 410);
+		
+		int width = 946;
+		int height = 410;
+		shlCustomerSearch.setSize(width, height);
+		shlCustomerSearch.addListener(SWT.Resize, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (shlCustomerSearch.getSize().x < new Point(width, height).x
+						|| shlCustomerSearch.getSize().y < new Point(width, height).y) {
+					shlCustomerSearch.setSize(width, height);	// set a minimum shell size
+				}
+				
+			}
+		});
 		
 		Gui.setDialogAtCenter(shlCustomerSearch);
+		shlCustomerSearch.setLayout(new FormLayout());
 						
 		// search results table
 		customerTable = new CustomerTable(shlCustomerSearch, SWT.BORDER | SWT.FULL_SELECTION);
-		customerTable.setBounds(10, 42, 909, 282);
+		FormData fd_customerTable = new FormData();
+		fd_customerTable.left = new FormAttachment(0, 10);
+		fd_customerTable.right = new FormAttachment(100, -10);
+		customerTable.setLayoutData(fd_customerTable);
 		customerTable.setLinesVisible(true);
 		customerTable.setHeaderVisible(true);
 		customerTable.addMouseListener(new MouseAdapter() {
@@ -133,16 +159,32 @@ public class CustomerSearchDialog extends Dialog {
 		tblclmnEmail.addSelectionListener(new TableColumnSortListener(tblclmnEmail));
 		
 		customerSearchTextBox = new MyText(shlCustomerSearch, SWT.BORDER);
+		fd_customerTable.top = new FormAttachment(customerSearchTextBox, 6);
+		FormData fd_customerSearchTextBox = new FormData();
+		fd_customerSearchTextBox.bottom = new FormAttachment(0, 32);
+		fd_customerSearchTextBox.right = new FormAttachment(100, -10);
+		fd_customerSearchTextBox.top = new FormAttachment(0, 10);
+		fd_customerSearchTextBox.left = new FormAttachment(0, 10);
+//		fd_customerSearchTextBox.bottom = new FormAttachment(0, 36);
+//		fd_customerSearchTextBox.right = new FormAttachment(0, 919);
+//		fd_customerSearchTextBox.top = new FormAttachment(0, 10);
+//		fd_customerSearchTextBox.left = new FormAttachment(0, 10);
+		customerSearchTextBox.setLayoutData(fd_customerSearchTextBox);
 		customerSearchTextBox.setText("Search...");
-		customerSearchTextBox.setBounds(10, 10, 909, 26);
 		customerSearchTextBox.setFocus();
 		customerSearchTextBox.addModifyListener(new SearchTextBoxListeners(customerSearchTextBox, customerTable, new Customer()));
 		customerSearchTextBox.addFocusListener(new TextBoxFocusListener(customerSearchTextBox));
 
 		// dialog  controls
 		Button btnSelectCustomer = new Button(shlCustomerSearch, SWT.NONE);
+		fd_customerTable.bottom = new FormAttachment(100, -64);
+		FormData fd_btnSelectCustomer = new FormData();
+		fd_btnSelectCustomer.top = new FormAttachment(customerTable, 10);
+		fd_btnSelectCustomer.right = new FormAttachment(0, 266);
+		fd_btnSelectCustomer.bottom = new FormAttachment(100, -10);
+		fd_btnSelectCustomer.left = new FormAttachment(0, 10);
+		btnSelectCustomer.setLayoutData(fd_btnSelectCustomer);
 		btnSelectCustomer.setText("Select Customer");
-		btnSelectCustomer.setBounds(10, 330, 256, 26);
 		btnSelectCustomer.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -154,8 +196,13 @@ public class CustomerSearchDialog extends Dialog {
 		});
 
 		Button btnCancel = new Button(shlCustomerSearch, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.bottom = new FormAttachment(btnSelectCustomer, 0, SWT.BOTTOM);
+		fd_btnCancel.top = new FormAttachment(btnSelectCustomer, 0, SWT.TOP);
+		fd_btnCancel.right = new FormAttachment(customerTable, 0, SWT.RIGHT);
+		fd_btnCancel.left = new FormAttachment(100, -266);
+		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		btnCancel.setBounds(662, 330, 256, 26);
 		shlCustomerSearch.setTabList(new Control[]{customerSearchTextBox, customerTable, btnSelectCustomer, btnCancel});
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
