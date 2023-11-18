@@ -877,17 +877,17 @@ public class Gui extends Composite {
 
 		TableColumn tblclmnOwnerJobSite = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnOwnerJobSite.setText("Owner");
-		tblclmnOwnerJobSite.setWidth(180);
+		tblclmnOwnerJobSite.setWidth(200);
 		tblclmnOwnerJobSite.addSelectionListener(new TableColumnSortListener(tblclmnOwnerJobSite));
 
 		TableColumn tblclmnMakeUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnMakeUnit.setText("Address");
-		tblclmnMakeUnit.setWidth(201);
+		tblclmnMakeUnit.setWidth(220);
 		tblclmnMakeUnit.addSelectionListener(new TableColumnSortListener(tblclmnMakeUnit));
 
 		TableColumn tblclmnModelUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnModelUnit.setText("City");
-		tblclmnModelUnit.setWidth(147);
+		tblclmnModelUnit.setWidth(160);
 		tblclmnModelUnit.addSelectionListener(new TableColumnSortListener(tblclmnModelUnit));
 
 		TableColumn tblclmnModelNameUnit = new TableColumn(projectSiteTable, SWT.NONE);
@@ -897,23 +897,13 @@ public class Gui extends Composite {
 
 		TableColumn tblclmnYearUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnYearUnit.setText("Zip");
-		tblclmnYearUnit.setWidth(59);
+		tblclmnYearUnit.setWidth(70);
 		tblclmnYearUnit.addSelectionListener(new TableColumnSortListener(tblclmnYearUnit));
 
 		TableColumn tblclmnMileageUnit = new TableColumn(projectSiteTable, SWT.NONE);
 		tblclmnMileageUnit.setText("Notes");
-		tblclmnMileageUnit.setWidth(223);
+		tblclmnMileageUnit.setWidth(256);
 		tblclmnMileageUnit.addSelectionListener(new TableColumnSortListener(tblclmnMileageUnit));
-
-		TableColumn tblclmnColorUnit = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnColorUnit.setText("-");
-		tblclmnColorUnit.setWidth(20);
-		tblclmnColorUnit.addSelectionListener(new TableColumnSortListener(tblclmnColorUnit));
-
-		TableColumn tblclmnAddressJobSite = new TableColumn(projectSiteTable, SWT.NONE);
-		tblclmnAddressJobSite.setText("-");
-		tblclmnAddressJobSite.setWidth(20);
-		tblclmnAddressJobSite.addSelectionListener(new TableColumnSortListener(tblclmnAddressJobSite));
 
 		// Delete right click menu
 		setupRightClickMenu(projectSiteTable, "ProjectSite");
@@ -921,7 +911,7 @@ public class Gui extends Composite {
 		Button btnNewProjectSite = new Button(projectSiteComposite, SWT.NONE);
 		FormData fd_btnNewProjectSite = new FormData();
 		fd_btnNewProjectSite.height = 28;
-		fd_btnNewProjectSite.width = 112;
+		fd_btnNewProjectSite.width = 128;
 		fd_btnNewProjectSite.top = new FormAttachment(0, -1);
 		fd_btnNewProjectSite.right = new FormAttachment(100);
 		btnNewProjectSite.setLayoutData(fd_btnNewProjectSite);
@@ -931,10 +921,10 @@ public class Gui extends Composite {
 		// ProjectSite controls
 //		MyText jobSiteSearchBox = new MyText(unitsComposite, SWT.BORDER);
 		FormData fd_projectSiteSearchBox = new FormData();
-		fd_projectSiteSearchBox.height = 16;
 		fd_projectSiteSearchBox.right = new FormAttachment(btnNewProjectSite);
-		fd_projectSiteSearchBox.top = new FormAttachment(0);
 		fd_projectSiteSearchBox.left = new FormAttachment(0);
+		fd_projectSiteSearchBox.height = 16;
+		fd_projectSiteSearchBox.top = new FormAttachment(0);
 		projectSiteSearchBox.setLayoutData(fd_projectSiteSearchBox);
 		projectSiteSearchBox.setText("Search...");
 		projectSiteSearchBox.addModifyListener(new SearchTextBoxListeners(projectSiteSearchBox, projectSiteTable, new ProjectSite()));
