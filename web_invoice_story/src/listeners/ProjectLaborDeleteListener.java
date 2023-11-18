@@ -3,21 +3,21 @@ package listeners;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import objects.JobLabor;
 import guiParts.JobLaborTable;
-import guiParts.RepairOrderJobTable;
+import guiParts.ProjectJobTable;
 
-public class RepairOrderLaborDeleteListener extends MouseAdapter {
+public class ProjectLaborDeleteListener extends MouseAdapter {
 	
-	private RepairOrderDialog roDialog;
+	private ProjectDialog roDialog;
 	private JobLaborTable jobLaborTable;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 
-	public RepairOrderLaborDeleteListener(RepairOrderDialog roDialog) {
+	public ProjectLaborDeleteListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
 		this.jobLaborTable = roDialog.getJobLaborTable();
-		this.tableJobsRepairOrder = roDialog.getTableJobsRepairOrder();
+		this.tableJobsRepairOrder = roDialog.getTableJobsProject();
 	}
 
 	@Override

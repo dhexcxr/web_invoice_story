@@ -48,12 +48,12 @@ public class JobLaborTable extends MyTable {
 
 	}
 	
-	public void setTotalLabor(RepairOrderJobTable tableJobsRepairOrder) {
-		RepairOrderJobTableItem selectedJobTableItem = (RepairOrderJobTableItem) tableJobsRepairOrder.getSelection()[0];
+	public void setTotalLabor(ProjectJobTable tableJobsRepairOrder) {
+		ProjectJobTableItem selectedJobTableItem = (ProjectJobTableItem) tableJobsRepairOrder.getSelection()[0];
 		BigDecimal laborTotal = calculateLaborTotal();
 		selectedJobTableItem.setLaborTotal(laborTotal);
-		selectedJobTableItem.setText(RepairOrderJobTable.LABOR_TOTAL_COLUMN, "$" + laborTotal.toString());
-		selectedJobTableItem.setText(RepairOrderJobTable.JOB_TOTAL_COLUMN, "$" + (laborTotal.add(selectedJobTableItem.getPartTotal()).toString()));
+		selectedJobTableItem.setText(ProjectJobTable.LABOR_TOTAL_COLUMN, "$" + laborTotal.toString());
+		selectedJobTableItem.setText(ProjectJobTable.JOB_TOTAL_COLUMN, "$" + (laborTotal.add(selectedJobTableItem.getPartTotal()).toString()));
 		tableJobsRepairOrder.notifyListeners(SWT.BUTTON5, new Event());
 	}
 	

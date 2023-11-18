@@ -7,28 +7,28 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import objects.InvoicePart;
 import guiParts.InvoicePartTable;
 import objects.JobPart;
 import guiParts.MyText;
-import guiParts.RepairOrderJobTable;
-import guiParts.RepairOrderJobTableItem;
+import guiParts.ProjectJobTable;
+import guiParts.ProjectJobTableItem;
 
-public class RepairOrderPartEditorListener extends InvoicePartEditorListener {
+public class ProjectPartEditorListener extends InvoicePartEditorListener {
 	
 	private InvoicePartTable partInvoiceTable;
 //	private int selectedTableItemIndex;
 	private Text editorTxtBox;
 	private List<MyText> invoiceDetailText;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 	private int currentJobTableItemIndex;
-	private RepairOrderDialog repairOrderDialog;
+	private ProjectDialog projectDialog;
 	
-	public RepairOrderPartEditorListener(InvoicePartTable partInvoiceTable, int selectedTableItemIndex,
+	public ProjectPartEditorListener(InvoicePartTable partInvoiceTable, int selectedTableItemIndex,
 			int selectedColumnIndex, Text editorTxtBox, List<MyText> invoiceDetailText, Shell parent,
-				InvoicePartTableListener invoicePartTableListener, RepairOrderJobTable tableJobsRepairOrder, int currentJobTableItemIndex,
-					RepairOrderDialog repairOrderDialog) {
+				InvoicePartTableListener invoicePartTableListener, ProjectJobTable tableJobsRepairOrder, int currentJobTableItemIndex,
+					ProjectDialog projectDialog) {
 		super(partInvoiceTable, selectedTableItemIndex, selectedColumnIndex, editorTxtBox, invoiceDetailText, parent, invoicePartTableListener);
 		// TODO connect Job Part total
 		this.partInvoiceTable = partInvoiceTable;
@@ -37,7 +37,7 @@ public class RepairOrderPartEditorListener extends InvoicePartEditorListener {
 		this.invoiceDetailText = invoiceDetailText;
 		this.tableJobsRepairOrder = tableJobsRepairOrder;
 		this.currentJobTableItemIndex = currentJobTableItemIndex;
-		this.repairOrderDialog = repairOrderDialog;
+		this.projectDialog = projectDialog;
 	}
 	
 	@Override
@@ -55,23 +55,23 @@ public class RepairOrderPartEditorListener extends InvoicePartEditorListener {
 				partInvoiceTable.getItem(selectedTableItemIndex).setData(null);
 			}
 			
-			repairOrderDialog.saveJob();
+			projectDialog.saveJob();
 			totalParts();
 			editorTxtBox.dispose();
 		}
 	}
 	
 	private void totalParts() {
-		RepairOrderJobTableItem selectedJobTableItem = (RepairOrderJobTableItem) tableJobsRepairOrder.getItem(currentJobTableItemIndex);
+		ProjectJobTableItem selectedJobTableItem = (ProjectJobTableItem) tableJobsRepairOrder.getItem(currentJobTableItemIndex);
 		String textToParse = invoiceDetailText.get(0).getText();
 		textToParse = textToParse.replaceAll("[^0-9.]", "");
 		if (!textToParse.equals("")) {
 			BigDecimal partTotal = new BigDecimal(textToParse);
 			selectedJobTableItem.setPartTotal(partTotal);
-			selectedJobTableItem.setText(RepairOrderJobTable.PART_TOTAL_COLUMN, "$" + partTotal.toString());
-			selectedJobTableItem.setText(RepairOrderJobTable.JOB_TOTAL_COLUMN, "$" + (partTotal.add(selectedJobTableItem.getLaborTotal()).toString()));
+			selectedJobTableItem.setText(ProjectJobTable.PART_TOTAL_COLUMN, "$" + partTotal.toString());
+			selectedJobTableItem.setText(ProjectJobTable.JOB_TOTAL_COLUMN, "$" + (partTotal.add(selectedJobTableItem.getLaborTotal()).toString()));
 		}
-		repairOrderDialog.calcRoTotal();
+		projectDialog.calcRoTotal();
 	}
 
 	

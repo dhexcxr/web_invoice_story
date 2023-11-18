@@ -6,19 +6,19 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TabFolder;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import objects.Job;
-import guiParts.RepairOrderJobTable;
+import guiParts.ProjectJobTable;
 
-public class RepairOrderJobDeleteListener extends MouseAdapter {
+public class ProjectJobDeleteListener extends MouseAdapter {
 	
-	private RepairOrderDialog roDialog;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectDialog roDialog;
+	private ProjectJobTable tableJobsRepairOrder;
 	private TabFolder tabFolderJobsRepairOrder;
-	public RepairOrderJobDeleteListener(RepairOrderDialog roDialog) {
+	public ProjectJobDeleteListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
-		this.tableJobsRepairOrder = roDialog.getTableJobsRepairOrder();
-		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsRepairOrder();
+		this.tableJobsRepairOrder = roDialog.getTableJobsProject();
+		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsProject();
 	}
 	
 	@Override

@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import gui.NewCustomerDialog;
 import gui.NewPartDialog;
 import gui.NewUnitDialog;
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import guiParts.MyTable;
 import guiParts.MyText;
 import objects.DbObjectSearchable;
@@ -50,7 +50,7 @@ public class CreateNewObjectListener extends MouseAdapter{
 			NewPartDialog addNewPartDialog = new NewPartDialog(shell, SWT.NONE);
 			newObject = addNewPartDialog.open();
 		} else if (table.getColumn(0).getText().equals("Project #")) {
-			RepairOrderDialog addNewRepairOrderDialog = new RepairOrderDialog(shell, SWT.NONE);
+			ProjectDialog addNewRepairOrderDialog = new ProjectDialog(shell, SWT.NONE);
 			newObject = addNewRepairOrderDialog.open();
 		}
 		

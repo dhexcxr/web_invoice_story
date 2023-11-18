@@ -6,14 +6,14 @@ import org.eclipse.swt.widgets.Composite;
 
 import objects.DbObjectSearchable;
 
-public class RepairOrderJobTable extends MyTable {
+public class ProjectJobTable extends MyTable {
 	
 	public static final int JOB_NAME_COLUMN = 0;
 	public static final int PART_TOTAL_COLUMN = 1;
 	public static final int LABOR_TOTAL_COLUMN = 2;
 	public static final int JOB_TOTAL_COLUMN = 3;
 
-	public RepairOrderJobTable(Composite parent, int style) {
+	public ProjectJobTable(Composite parent, int style) {
 		super(parent, style);
 		// TODO Auto-generated constructor stub
 	}

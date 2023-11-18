@@ -13,8 +13,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import guiParts.MyText;
-import guiParts.RepairOrderJobTable;
-import gui.RepairOrderDialog;
+import guiParts.ProjectJobTable;
+import gui.ProjectDialog;
 import objects.InvoicePart;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
@@ -29,8 +29,8 @@ public class InvoicePartTableListener implements Listener {
 	
 	private boolean visible = false;
 	
-	private RepairOrderJobTable tableJobsRepairOrder;
-	private RepairOrderDialog repairOrderDialog;
+	private ProjectJobTable tableJobsRepairOrder;
+	private ProjectDialog projectDialog;
 	
 	private boolean editingInvoice;
 	
@@ -46,7 +46,7 @@ public class InvoicePartTableListener implements Listener {
 	    editingInvoice = true;
 	}
 	
-	public InvoicePartTableListener(InvoicePartTable invoicePartTable, RepairOrderJobTable tableJobsRepairOrder, RepairOrderDialog repairOrderDialog, Shell parent) {
+	public InvoicePartTableListener(InvoicePartTable invoicePartTable, ProjectJobTable tableJobsRepairOrder, ProjectDialog projectDialog, Shell parent) {
 		this(invoicePartTable, new ArrayList<>());
 		this.invoiceDetailText.add(new MyText(new Shell(), 0));		// I think this is a total hack way to do this
 		this.invoiceDetailText.add(new MyText(new Shell(), 0));
@@ -55,7 +55,7 @@ public class InvoicePartTableListener implements Listener {
 		this.invoiceDetailText.add(new MyText(new Shell(), 0));
 		this.invoiceDetailText.add(new MyText(new Shell(), 0));
 		this.tableJobsRepairOrder = tableJobsRepairOrder;
-		this.repairOrderDialog = repairOrderDialog;
+		this.projectDialog = projectDialog;
 		this.parent = parent;
 	}
 
@@ -120,9 +120,9 @@ public class InvoicePartTableListener implements Listener {
 					editorTxtBox, invoiceDetailText, parent, this);
 		} else {
 			int currentJobTableItemIndex = tableJobsRepairOrder.getSelectionIndex();
-			return new RepairOrderPartEditorListener(invoicePartTable, currentTableItemIndex, selectedColumnIndex,
+			return new ProjectPartEditorListener(invoicePartTable, currentTableItemIndex, selectedColumnIndex,
 					editorTxtBox, invoiceDetailText, parent, this,
-					tableJobsRepairOrder, currentJobTableItemIndex, repairOrderDialog);
+					tableJobsRepairOrder, currentJobTableItemIndex, projectDialog);
 		}
 	}
 	

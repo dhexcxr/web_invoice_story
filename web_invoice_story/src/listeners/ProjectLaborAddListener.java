@@ -6,22 +6,22 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TableItem;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import objects.JobLabor;
 import guiParts.JobLaborTable;
 import guiParts.JobLaborTableItem;
-import guiParts.RepairOrderJobTable;
+import guiParts.ProjectJobTable;
 
-public class RepairOrderLaborAddListener extends MouseAdapter {
+public class ProjectLaborAddListener extends MouseAdapter {
 	
-	private RepairOrderDialog roDialog;
+	private ProjectDialog roDialog;
 	private JobLaborTable jobLaborTable;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 
-	public RepairOrderLaborAddListener(RepairOrderDialog roDialog) {
+	public ProjectLaborAddListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
 		this.jobLaborTable = roDialog.getJobLaborTable();
-		this.tableJobsRepairOrder = roDialog.getTableJobsRepairOrder();	
+		this.tableJobsRepairOrder = roDialog.getTableJobsProject();	
 	}
 	
 	@Override

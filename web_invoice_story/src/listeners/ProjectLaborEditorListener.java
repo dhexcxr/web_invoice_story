@@ -10,36 +10,36 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import guiParts.JobLaborTable;
 import guiParts.JobLaborTableItem;
-import guiParts.RepairOrderJobTable;
-import guiParts.RepairOrderJobTableItem;
+import guiParts.ProjectJobTable;
+import guiParts.ProjectJobTableItem;
 import web_invoice_story.Application;
 
-public class RepairOrderLaborEditorListener implements Listener {
+public class ProjectLaborEditorListener implements Listener {
 
 	private JobLaborTable jobLaborTable;
 	private JobLaborTableItem selectedTableItem;
 	private int selectedColumnIndex;
 	private Text editorTxtBox;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 	private int currentJobTableItemIndex;
-	private RepairOrderDialog repairOrderDialog;
+	private ProjectDialog projectDialog;
 
 
 	private static final String ONLY_DECIMALS = "[^0-9.]";		// find a better name
 
 
-	public RepairOrderLaborEditorListener(JobLaborTable jobLaborTable, int selectedTableItemIndex, int selectedColumnIndex,
-			Text editorTxtBox, RepairOrderJobTable tableJobsRepairOrder, int currentJobTableItemIndex, RepairOrderDialog repairOrderDialog) {
+	public ProjectLaborEditorListener(JobLaborTable jobLaborTable, int selectedTableItemIndex, int selectedColumnIndex,
+			Text editorTxtBox, ProjectJobTable tableJobsRepairOrder, int currentJobTableItemIndex, ProjectDialog projectDialog) {
 		this.jobLaborTable = jobLaborTable;
 		this.selectedTableItem = (JobLaborTableItem) jobLaborTable.getItem(selectedTableItemIndex);
 		this.selectedColumnIndex = selectedColumnIndex;
 		this.editorTxtBox = editorTxtBox;
 		this.tableJobsRepairOrder = tableJobsRepairOrder;
 		this.currentJobTableItemIndex = currentJobTableItemIndex;
-		this.repairOrderDialog = repairOrderDialog;
+		this.projectDialog = projectDialog;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class RepairOrderLaborEditorListener implements Listener {
 			setColumnData();
 		}
 //		tableJobsRepairOrder.notifyListeners(SWT.BUTTON4, new Event());		// save Parts and Labor
-		repairOrderDialog.saveJob();
+		projectDialog.saveJob();
 		setTotalLabor();
 	}
 	
@@ -78,12 +78,12 @@ public class RepairOrderLaborEditorListener implements Listener {
 	}
 	
 	private void setTotalLabor() {
-		RepairOrderJobTableItem selectedJobTableItem = (RepairOrderJobTableItem) tableJobsRepairOrder.getItem(currentJobTableItemIndex);
+		ProjectJobTableItem selectedJobTableItem = (ProjectJobTableItem) tableJobsRepairOrder.getItem(currentJobTableItemIndex);
 		BigDecimal laborTotal = calculateLaborTotal();
 		selectedJobTableItem.setLaborTotal(laborTotal);
-		selectedJobTableItem.setText(RepairOrderJobTable.LABOR_TOTAL_COLUMN, "$" + laborTotal.toString());
-		selectedJobTableItem.setText(RepairOrderJobTable.JOB_TOTAL_COLUMN, "$" + (laborTotal.add(selectedJobTableItem.getPartTotal()).toString()));
-		repairOrderDialog.calcRoTotal();
+		selectedJobTableItem.setText(ProjectJobTable.LABOR_TOTAL_COLUMN, "$" + laborTotal.toString());
+		selectedJobTableItem.setText(ProjectJobTable.JOB_TOTAL_COLUMN, "$" + (laborTotal.add(selectedJobTableItem.getPartTotal()).toString()));
+		projectDialog.calcRoTotal();
 	}
 	
 	private BigDecimal calculateLaborTotal() {

@@ -7,7 +7,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.TabFolder;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import objects.Job;
 import web_invoice_story.Application;
 import guiParts.MyText;
@@ -17,8 +17,8 @@ public class JobDetailsModifiedListener implements ModifyListener {
 	private TabFolder tabFolderJobsRepairOrder;
 	private List<MyText> jobDetailWidgets;
 	
-	public JobDetailsModifiedListener(RepairOrderDialog roDialog) {
-		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsRepairOrder();
+	public JobDetailsModifiedListener(ProjectDialog roDialog) {
+		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsProject();
 		this.jobDetailWidgets = roDialog.getJobDetailsText();
 	}
 

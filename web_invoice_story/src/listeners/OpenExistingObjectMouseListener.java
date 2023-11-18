@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Table;
 import gui.NewCustomerDialog;
 import gui.NewPartDialog;
 import gui.NewUnitDialog;
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import guiParts.MyTable;
 import objects.Customer;
 import objects.DbObjectSearchable;
@@ -108,7 +108,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 		Project project= (Project) table.getSelection()[0].getData();
 		Application.getLogger().log(Level.INFO, "Open RO: {0}", project.getProjectId());
 		
-		RepairOrderDialog modifyExistingRepairOrder= new RepairOrderDialog(shell, SWT.NONE);
+		ProjectDialog modifyExistingRepairOrder= new ProjectDialog(shell, SWT.NONE);
 		modifyExistingRepairOrder.open(project);
 	}
 	

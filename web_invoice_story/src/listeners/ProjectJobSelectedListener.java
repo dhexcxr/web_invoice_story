@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TableItem;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
 import objects.Job;
@@ -20,13 +20,13 @@ import guiParts.JobLaborTable;
 import guiParts.JobLaborTableItem;
 import objects.JobPart;
 import guiParts.MyText;
-import guiParts.RepairOrderJobTable;
+import guiParts.ProjectJobTable;
 
-public class RepairOrderJobSelectedListener extends SelectionAdapter {
+public class ProjectJobSelectedListener extends SelectionAdapter {
 	
-	private RepairOrderDialog roDialog;
+	private ProjectDialog roDialog;
 	private TabFolder tabFolderJobsRepairOrder;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 	private List<MyText> jobDetailsText;
 	private InvoicePartTable jobPartsTable;
 	private JobLaborTable jobLaborTable;
@@ -40,10 +40,10 @@ public class RepairOrderJobSelectedListener extends SelectionAdapter {
 	private static final int ADD_LABOR_BUTTON = 1;
 	private static final int DELETE_LABOR_BUTTON = 2;
 
-	public RepairOrderJobSelectedListener(RepairOrderDialog roDialog) {
+	public ProjectJobSelectedListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
-		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsRepairOrder();
-		this.tableJobsRepairOrder = roDialog.getTableJobsRepairOrder();
+		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsProject();
+		this.tableJobsRepairOrder = roDialog.getTableJobsProject();
 		this.jobDetailsText = roDialog.getJobDetailsText();
 		this.jobPartsTable = roDialog.getJobPartsTable();
 		this.jobLaborTable = roDialog.getJobLaborTable();

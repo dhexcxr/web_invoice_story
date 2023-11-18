@@ -8,15 +8,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import gui.ConfirmDialog;
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import web_invoice_story.Application;
 
-public class RepairOrderCloseListener implements Listener {
+public class ProjectCloseListener implements Listener {
 	
-	private RepairOrderDialog roDialog;
+	private ProjectDialog roDialog;
 	private Shell shell;
 
-	public RepairOrderCloseListener(RepairOrderDialog roDialog) {
+	public ProjectCloseListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
 		this.shell = roDialog.getRoDialogShell();
 	}

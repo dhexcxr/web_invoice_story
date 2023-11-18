@@ -9,21 +9,21 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import guiParts.JobLaborTable;
-import guiParts.RepairOrderJobTable;
+import guiParts.ProjectJobTable;
 
-public class RepairOrderLaborTableListener implements Listener {
+public class ProjectLaborTableListener implements Listener {
 	
 	private JobLaborTable jobLaborTable;
 	private TableEditor editor;
-	private RepairOrderJobTable tableJobsRepairOrder;
-	private RepairOrderDialog repairOrderDialog;
+	private ProjectJobTable tableJobsRepairOrder;
+	private ProjectDialog projectDialog;
 
-	public RepairOrderLaborTableListener(JobLaborTable jobLaborTable, RepairOrderJobTable tableJobsRepairOrder, RepairOrderDialog repairOrderDialog) {
+	public ProjectLaborTableListener(JobLaborTable jobLaborTable, ProjectJobTable tableJobsRepairOrder, ProjectDialog projectDialog) {
 		this.jobLaborTable = jobLaborTable;
 		this.tableJobsRepairOrder = tableJobsRepairOrder;
-		this.repairOrderDialog = repairOrderDialog;
+		this.projectDialog = projectDialog;
 		this.editor = new TableEditor(jobLaborTable);
 		editor.horizontalAlignment = SWT.LEFT;
 	    editor.grabHorizontal = true;
@@ -45,9 +45,9 @@ public class RepairOrderLaborTableListener implements Listener {
         			final int selectedColumnIndex = i;
         			Text editorTxtBox = new Text(jobLaborTable, SWT.NONE);
         			int currentJobTableItemIndex = tableJobsRepairOrder.getSelectionIndex();
-        			Listener textListener = new RepairOrderLaborEditorListener(jobLaborTable, currentTableItemIndex, selectedColumnIndex,
+        			Listener textListener = new ProjectLaborEditorListener(jobLaborTable, currentTableItemIndex, selectedColumnIndex,
         																		editorTxtBox, tableJobsRepairOrder, currentJobTableItemIndex,
-        																			repairOrderDialog);
+        																			projectDialog);
         			editor.setEditor(editorTxtBox, selectedTableItem, i);
         			editorTxtBox.addListener(SWT.FocusOut, textListener);
         			editorTxtBox.addListener(SWT.Traverse, textListener);

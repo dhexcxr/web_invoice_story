@@ -12,7 +12,7 @@ import objects.JobLabor;
 import objects.Part;
 import web_invoice_story.Application;
 
-public class RepairOrderJobTableItem extends TableItem {
+public class ProjectJobTableItem extends TableItem {
 	
 	public static final int JOB_NAME_COLUMN = 0;
 	public static final int PART_TOTAL_COLUMN = 1;
@@ -22,7 +22,7 @@ public class RepairOrderJobTableItem extends TableItem {
 	private BigDecimal partTotal;
 	private BigDecimal laborTotal;
 
-	public RepairOrderJobTableItem(Table parent, int style) {
+	public ProjectJobTableItem(Table parent, int style) {
 		super(parent, style);
 	}
 

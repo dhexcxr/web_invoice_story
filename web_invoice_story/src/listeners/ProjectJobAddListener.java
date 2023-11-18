@@ -9,20 +9,20 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TableItem;
 
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
 import objects.Job;
 import guiParts.JobLaborTable;
 import guiParts.MyText;
-import guiParts.RepairOrderJobTable;
-import guiParts.RepairOrderJobTableItem;
+import guiParts.ProjectJobTable;
+import guiParts.ProjectJobTableItem;
 
-public class RepairOrderJobAddListener extends MouseAdapter {
+public class ProjectJobAddListener extends MouseAdapter {
 	
-	private RepairOrderDialog roDialog;
+	private ProjectDialog roDialog;
 	private TabFolder tabFolderJobsRepairOrder;
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 	private List<MyText> jobDetailsText;
 	private InvoicePartTable jobPartsTable;
 	private JobLaborTable jobLaborTable;
@@ -32,10 +32,10 @@ public class RepairOrderJobAddListener extends MouseAdapter {
 	private static final int JOB_RESOLUTION_TEXT = 2;
 	private static final int JOB_RECOMMENDATIONS_TEXT = 3;
 
-	public RepairOrderJobAddListener(RepairOrderDialog roDialog) {
+	public ProjectJobAddListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
-		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsRepairOrder();
-		this.tableJobsRepairOrder = roDialog.getTableJobsRepairOrder();
+		this.tabFolderJobsRepairOrder = roDialog.getTabFolderJobsProject();
+		this.tableJobsRepairOrder = roDialog.getTableJobsProject();
 		this.jobDetailsText = roDialog.getJobDetailsText();
 		this.jobPartsTable = roDialog.getJobPartsTable();
 		this.jobLaborTable = roDialog.getJobLaborTable();
@@ -47,7 +47,7 @@ public class RepairOrderJobAddListener extends MouseAdapter {
 			// but it seems to be working fine so I don't know that its actually needed
 		tabFolderJobsRepairOrder.notifyListeners(SWT.Selection, new Event());		// trigger saving Job details
 		// create new Job on Job Table
-		RepairOrderJobTableItem job = new RepairOrderJobTableItem(tableJobsRepairOrder, roDialog.getStyle());
+		ProjectJobTableItem job = new ProjectJobTableItem(tableJobsRepairOrder, roDialog.getStyle());
 		job.setData(new Job());
 		tableJobsRepairOrder.setSelection(tableJobsRepairOrder.getItemCount() - 1);
 		tableJobsRepairOrder.notifyListeners(SWT.Selection, new Event());

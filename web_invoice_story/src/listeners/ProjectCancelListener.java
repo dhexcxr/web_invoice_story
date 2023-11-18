@@ -8,15 +8,15 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Shell;
 
 import gui.ConfirmDialog;
-import gui.RepairOrderDialog;
+import gui.ProjectDialog;
 import web_invoice_story.Application;
 
-public class RepairOrderCancelListener extends MouseAdapter {
+public class ProjectCancelListener extends MouseAdapter {
 
-	private RepairOrderDialog roDialog;
+	private ProjectDialog roDialog;
 	private Shell shell;
 	
-	public RepairOrderCancelListener(RepairOrderDialog roDialog) {
+	public ProjectCancelListener(ProjectDialog roDialog) {
 		this.roDialog = roDialog;
 		this.shell = roDialog.getRoDialogShell();
 	}
@@ -41,11 +41,11 @@ public class RepairOrderCancelListener extends MouseAdapter {
 		
 		if (cancelChanges) {
 			// TODO remove customer and unit
-			roDialog.getTxtCustomerRepairOrder().setText("");
-			roDialog.getTxtCustomerRepairOrder().setData(null);
-			roDialog.getTxtUnitRepairOrder().setText("");
-			roDialog.getTxtUnitRepairOrder().setData(null);
-			roDialog.getTableJobsRepairOrder().removeAll();
+			roDialog.getTxtCustomerProject().setText("");
+			roDialog.getTxtCustomerProject().setData(null);
+			roDialog.getTxtProjectSiteProject().setText("");
+			roDialog.getTxtProjectSiteProject().setData(null);
+			roDialog.getTableJobsProject().removeAll();
 			roDialog.disableJobTabs();
 			roDialog.setDetailsToDelete(new HashMap<>());
 			roDialog.reloadRo();

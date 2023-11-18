@@ -8,13 +8,13 @@ import org.eclipse.swt.widgets.TableItem;
 import objects.Job;
 import web_invoice_story.Application;
 import guiParts.MyText;
-import guiParts.RepairOrderJobTable;
+import guiParts.ProjectJobTable;
 
 public class JobNameModifiedListener extends InfoTextBoxModifyListener {
 	
-	private RepairOrderJobTable tableJobsRepairOrder;
+	private ProjectJobTable tableJobsRepairOrder;
 
-	public JobNameModifiedListener(MyText text, RepairOrderJobTable tableJobsRepairOrder) {
+	public JobNameModifiedListener(MyText text, ProjectJobTable tableJobsRepairOrder) {
 		super(text);
 		this.tableJobsRepairOrder = tableJobsRepairOrder;
 	}
