@@ -48,7 +48,6 @@ public class AmountDueDialog extends Dialog{
 	private Button btnCashier;
 	private Button btnCancel;
 	
-	private MyText finalTotalTextFromInvoice;
 	
 	private AmountDueResponse response = new AmountDueResponse();		// NOTE this should allow to remove the hack txt fields i currently use to return the Ammount Charged
 
@@ -65,7 +64,6 @@ public class AmountDueDialog extends Dialog{
 	}
 	
 	public AmountDueResponse open(MyText finalTotalText) {
-		this.finalTotalTextFromInvoice = finalTotalText;
 		return open(finalTotalText.getText());
 	}
 
@@ -224,6 +222,7 @@ public class AmountDueDialog extends Dialog{
 				MessageBox changeDueMessageBox= new MessageBox(shlAmountDue, getStyle());
 				
 				if (response.getResult() == Result.PAYMENT) {
+					// paying an invoice to pay down account balance
 					if (tendered.compareTo(total) > 0) {
 						response.setAmountCharged(tendered.negate());
 						changeDueMessageBox.setText("Notice");
@@ -240,7 +239,7 @@ public class AmountDueDialog extends Dialog{
 						changeDueMessageBox.setMessage("Thank you for the payment");
 					}
 				} else {
-
+					// paying a normal invoice or project
 					// calculate any change
 					BigDecimal chageDue = total.subtract(tendered);
 

@@ -23,6 +23,7 @@ public class Application /* implements IApplication */ implements EntryPoint {
 	
 	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private static Display display;
+	private static Shell shell;
 	private static final Settings settings = new Settings();
 
 //	public Object start(IApplicationContext context) throws Exception {
@@ -38,16 +39,12 @@ public class Application /* implements IApplication */ implements EntryPoint {
 	 */
 	public int createUI() {
 		display = new Display();
-		Shell shell = new Shell(display, SWT.NO_TRIM);
+		shell = new Shell(display, SWT.NO_TRIM);
 		
 		shell.setText("Web Invoice Story");
 		shell.setLayout(new FormLayout());
-//		shell.setLayout(new FillLayout());
-//		shell.setImage(new Image(display(), Application.class.getClassLoader().getResourceAsStream("resources/icon.png")));
 		shell.setMinimumSize(1024, 768);
 		
-		
-//		@SuppressWarnings("unused")
 		Gui gui = new Gui(shell, SWT.NONE);
 		FormData fd_gui = new FormData();
 		fd_gui.bottom = new FormAttachment(100);
@@ -89,7 +86,7 @@ public class Application /* implements IApplication */ implements EntryPoint {
 		
 		// TODO get size of display (browser window), if less than 1024x768 display dialog telling user to increase browser window size
 		
-		// TODO also, get the streamlined object save style objects from that other project I did
+		// TODO also, get the streamlined object save style objects from that other project I did, DONE for the most part
 		
 		if (DbServices.isConnected()) {
 			while (!shell.isDisposed()) {
@@ -107,10 +104,6 @@ public class Application /* implements IApplication */ implements EntryPoint {
 	
 	public static Logger getLogger() {
 		return LOGGER;
-	}
-
-	public static final Display display() {
-		return display;
 	}
 	
 	public static Settings getSettings() {
