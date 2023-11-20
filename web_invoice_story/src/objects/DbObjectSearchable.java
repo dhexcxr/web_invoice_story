@@ -28,7 +28,7 @@ public abstract class DbObjectSearchable {
 		// return subclass's correct DB search query 
 		int selectedLocation = Application.getSettings().getCurrentLocation();
 		
-		if (selectedLocation != 0 && !(this instanceof StoreLocation) && !(this instanceof ProjectSite)
+		if (selectedLocation != 0 && !(this instanceof StoreLocation) && !(this instanceof User) && !(this instanceof ProjectSite)
 				&& !(this instanceof Account) && !(this instanceof AccountTransaction) && !(this instanceof AccountBalanceHx)
 				&& !(this instanceof Job) && !(this instanceof JobLabor) && !(this instanceof JobPart)) {
 			// modify search query to only show results from selected location

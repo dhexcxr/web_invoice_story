@@ -23,6 +23,7 @@ import objects.AccountTransaction;
 import objects.Customer;
 import objects.DbObjectSavable;
 import objects.DbObjectSearchable;
+import objects.Employee;
 import objects.Invoice;
 import objects.InvoicePart;
 import objects.Job;
@@ -32,6 +33,7 @@ import objects.Part;
 import objects.Project;
 import objects.ProjectSite;
 import objects.StoreLocation;
+import objects.User;
 
 public class DbServices {
 	// TODO add status icon somewhere to show when we're connected to DB
@@ -482,6 +484,10 @@ public class DbServices {
 		List<DbObjectSearchable> results = new ArrayList<>();
 		if (object instanceof Customer) {
 			results = buildCustomers(queryResultSet);		// TODO push buildObjects(queryResultSet) up to superclass
+		} else if (object instanceof Employee) {
+			results = buildEmployees(queryResultSet);
+		} else if (object instanceof User) {
+			results = buildUsers(queryResultSet);
 		} else if (object instanceof StoreLocation) {
 			results = buildStoreLocations(queryResultSet);
 		} else if (object instanceof Part) {
@@ -529,6 +535,40 @@ public class DbServices {
 			customer.setLocationId(queryResultSet.getLong(12));
 
 			results.add(i, customer);
+			i++;
+		}
+		return results;
+	}
+	
+	private static List<DbObjectSearchable> buildEmployees(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+		int i = 0;
+		while (queryResultSet.next()) {
+			Employee employee = new Employee();
+			employee.setFirstName(queryResultSet.getString(1));
+			employee.setLastName(queryResultSet.getString(2));
+			employee.setJobTitle(queryResultSet.getString(3));
+			employee.setPayRate(queryResultSet.getBigDecimal(4));
+			employee.setEmployeeId(queryResultSet.getLong(5));
+			employee.setLocationId(queryResultSet.getLong(6));
+
+			results.add(i, employee);
+			i++;
+		}
+		return results;
+	}
+	
+	private static List<DbObjectSearchable> buildUsers(ResultSet queryResultSet) throws SQLException {
+		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+		int i = 0;
+		while (queryResultSet.next()) {
+			User employee = new User();
+			employee.setEmployeeId(queryResultSet.getLong(1));
+			employee.setUserName(queryResultSet.getString(2));
+			employee.setPasswordHash(queryResultSet.getString(3));
+			employee.setUserId(queryResultSet.getLong(4));
+
+			results.add(i, employee);
 			i++;
 		}
 		return results;
