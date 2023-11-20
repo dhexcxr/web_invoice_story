@@ -101,7 +101,7 @@ public class Application /* implements IApplication */ implements EntryPoint {
 		// save settings and disconnect from SQL DB before close
 		settings.save();
 		DbServices.disconnectFromDb();
-		display.close();
+		shell.close();
 		return 0;
 	}
 	
