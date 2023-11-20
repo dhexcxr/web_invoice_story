@@ -1257,7 +1257,16 @@ public class Gui extends Composite {
 	}
 
 	public static void setDialogAtCenter(Shell dialogShell) {
-		Rectangle parentRec = dialogShell.getParent().getBounds();
+		Rectangle parentRec;
+		
+		Composite parentComposite = dialogShell.getParent();
+		if (parentComposite != null) {
+			parentRec = parentComposite.getBounds();
+		} else {
+			Display parentDisplay = dialogShell.getDisplay();
+			parentRec = parentDisplay.getBounds();
+		}
+		
 		Point parentCenter = new Point(parentRec.x + parentRec.width / 2, parentRec.y + parentRec.height / 2);
 		dialogShell.setLocation(parentCenter.x - dialogShell.getBounds().width / 2,
 				parentCenter.y - dialogShell.getBounds().height / 2);

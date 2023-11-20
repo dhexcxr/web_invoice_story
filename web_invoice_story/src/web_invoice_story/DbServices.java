@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import gui.Splash;
 import objects.Account;
 import objects.AccountTransaction;
 import objects.Customer;
@@ -74,13 +74,6 @@ public class DbServices {
 		String user = "TestUser";
 		String pass = "test";
 		
-		long splashTime = System.currentTimeMillis();
-		Shell connectingToDb = new Shell(Application.display(), SWT.APPLICATION_MODAL | SWT.TOOL | SWT.NO_FOCUS);
-		connectingToDb.setSize(980, 640);
-		connectingToDb.setBackgroundImage(new Image(Application.display(), DbServices.class.getClassLoader().getResourceAsStream("resources/splash.jpg")));
-		connectingToDb.setText("Connecting to database...");
-		connectingToDb.open();
-		
 		int i = 0;
 		while (!isConnected() && i < 3) {		// try to connect 3 times
 			try {
@@ -102,9 +95,6 @@ public class DbServices {
 			dbConnectionError.setMessage("Unable to connect to database...");
 			dbConnectionError.open();
 		}
-		// TODO enable splash delay in release 
-//		while (System.currentTimeMillis() - splashTime < 2000) {};		// leave splash screen open for at least 2 seconds, but no more than 2 seconds
-		connectingToDb.close();
 	}
 	
 	public static void disconnectFromDb() {

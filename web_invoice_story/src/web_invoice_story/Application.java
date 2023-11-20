@@ -7,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import gui.Gui;
+import gui.Splash;
 
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
@@ -59,8 +60,16 @@ public class Application /* implements IApplication */ implements EntryPoint {
 		shell.setMaximized(true);
 		shell.open();
 		
+		long splashTime = System.currentTimeMillis();
+		Splash splash = new Splash(shell, SWT.SHELL_TRIM);
+		splash.open();
+		
 		// Connect to SQL Database
 		DbServices.connectToDb();
+		
+		while (System.currentTimeMillis() - splashTime < 1500) {};		// leave splash screen open for at least 2 seconds, but no more than 2 seconds
+		splash.setShellText("Connected to Database.");
+		splash.close();
 		
 		
 		// TODO get size of display (browser window), if less than 1024x768 display dialog telling user to increase browser window size
