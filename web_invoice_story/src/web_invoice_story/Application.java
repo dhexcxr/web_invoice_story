@@ -5,8 +5,10 @@ import java.util.logging.Logger;
 import org.eclipse.rap.rwt.application.EntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import gui.Gui;
+import gui.LoginDialog;
 import gui.Splash;
 
 import org.eclipse.swt.layout.FormLayout;
@@ -69,6 +71,19 @@ public class Application /* implements IApplication */ implements EntryPoint {
 		
 		while (System.currentTimeMillis() - splashTime < 1500) {};		// leave splash screen open for at least 2 seconds, but no more than 2 seconds
 		splash.setShellText("Connected to Database.");
+		
+		LoginDialog login = new LoginDialog(shell, SWT.SHELL_TRIM);
+		boolean loginResponse = login.open();
+		
+		if (!loginResponse) {
+			MessageBox loginCanceled = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.APPLICATION_MODAL);
+			loginCanceled.setText("Notice");
+			loginCanceled.setMessage("Good bye...");
+			loginCanceled.open();
+			shell.close();
+			return 0;
+		}
+		
 		splash.close();
 		
 		
