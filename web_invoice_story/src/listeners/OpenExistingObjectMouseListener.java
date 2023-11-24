@@ -17,7 +17,7 @@ import gui.NewProjectSiteDialog;
 import gui.ProjectDialog;
 import guiParts.MyTable;
 import objects.Customer;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.Part;
 import objects.Project;
 import objects.ProjectSite;
@@ -45,7 +45,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 	public void mouseDoubleClick(MouseEvent e) {
 		// open saved object for editing
 		Application.getLogger().log(Level.INFO, "Double clicked to open an existing object");
-		List<DbObjectSearchable> tableObjects = new ArrayList<>();
+		List<DbObject> tableObjects = new ArrayList<>();
 		// TODO there might be a better way to check what type we're searching
 			// just like in DbServices.searchForObject
 		// LATER NOTE probably doing an instanceof on the table object we saved up there
@@ -63,7 +63,7 @@ public class OpenExistingObjectMouseListener extends MouseAdapter {
 
 		// here, we repaint table with objects that are currently in it so we don't have to go out to the DB
 		for (int i = 0; i < table.getItems().length; i++) {
-			tableObjects.add((DbObjectSearchable) table.getItems()[i].getData());
+			tableObjects.add((DbObject) table.getItems()[i].getData());
 		}
 		// TODO paint just at the selectedTableIndex, this will require us to implement paint(Object object, int selectedTableItemIndex)
 			// in all MyTable objects as it is implemented in InvoicePartTable

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
-import objects.DbObjectSearchable;
+import objects.DbObject;
 
 public class ProjectJobTable extends MyTable {
 	
@@ -19,19 +19,19 @@ public class ProjectJobTable extends MyTable {
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object, int selectedItemIndex) {		// NOTE not used
+	public void paint(DbObject object, int selectedItemIndex) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(List<? extends DbObjectSearchable> objects) {		// NOTE this is technically not used, but is kinda linked via SearchTextBoxListeners
+	public void paint(List<? extends DbObject> objects) {		// NOTE this is technically not used, but is kinda linked via SearchTextBoxListeners
 		// TODO Auto-generated method stub							// but there is no TextSearchBox for RO Jobs, probably need to do a 'throw UnsupportedOperation' or whatever
 
 	}

@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TableItem;
 
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import web_invoice_story.Application;
 
 public class JobLaborTable extends MyTable {
@@ -25,19 +25,19 @@ public class JobLaborTable extends MyTable {
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object, int selectedItemIndex) {		// NOTE not used
+	public void paint(DbObject object, int selectedItemIndex) {		// NOTE not used
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void paint(List<? extends DbObjectSearchable> objects) {		// NOTE similar to ROJobTable, this is not technically used anywhere
+	public void paint(List<? extends DbObject> objects) {		// NOTE similar to ROJobTable, this is not technically used anywhere
 		// TODO Auto-generated method stub							// probably add a 'throw UnsupportedOperation'
 
 	}

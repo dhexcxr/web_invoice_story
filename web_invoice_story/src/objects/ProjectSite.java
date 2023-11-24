@@ -7,7 +7,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
+public class ProjectSite extends DbObject {
 	
 	// might not need this
 	private long projectSiteId = -1;
@@ -154,18 +154,18 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 				INNER JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId
 				WHERE projectSiteId = ?;""";
 		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
-		super.querySubStringIndices[0] = 32;					// and move these 2 search() function implementations into the DbObjectSearchable too
-		super.querySubStringIndices[1] = 193;						// we just need to look at who calls what and where is a specific DbObjectSearchable expected
-																	// and where can we give it the generic ? extends DbObjectSearchable
-																	// I thought of this because if this function here returns a List<? extends DbObjectSearchable instead
+		super.querySubStringIndices[0] = 32;					// and move these 2 search() function implementations into the DbObject too
+		super.querySubStringIndices[1] = 193;						// we just need to look at who calls what and where is a specific DbObject expected
+																	// and where can we give it the generic ? extends DbObject
+																	// I thought of this because if this function here returns a List<? extends DbObject instead
 		return packObject(DbServices.searchForObjectByPk(this));				// of a List<ProjectSite> nothing seems to complain, though I didn't actually test anything
 	}
 	
-	private List<ProjectSite> packObjects(List<DbObjectSearchable> searchResults) {		// TODO NOTE look at how all of these are implemented
-		// helper to cast List of DbObjectSearchable to List of Customer				// this could probably go into DbObjectSearchable
+	private List<ProjectSite> packObjects(List<DbObject> searchResults) {		// TODO NOTE look at how all of these are implemented
+		// helper to cast List of DbObject to List of Customer				// this could probably go into DbObject
 		List<ProjectSite> projectSiteSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			if (object instanceof ProjectSite projectSite) {
 				projectSiteSearchResults.add(projectSite);
 			}
@@ -174,7 +174,7 @@ public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
 		return projectSiteSearchResults;
 	}
 	
-	private ProjectSite packObject(DbObjectSearchable searchResult) {
+	private ProjectSite packObject(DbObject searchResult) {
 		if (searchResult instanceof ProjectSite projectSite) {
 			return projectSite;
 		}

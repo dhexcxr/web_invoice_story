@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.ProjectSite;
 
 public class ProjectSiteTable extends MyTable{
@@ -28,21 +28,21 @@ public class ProjectSiteTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(DbObjectSearchable customer, int selectedTableItemIndex) {		// NOTE not used
+	public void paint(DbObject customer, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 //		this.paint(new Object[] {customer});
 	}
 	
 	@Override
-	public void paint(List<? extends DbObjectSearchable> objectResults) {
+	public void paint(List<? extends DbObject> objectResults) {
 		// build each TableItem to fill ProjectSite Table
-		for (DbObjectSearchable object : objectResults) {
+		for (DbObject object : objectResults) {
 			if (object instanceof ProjectSite projectSite) {		// TODO remove all null chekcs with an instanceof
 				TableItem tableItem = new TableItem(this, SWT.NONE);
 				tableItem.setText(new String[] {projectSite.getOwner(), projectSite.getProjectSiteAddress(), projectSite.getProjectSiteCity(),

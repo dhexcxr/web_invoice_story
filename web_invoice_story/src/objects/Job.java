@@ -7,7 +7,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Job extends DbObjectSearchable implements DbObjectSavable {
+public class Job extends DbObject {
 	
 	private long jobId = -1;
 	private long projectId;
@@ -212,11 +212,11 @@ public class Job extends DbObjectSearchable implements DbObjectSavable {
 		return packObjects(DbServices.searchForObjectsByPk(this));
 	}
 	
-	private List<Job> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Job
+	private List<Job> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Job
 		List<Job> jobSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			if (object instanceof Job job) {
 				jobSearchResults.add(job);
 			}

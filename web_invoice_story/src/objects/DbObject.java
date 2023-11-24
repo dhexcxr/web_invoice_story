@@ -1,10 +1,12 @@
 package objects;
 
 import java.util.List;
+import java.util.Map;
 
 import web_invoice_story.Application;
+import web_invoice_story.DbServices;
 
-public abstract class DbObjectSearchable {
+public abstract class DbObject {
 
 	protected String searchString;
 	protected String searchQuery;
@@ -37,7 +39,7 @@ public abstract class DbObjectSearchable {
 			// add location details
 			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf("WHERE") - 1,
 					"\nINNER JOIN web_invoice_story.storeLocation on storeLocation.locationId = "
-					+ ((DbObjectSavable) this).getTableName() + ".locationId"
+					+ this.getTableName() + ".locationId"
 					+ " AND storeLocation.locationId = " + selectedLocation);
 //			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
 			searchQuery = searchQueryWithLoc.toString();
@@ -72,8 +74,26 @@ public abstract class DbObjectSearchable {
 	
 	// TODO see about making a castDown() function that automatically casts a DbObjectSaveable to its true subtype
 	
-	public abstract List<? extends DbObjectSearchable> search(String searchString);
+	public abstract List<? extends DbObject> search(String searchString);
 	
-	public abstract DbObjectSearchable searchByPk(long primaryKey);
+	public abstract DbObject searchByPk(long primaryKey);
+	
+	public abstract long getDbPk();
+
+	public abstract void setDbPk(long dbPk);
+	
+	public abstract String getPkName();
+	
+	public abstract String getTableName();
+	
+	public abstract Map<String, String> getDataMap();
+	
+	public int delete() {
+		return DbServices.deleteObject(this);
+	}
+
+	public void save() {
+		DbServices.saveObject(this);
+	}
 
 }

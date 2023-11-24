@@ -15,7 +15,7 @@ import gui.NewProjectSiteDialog;
 import gui.ProjectDialog;
 import guiParts.MyTable;
 import guiParts.MyText;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import web_invoice_story.Application;
 
 // TODO rename this something better (or refactor more), 'cause we're not just creating objects here
@@ -39,7 +39,7 @@ public class CreateNewObjectListener extends MouseAdapter{
 		Application.getLogger().log(Level.INFO, "Mouse down event on a table, first column: {0}", table.getColumn(0).getText());
 		
 		Object newObject = null;
-		List<DbObjectSearchable> newTableContents = new ArrayList<>();
+		List<DbObject> newTableContents = new ArrayList<>();
 		if (table.getColumn(0).getText().equals("First Name")) {
 			NewCustomerDialog addNewCustomerDialog = new NewCustomerDialog(shell, SWT.NONE);
 			newObject = addNewCustomerDialog.open();
@@ -57,9 +57,9 @@ public class CreateNewObjectListener extends MouseAdapter{
 		// repaint table - get current data in TableItems, insert the new data at the end, then call table.paint
 			// TODO if there is no search query in SearchBox do not add new object to table
 		for (int i = 0; i < table.getItems().length; i++) {
-			newTableContents.add((DbObjectSearchable) table.getItems()[i].getData());
+			newTableContents.add((DbObject) table.getItems()[i].getData());
 		}
-		newTableContents.add(table.getItems().length, (DbObjectSearchable) newObject);
+		newTableContents.add(table.getItems().length, (DbObject) newObject);
 		table.removeAll();
 		table.paint(newTableContents);
 	}	

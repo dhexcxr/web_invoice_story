@@ -188,11 +188,11 @@ public class JobPart extends InvoicePart {
 		return packObjects(DbServices.searchForObjectsByPk(this));
 	}
 	
-	private List<JobPart> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of JobLabor
+	private List<JobPart> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of JobLabor
 		List<JobPart> jobPartSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			if (object instanceof JobPart jobPart) {
 				jobPartSearchResults.add(jobPart);
 			}

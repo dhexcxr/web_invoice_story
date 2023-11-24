@@ -21,8 +21,7 @@ import gui.Splash;
 import objects.Account;
 import objects.AccountTransaction;
 import objects.Customer;
-import objects.DbObjectSavable;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.Employee;
 import objects.Invoice;
 import objects.InvoicePart;
@@ -114,7 +113,7 @@ public class DbServices {
 	// END General DB methods
 	
 	// START Object Save/Update DB methods
-	public static int deleteObject(DbObjectSavable dbObject) {
+	public static int deleteObject(DbObject dbObject) {
 		if (!isConnected()) {
 			connectToDb();
 		}
@@ -126,7 +125,7 @@ public class DbServices {
 		return sendQueryToDb(queryString);
 	}
 	
-	public static void saveObject(DbObjectSavable dbObject) {
+	public static void saveObject(DbObject dbObject) {
 		// TODO have saveObject also return updateCount from sendQueryToDb
 		if (!isConnected()) {
 			connectToDb();
@@ -140,6 +139,7 @@ public class DbServices {
 		// start building query string
 		if (creatingNewObject) {
 			queryString.append("INSERT INTO web_invoice_story." + dbObject.getTableName() + " () VALUES ();" );
+//			if (Application.getSettings().getCurrentLocation() == 0 && )
 		} else {
 			queryString.append("UPDATE web_invoice_story." + dbObject.getTableName() + " SET WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk() + ";");
 		}
@@ -173,7 +173,7 @@ public class DbServices {
 		}
 	}
 	
-	private static long getLastSavedDbObjectPk(DbObjectSavable dbObject) {
+	private static long getLastSavedDbObjectPk(DbObject dbObject) {
 		// get primary key of last object saved into dbObject's database table
 		ResultSet results = null;
 		try (PreparedStatement lastDbObjectPkStatement = DbServices.getDbConnection().prepareStatement(
@@ -235,7 +235,7 @@ public class DbServices {
 		return SQL_FAILURE;
 	}
 
-	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
+	private static void saveInvoiceLineItems(DbObject dbObject) {
 		long invoiceNumber = getLastSavedDbObjectPk(dbObject);	// NOTE it looks like I set the Invoice PK right before I call this
 		// insert individual part invoice line items into invoicepart table		// we probably don;t need this func call
 		// update onHand of part table
@@ -251,7 +251,7 @@ public class DbServices {
 		sellInvoicePartsOutOfInventory(invoiceNumber);
 	}
 	
-	private static void saveRoJobs(DbObjectSavable dbObject ) {
+	private static void saveRoJobs(DbObject dbObject ) {
 		long roNum = dbObject.getDbPk();
 		if (roNum == -1) {
 			roNum = getLastRoNum();
@@ -263,7 +263,7 @@ public class DbServices {
 		}
 	}
 	
-	private static void saveJobParts(DbObjectSavable dbObject) {
+	private static void saveJobParts(DbObject dbObject) {
 		long jobId = dbObject.getDbPk();
 		if (jobId == -1) {
 			jobId = getLastJobId();
@@ -275,7 +275,7 @@ public class DbServices {
 		}
 	}
 	
-	private static void saveJobLabor(DbObjectSavable dbObject) {
+	private static void saveJobLabor(DbObject dbObject) {
 		long jobId = dbObject.getDbPk();
 		if (jobId == -1) {
 			jobId = getLastJobId();
@@ -331,7 +331,7 @@ public class DbServices {
 		return updateCount;		// return number of database table rows that were saved or updated
 	}
 	
-	private static List<String> insertFieldsIntoQuery(StringBuilder queryString, DbObjectSavable dbObject, boolean creatingNewObject) {
+	private static List<String> insertFieldsIntoQuery(StringBuilder queryString, DbObject dbObject, boolean creatingNewObject) {
 		// insert into the SQL query only the fields where we have data we need to save 
 		List<String> results = new ArrayList<>();
 		for (Map.Entry<String, String> entry : dbObject.getDataMap().entrySet()) {
@@ -414,17 +414,17 @@ public class DbServices {
 		return searchQuery.replaceAll("[^a-zA-Z0-9 %'-]", "").split(" ");
 	}
 	
-	public static DbObjectSearchable searchForObjectByPk(DbObjectSearchable object) {
+	public static DbObject searchForObjectByPk(DbObject object) {
 		return searchForObjectsByPk(object).get(0);
 	}
 	
 	// TODO rename to searchForManyObjectsByPk
-	public static List<DbObjectSearchable> searchForObjectsByPk(DbObjectSearchable object) {
+	public static List<DbObject> searchForObjectsByPk(DbObject object) {
 		if (!isConnected()) {
 			connectToDb();
 		}
 		
-		List<DbObjectSearchable> results = new ArrayList<>(1);		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
+		List<DbObject> results = new ArrayList<>(1);		// TODO we can move this into each DbSearchableObjects in our application, make an object.getSelectedIdQuery()
 											// this will allow us to make a polymorphic select by Primary Key search - MOSTLY DONE
 		String queryString = object.getSearchQuery();
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString)) {
@@ -440,7 +440,7 @@ public class DbServices {
 	}
 	
 	// START Object Search/Build DB methods
-	public static List<DbObjectSearchable> searchForObject(DbObjectSearchable object) {			// TODO rename to searchByQueryString
+	public static List<DbObject> searchForObject(DbObject object) {			// TODO rename to searchByQueryString
 		if (object.getWordsFromSearchString().length <= 0) {		// if there is no searchString set in object
 			throw new IllegalArgumentException("ERROR - DbServices.searchForObject(object): no search string in object");
 		}
@@ -448,7 +448,7 @@ public class DbServices {
 			connectToDb();
 		}
 		
-		List<DbObjectSearchable> results = new ArrayList<>(1);
+		List<DbObject> results = new ArrayList<>(1);
 		String queryString = object.getSearchQuery();
 		try (PreparedStatement statement = DbServices.getDbConnection().prepareStatement(queryString)) {
 			statement.setMaxRows(MAX_RESULTS);
@@ -464,7 +464,7 @@ public class DbServices {
 		return results;
 	}
 	
-	private static void fillStatementParameters(PreparedStatement statement, DbObjectSearchable object) throws SQLException {
+	private static void fillStatementParameters(PreparedStatement statement, DbObject object) throws SQLException {
 		// fill search fields in queryString
 		ParameterMetaData parameterMetaData = statement.getParameterMetaData();
 		int parameterCount = parameterMetaData.getParameterCount();
@@ -479,9 +479,9 @@ public class DbServices {
 		}
 	}
 	
-	private static List<DbObjectSearchable> buildFoundObjects(ResultSet queryResultSet, DbObjectSearchable object) throws SQLException {
+	private static List<DbObject> buildFoundObjects(ResultSet queryResultSet, DbObject object) throws SQLException {
 		// build correct object out of the SQL query ResultSet
-		List<DbObjectSearchable> results = new ArrayList<>();
+		List<DbObject> results = new ArrayList<>();
 		if (object instanceof Customer) {
 			results = buildCustomers(queryResultSet);		// TODO push buildObjects(queryResultSet) up to superclass
 		} else if (object instanceof Employee) {
@@ -513,11 +513,11 @@ public class DbServices {
 	}
 	
 
-	// TODO move these builders into the DbObjectSearchable, probably as a static method (as I am thinking of making all the search methods)
+	// TODO move these builders into the DbObject, probably as a static method (as I am thinking of making all the search methods)
 		// then i can just pass the results to the static method without doing a bunch of instanceof as in buildFoundObjects()
 		// e.g. buildFoundObjects would just need to have one line: object.buildObjects(resultSet);
-	private static List<DbObjectSearchable> buildCustomers(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildCustomers(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Customer customer = new Customer();
@@ -540,8 +540,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildEmployees(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildEmployees(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Employee employee = new Employee();
@@ -558,8 +558,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildUsers(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildUsers(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			User employee = new User();
@@ -574,8 +574,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildStoreLocations(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildStoreLocations(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			StoreLocation storeLocation = new StoreLocation();
@@ -593,8 +593,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildParts(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildParts(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			
@@ -615,8 +615,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildProjectSites(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildProjectSites(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			
@@ -643,8 +643,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildInvoices(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildInvoices(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Invoice invoice = new Invoice();
@@ -677,8 +677,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildRepairOrders(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildRepairOrders(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Project project = new Project();
@@ -716,8 +716,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildJobs(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildJobs(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Job job = new Job();
@@ -734,8 +734,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildJobLabors(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildJobLabors(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			JobLabor jobLabor = new JobLabor();
@@ -752,8 +752,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildJobParts(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildJobParts(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			JobPart jobPart = new JobPart();
@@ -772,8 +772,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildAccounts(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);
+	private static List<DbObject> buildAccounts(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);
 		int i = 0;
 		while (queryResultSet.next()) {
 			Account account = new Account();
@@ -812,8 +812,8 @@ public class DbServices {
 		return results;
 	}
 	
-	private static List<DbObjectSearchable> buildAccountTransactions(ResultSet queryResultSet) throws SQLException {
-		List<DbObjectSearchable> results = new ArrayList<>(MAX_RESULTS);	// TODO probably take these MAX_RESULTS out of these instantiations
+	private static List<DbObject> buildAccountTransactions(ResultSet queryResultSet) throws SQLException {
+		List<DbObject> results = new ArrayList<>(MAX_RESULTS);	// TODO probably take these MAX_RESULTS out of these instantiations
 		int i = 0;
 		while (queryResultSet.next()) {
 			AccountTransaction accountTransaction = new AccountTransaction();
