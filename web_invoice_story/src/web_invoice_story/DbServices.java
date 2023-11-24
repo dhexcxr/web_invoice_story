@@ -788,21 +788,20 @@ public class DbServices {
 			account.setAccountName(queryResultSet.getString(6));
 			account.setBalance(queryResultSet.getBigDecimal(7));
 			
-			
-			Timestamp lastChargeDate = queryResultSet.getTimestamp(8);
-			if (lastChargeDate != null) {
-				StringBuilder lastCharge = new StringBuilder(lastChargeDate.toLocalDateTime().toLocalDate().toString());
-				lastCharge.append(": $");
-				lastCharge.append(queryResultSet.getBigDecimal(9).toString());
-				account.setLastCharge(lastCharge.toString());
-			}
-			
-			Timestamp lastPaymentDate = queryResultSet.getTimestamp(10);
+			Timestamp lastPaymentDate = queryResultSet.getTimestamp(8);
 			if (lastPaymentDate != null) {
 				StringBuilder lastPayment = new StringBuilder(lastPaymentDate.toLocalDateTime().toLocalDate().toString());
 				lastPayment.append(": $");
-				lastPayment.append(queryResultSet.getBigDecimal(11).toString());
+				lastPayment.append(queryResultSet.getBigDecimal(9).toString());
 				account.setLastPayment(lastPayment.toString());
+			}
+			
+			Timestamp lastChargeDate = queryResultSet.getTimestamp(10);
+			if (lastChargeDate != null) {
+				StringBuilder lastCharge = new StringBuilder(lastChargeDate.toLocalDateTime().toLocalDate().toString());
+				lastCharge.append(": $");
+				lastCharge.append(queryResultSet.getBigDecimal(11).toString());
+				account.setLastCharge(lastCharge.toString());
 			}
 			
 			account.setTransactions(new AccountTransaction().searchTransactionsByAccount(account.getAccountId()));
