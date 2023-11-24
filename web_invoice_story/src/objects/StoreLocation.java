@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class StoreLocation extends DbObjectSearchable {
+public class StoreLocation extends DbObject {
 	
 	// might not need this
 	private long locationId = -1;
@@ -204,20 +204,20 @@ public class StoreLocation extends DbObjectSearchable {
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on
-	private List<StoreLocation> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+	private List<StoreLocation> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Customer
 		List<StoreLocation> storeLocationSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			storeLocationSearchResults.add(packObject(object));
 		}
 		
 		return storeLocationSearchResults;
 	}
 	
-	private StoreLocation packObject(DbObjectSearchable dbObjectSearchable) {
-		// helper to cast List of DbObjectSearchable to List of Customer
-			if (dbObjectSearchable instanceof StoreLocation storeLocation) {
+	private StoreLocation packObject(DbObject dbObject) {
+		// helper to cast List of DbObject to List of Customer
+			if (dbObject instanceof StoreLocation storeLocation) {
 				return storeLocation;
 			}
 			throw new IllegalArgumentException("objects.Customer.packObject(): dbObjectSearchable is not a StoreLocation");

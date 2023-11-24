@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class AccountTransaction extends DbObjectSearchable {
+public class AccountTransaction extends DbObject {
 	
 	// might not need this
 	private long transactionId = -1;
@@ -174,20 +174,20 @@ public class AccountTransaction extends DbObjectSearchable {
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on
-	private List<AccountTransaction> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+	private List<AccountTransaction> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Customer
 		List<AccountTransaction> transactionSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			transactionSearchResults.add(packObject(object));
 		}
 		
 		return transactionSearchResults;
 	}
 	
-	private AccountTransaction packObject(DbObjectSearchable dbObjectSearchable) {
-		// helper to cast List of DbObjectSearchable to List of Customer
-			if (dbObjectSearchable instanceof AccountTransaction accountTransaction) {
+	private AccountTransaction packObject(DbObject dbObject) {
+		// helper to cast List of DbObject to List of Customer
+			if (dbObject instanceof AccountTransaction accountTransaction) {
 				return accountTransaction;
 			}
 			throw new IllegalArgumentException("objects.AccountTransaction.packObject(): dbObjectSearchable is not an AccountTransaction");

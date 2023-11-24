@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import objects.Account;
 import objects.Customer;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 
 public class AccountTable extends MyTable{
 	// TODO maybe turn these into a AccountTable.Columns enum
@@ -31,13 +31,13 @@ public class AccountTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {
+	public void paint(DbObject object, int selectedTableItemIndex) {
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 //		this.paint(new Object[] {customer});
 		List<Account> accounts = new ArrayList<>();
@@ -57,9 +57,9 @@ public class AccountTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(List<? extends DbObjectSearchable> objectResults) {
+	public void paint(List<? extends DbObject> objectResults) {
 		// build each TableItem to fill Customer Table
-		for (DbObjectSearchable object : objectResults) {
+		for (DbObject object : objectResults) {
 			if (object == null || !(object instanceof Account account)) {
 				break;		// NOTE the null check might not be necessary now that we're passing in a List<> instead of the built-in array
 			}

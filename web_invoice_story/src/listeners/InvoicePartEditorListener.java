@@ -17,7 +17,7 @@ import gui.PartSearchDialog;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
 import guiParts.MyText;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.InvoicePart;
 import objects.JobPart;
 import objects.Part;
@@ -123,7 +123,7 @@ public class InvoicePartEditorListener implements Listener {
 		Application.getLogger().log(Level.INFO, "findPartNumber called");
 		// search for part, populate selected TableItem fields, add new TableItem, calculate total
 		if (editorTxtBox.getText().length() > 0) {
-					// NOTE the change here is how we drop a DbServices.search() call for an DbObjectSearchable().search() call
+					// NOTE the change here is how we drop a DbServices.search() call for an DbObject().search() call
 						// now we don't have to perform a hacky cast
 			List<Part> partResults = new Part().search(editorTxtBox.getText());
 			InvoicePart editedLineItem = (InvoicePart) selectedTableItem.getData();

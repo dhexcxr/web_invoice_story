@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.Invoice;
 
 public class InvoiceSearchResultsTable extends MyTable {
@@ -26,21 +26,21 @@ public class InvoiceSearchResultsTable extends MyTable {
 		// TODO Auto-generated constructor stub
 	}
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(DbObjectSearchable part, int selectedTableItemIndex) {		// NOTE not used
+	public void paint(DbObject part, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
-//		this.paint(new ArrayList<DbObjectSearchable>() {{add(part);}});	// this is messy, could also use List.of() or Arrays.asList()
+//		this.paint(new ArrayList<DbObject>() {{add(part);}});	// this is messy, could also use List.of() or Arrays.asList()
 	}
 	
 	@Override
-	public void paint(List<? extends DbObjectSearchable> invoiceResults) {
+	public void paint(List<? extends DbObject> invoiceResults) {
 		// build each TableItem to fill Invoice Table
-		for (DbObjectSearchable object : invoiceResults) {
+		for (DbObject object : invoiceResults) {
 			if (object == null || !(object instanceof Invoice invoice)) {
 				break;
 			}

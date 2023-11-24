@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.Project;
 
 public class RepairOrderTable extends MyTable {
@@ -28,13 +28,13 @@ public class RepairOrderTable extends MyTable {
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object) {
+	public void paint(DbObject object) {
 		// build each TableItem to fill ProjectSite Table
 			paint(object, this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {
+	public void paint(DbObject object, int selectedTableItemIndex) {
 		// TODO compare this with PartInventoryTable.paint(part, slectedTableItemIndex)
 		if (object == null) {
 			return;
@@ -47,8 +47,8 @@ public class RepairOrderTable extends MyTable {
 	}
 
 	@Override
-	public void paint(List<? extends DbObjectSearchable> objectResults) {
-		for (DbObjectSearchable object : objectResults) {
+	public void paint(List<? extends DbObject> objectResults) {
+		for (DbObject object : objectResults) {
 			if (object  instanceof Project project) {
 				TableItem tableItem =  new TableItem(this, SWT.NONE);	
 				tableItem.setText(new String[] {Long.toString(project.getProjectId()), project.getCustomerName(),

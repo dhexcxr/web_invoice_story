@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class Customer extends DbObjectSearchable {
+public class Customer extends DbObject {
 	
 	// TODO saving customer when a location is selected, get current location and save to table
 		// if current location is 0 - All, save it with 1 - Phoenix (the home office)
@@ -249,20 +249,20 @@ public class Customer extends DbObjectSearchable {
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on
-	private List<Customer> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+	private List<Customer> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Customer
 		List<Customer> customerSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			customerSearchResults.add(packObject(object));
 		}
 		
 		return customerSearchResults;
 	}
 	
-	private Customer packObject(DbObjectSearchable dbObjectSearchable) {
-		// helper to cast List of DbObjectSearchable to List of Customer
-			if (dbObjectSearchable instanceof Customer customer) {
+	private Customer packObject(DbObject dbObject) {
+		// helper to cast List of DbObject to List of Customer
+			if (dbObject instanceof Customer customer) {
 				return customer;
 			}
 			throw new IllegalArgumentException("objects.Customer.packObject(): dbObjectSearchable is not a Customer");

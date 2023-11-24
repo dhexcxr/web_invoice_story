@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class Account extends DbObjectSearchable {
+public class Account extends DbObject {
 	
 	// might not need this
 	private long accountId = -1;
@@ -272,20 +272,20 @@ public class Account extends DbObjectSearchable {
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on
-	private List<Account> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+	private List<Account> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Customer
 		List<Account> accountSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			accountSearchResults.add(packObject(object));
 		}
 		
 		return accountSearchResults;
 	}
 	
-	private Account packObject(DbObjectSearchable dbObjectSearchable) {
-		// helper to cast List of DbObjectSearchable to List of Customer
-			if (dbObjectSearchable instanceof Account account) {
+	private Account packObject(DbObject dbObject) {
+		// helper to cast List of DbObject to List of Customer
+			if (dbObject instanceof Account account) {
 				return account;
 			}
 			throw new IllegalArgumentException("objects.Account.packObject(): dbObjectSearchable is not an Account");

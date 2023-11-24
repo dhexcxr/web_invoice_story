@@ -6,7 +6,7 @@ import java.util.Map;
 import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
-public abstract class DbObjectSearchable {
+public abstract class DbObject {
 
 	protected String searchString;
 	protected String searchQuery;
@@ -74,9 +74,9 @@ public abstract class DbObjectSearchable {
 	
 	// TODO see about making a castDown() function that automatically casts a DbObjectSaveable to its true subtype
 	
-	public abstract List<? extends DbObjectSearchable> search(String searchString);
+	public abstract List<? extends DbObject> search(String searchString);
 	
-	public abstract DbObjectSearchable searchByPk(long primaryKey);
+	public abstract DbObject searchByPk(long primaryKey);
 	
 	public abstract long getDbPk();
 

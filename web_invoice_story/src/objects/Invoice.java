@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import web_invoice_story.DbServices;
 
-public class Invoice extends DbObjectSearchable {
+public class Invoice extends DbObject {
 
 	private long invoiceNum = -1;
 	private long customerId;
@@ -236,11 +236,11 @@ public class Invoice extends DbObjectSearchable {
 		throw new UnsupportedOperationException();
 	}
 	
-	private List<Invoice> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Invoice
+	private List<Invoice> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Invoice
 		List<Invoice> invoiceSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			if (object instanceof Invoice invoice) {
 				invoiceSearchResults.add(invoice);
 			}

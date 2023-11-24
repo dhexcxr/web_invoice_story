@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Event;
 
 import guiParts.MyTable;
 import guiParts.MyText;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 
 public class SearchTextBoxListeners implements ModifyListener {
 	
@@ -15,10 +15,10 @@ public class SearchTextBoxListeners implements ModifyListener {
 	
 	private MyText searchBox;
 	private MyTable table;
-	private transient DbObjectSearchable searchObject;
+	private transient DbObject searchObject;
 	private String textBoxStartingText;
 	
-	public SearchTextBoxListeners(MyText textBox, MyTable table, DbObjectSearchable searchObject) {
+	public SearchTextBoxListeners(MyText textBox, MyTable table, DbObject searchObject) {
 		this.searchBox = textBox;
 		this.table = table;
 		this.searchObject = searchObject;

@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import objects.Customer;
-import objects.DbObjectSearchable;
+import objects.DbObject;
 
 public class CustomerTable extends MyTable{
 	
@@ -29,21 +29,21 @@ public class CustomerTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(DbObjectSearchable object, int selectedTableItemIndex) {		// NOTE not used
+	public void paint(DbObject object, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 //		this.paint(new Object[] {customer});
 	}
 	
 	@Override
-	public void paint(List<? extends DbObjectSearchable> objectResults) {
+	public void paint(List<? extends DbObject> objectResults) {
 		// build each TableItem to fill Customer Table
-		for (DbObjectSearchable object : objectResults) {
+		for (DbObject object : objectResults) {
 			if (object == null || !(object instanceof Customer customer)) {
 				break;
 			}

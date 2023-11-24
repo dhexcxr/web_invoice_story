@@ -8,7 +8,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Part extends DbObjectSearchable {
+public class Part extends DbObject {
 	private long partId = -1;
 	private String partNumber;
 	private String supplier;
@@ -170,19 +170,19 @@ public class Part extends DbObjectSearchable {
 		return packObject(DbServices.searchForObjectByPk(this));
 	}
 	
-	private List<Part> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Part
+	private List<Part> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Part
 		List<Part> partSearchResults = new ArrayList<>();
 
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			partSearchResults.add(packObject(object));
 		}
 		return partSearchResults;
 	}
 	
-	private Part packObject(DbObjectSearchable dbObjectSearchable) {
-		// helper to cast DbObjectSearchable to Part
-			if (dbObjectSearchable instanceof Part part) {
+	private Part packObject(DbObject dbObject) {
+		// helper to cast DbObject to Part
+			if (dbObject instanceof Part part) {
 				return part;
 			}
 			throw new IllegalArgumentException("objects.Part.packObject(): dbObjectSearchable is not a Part");

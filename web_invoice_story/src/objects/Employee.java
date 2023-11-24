@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class Employee extends DbObjectSearchable {
+public class Employee extends DbObject {
 	
 	// might not need this
 	private long employeeId = -1;
@@ -182,20 +182,20 @@ public class Employee extends DbObjectSearchable {
 	// TODO make these methods of superclass
 		// another NOTE these are not used now but may be useful if I remove the two search methods
 			// from the super class and make them return objects of the Class they're called on
-	private List<Employee> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+	private List<Employee> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Customer
 		List<Employee> employeeSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			employeeSearchResults.add(packObject(object));
 		}
 		
 		return employeeSearchResults;
 	}
 	
-	private Employee packObject(DbObjectSearchable dbObjectSearchable) {
-		// helper to cast List of DbObjectSearchable to List of Customer
-			if (dbObjectSearchable instanceof Employee employee) {
+	private Employee packObject(DbObject dbObject) {
+		// helper to cast List of DbObject to List of Customer
+			if (dbObject instanceof Employee employee) {
 				return employee;
 			}
 			throw new IllegalArgumentException("objects.Employee.packObject(): dbObjectSearchable is not a Employee");

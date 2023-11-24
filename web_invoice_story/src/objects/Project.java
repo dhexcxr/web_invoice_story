@@ -9,7 +9,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Project extends DbObjectSearchable {
+public class Project extends DbObject {
 	
 	// TODO make a 1 line invoice when cashiering Projects
 	
@@ -296,12 +296,12 @@ public class Project extends DbObjectSearchable {
 		return packObject(DbServices.searchForObjectByPk(this));
 	}
 	
-	// TODO make this an abstract method in DbObjectSearchable
-	private List<Project> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of Customer
+	// TODO make this an abstract method in DbObject
+	private List<Project> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of Customer
 		List<Project> repairOrderSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 					// TODO use this shortened form of instanceof casting in the Tables
 			repairOrderSearchResults.add(packObject(object));
 		}
@@ -309,7 +309,7 @@ public class Project extends DbObjectSearchable {
 		return repairOrderSearchResults;
 	}
 	
-	private Project packObject(DbObjectSearchable searchResult) {
+	private Project packObject(DbObject searchResult) {
 		if (searchResult instanceof Project project) {
 			return project;
 		}

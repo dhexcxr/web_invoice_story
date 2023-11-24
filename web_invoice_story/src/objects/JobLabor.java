@@ -8,7 +8,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class JobLabor extends DbObjectSearchable {
+public class JobLabor extends DbObject {
 	
 	// joblabor Database Table
 	
@@ -133,11 +133,11 @@ public class JobLabor extends DbObjectSearchable {
 		return packObjects(DbServices.searchForObjectsByPk(this));
 	}
 	
-	private List<JobLabor> packObjects(List<DbObjectSearchable> searchResults) {
-		// helper to cast List of DbObjectSearchable to List of JobLabor
+	private List<JobLabor> packObjects(List<DbObject> searchResults) {
+		// helper to cast List of DbObject to List of JobLabor
 		List<JobLabor> jobLaborSearchResults = new ArrayList<>();
 		
-		for (DbObjectSearchable object : searchResults) {
+		for (DbObject object : searchResults) {
 			if (object instanceof JobLabor jobLabor) {
 				jobLaborSearchResults.add(jobLabor);
 			}

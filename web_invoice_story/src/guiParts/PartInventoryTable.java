@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import objects.DbObjectSearchable;
+import objects.DbObject;
 import objects.Part;
 
 public class PartInventoryTable extends MyTable{
@@ -28,22 +28,22 @@ public class PartInventoryTable extends MyTable{
 	}
 	
 	@Override
-	public void paint(DbObjectSearchable object) {		// NOTE not used
+	public void paint(DbObject object) {		// NOTE not used
 		// build each TableItem to fill ProjectSite Table
 			paint(object,this.getSelectionIndex());
 	}
 
 	@Override
-	public void paint(DbObjectSearchable part, int selectedTableItemIndex) {		// NOTE not used
+	public void paint(DbObject part, int selectedTableItemIndex) {		// NOTE not used
 		// TODO compare this with MyPartInvoiceTable.paint(Object)
 			// e.g. where is this method called and does it matter that I'm ignoring selectedTableItemIndex
 //		this.paint(new Object[] {part});
 	}
 	
 	@Override
-	public void paint(List<? extends DbObjectSearchable> partResults) {
+	public void paint(List<? extends DbObject> partResults) {
 		// build each TableItem to fill ProjectSite Table
-		for (DbObjectSearchable object : partResults) {
+		for (DbObject object : partResults) {
 			if (object == null || !(object instanceof Part part)) {
 				break;
 			}
