@@ -12,6 +12,9 @@ public abstract class DbObject {
 	protected String searchQuery;
 	protected String outerSearchQueryAppendix;
 	protected int[] querySubStringIndices = new int[2];
+	
+	private boolean locationMatters = false;
+	private boolean locationThroughCustomer = false;
 
 	public String getSearchString() {
 		return searchString;
@@ -74,6 +77,22 @@ public abstract class DbObject {
 	
 	// TODO see about making a castDown() function that automatically casts a DbObjectSaveable to its true subtype
 	
+	public boolean doesLocationMatter() {
+		return locationMatters;
+	}
+
+	public void setLocationMatters(boolean locationMatters) {
+		this.locationMatters = locationMatters;
+	}
+
+	public boolean isLocationThroughCustomer() {
+		return locationThroughCustomer;
+	}
+
+	public void setLocationThroughCustomer(boolean locationThroughCustomer) {
+		this.locationThroughCustomer = locationThroughCustomer;
+	}
+
 	public abstract List<? extends DbObject> search(String searchString);
 	
 	public abstract DbObject searchByPk(long primaryKey);
