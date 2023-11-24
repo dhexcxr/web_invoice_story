@@ -144,8 +144,8 @@ public class NewCustomerDialog extends Dialog {
 		fd_txtLastName.right = new FormAttachment(0, 582);
 		fd_txtLastName.top = new FormAttachment(0, 36);
 		fd_txtLastName.left = new FormAttachment(0, 292);
-		txtLastName.setLayoutData(fd_txtLastName);
-		txtLastName.setBackground(SWTResourceManager.getColor(255, 102, 102));
+		txtLastName.setLayoutData(fd_txtLastName);		// TODO fix, this stays red when opening a customer with a last name already
+		txtLastName.setBackground(SWTResourceManager.getColor(255, 102, 102));	// TODO fix right side alignment
 		
 		Label lblAddress = new Label(shlNewCustomer, SWT.NONE);
 		FormData fd_lblAddress = new FormData();

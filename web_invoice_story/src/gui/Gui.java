@@ -947,6 +947,7 @@ public class Gui extends Composite {
 		
 		MyText accountSearchTextBox = new MyText(accountsDetailComposite, SWT.BORDER);
 		
+		// TODO update AccountTable after taking a payment
 		AccountTable accountTable = new AccountTable(accountsDetailComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_accountTable = new FormData();
 		fd_accountTable.top = new FormAttachment(accountSearchTextBox);

@@ -136,6 +136,7 @@ public class InvoiceSearchDialog extends Dialog {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				if (invoiceTable.getSelection().length > 0) {
+					// TODO do something with this invoice, like display it in the UI
 					result =  invoiceTable.getSelection()[0].getData();
 					shlInvoiceSearch.close();
 				}

@@ -5,7 +5,7 @@ import java.util.Map;
 import web_invoice_story.DbServices;
 
 
-public interface DbObjectSavable {
+public interface DbObjectSavable {		// TODO combine this with DbObjectSearchable
 	
 	public long getDbPk();
 	

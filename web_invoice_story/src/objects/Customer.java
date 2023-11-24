@@ -11,6 +11,9 @@ import web_invoice_story.DbServices;
 
 public class Customer extends DbObjectSearchable implements DbObjectSavable {
 	
+	// TODO saving customer when a location is selected, get current location and save to table
+		// if current location is 0 - All, save it with 1 - Phoenix (the home office)
+	
 	// might not need this
 	private long customerId = -1;
 	private long locationId;

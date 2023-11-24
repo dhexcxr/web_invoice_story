@@ -96,6 +96,7 @@ public class Part extends DbObjectSearchable implements DbObjectSavable{
 		return cost == null ? BigDecimal.valueOf(0) : cost;
 	}
 
+	// TODO make sure there is always 2 decimal places on Cost and Price
 	public void setCost(BigDecimal cost) {
 		this.cost = cost == null ? BigDecimal.valueOf(0) : cost;
 	}
