@@ -395,6 +395,8 @@ public class NewCustomerDialog extends Dialog {
 		if (txtEmail.isModified()) {	// TODO make dialog box, if txtEmail.isModified, check its format
 			customer.setEmail(txtEmail.getText());					// vs regex to ensure (name)@(domain).(tld)
 		}
+		
+		customer.setLocationId(Application.getSettings().getCurrentLocation());
 
 		DbServices.saveObject(customer);
 		result = customer;

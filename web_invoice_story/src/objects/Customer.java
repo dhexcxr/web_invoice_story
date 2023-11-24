@@ -66,7 +66,8 @@ public class Customer extends DbObject {
 	}
 
 	public long getLocationId() {
-		return locationId;
+		// if location is set to 0 (i.e. we started saving this object when set to All Locations) save to Home Location (locationId = 1)
+		return locationId == 0 ? 1 : locationId;
 	}
 
 	public void setLocationId(long locationId) {		// TODO need to set locationId when saving new customer
@@ -172,19 +173,19 @@ public class Customer extends DbObject {
 		// return helper data for saving and updating Customer objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (customerId != -1) {
-			dataMap.put("customerId", Long.toString(customerId));
+			dataMap.put("customerId", Long.toString(getCustomerId()));
 		}
-		dataMap.put("locationId", Long.toString(locationId));
-		dataMap.put("firstName", firstName);
-		dataMap.put("lastName", lastName);
-		dataMap.put("address", address);
-		dataMap.put("city", city);
-		dataMap.put("state", state);
-		dataMap.put("zipCode", zipCode);
-		dataMap.put("homePhone", homePhone);
-		dataMap.put("workPhone", workPhone);
-		dataMap.put("cellPhone", cellPhone);
-		dataMap.put("email", email);
+		dataMap.put("locationId", Long.toString(getLocationId()));
+		dataMap.put("firstName", getFirstName());
+		dataMap.put("lastName", getLastName());
+		dataMap.put("address", getAddress());
+		dataMap.put("city", getCity());
+		dataMap.put("state", getState());
+		dataMap.put("zipCode", getZipCode());
+		dataMap.put("homePhone", getHomePhone());
+		dataMap.put("workPhone", getWorkPhone());
+		dataMap.put("cellPhone", getCellPhone());
+		dataMap.put("email", getEmail());
 
 		return dataMap;
 	}
