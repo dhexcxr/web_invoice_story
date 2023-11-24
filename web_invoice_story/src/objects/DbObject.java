@@ -33,9 +33,14 @@ public abstract class DbObject {
 		// return subclass's correct DB search query 
 		int selectedLocation = Application.getSettings().getCurrentLocation();
 		
-		if (selectedLocation != 0 && !(this instanceof StoreLocation) && !(this instanceof User) && !(this instanceof ProjectSite)
-				&& !(this instanceof Account) && !(this instanceof AccountTransaction) && !(this instanceof AccountBalanceHx)
-				&& !(this instanceof Job) && !(this instanceof JobLabor) && !(this instanceof JobPart)) {
+		// TODO these location queries probably need to go in the DbObjects themselves
+			// with an if(currentLocation != 0) {[add this to query]} or something like that
+			// there would be a copy of the query in each Object (potentially duplicating code)
+			// but some objects, like ProjectSite, need their own special version of the locationId code
+			// /and/ there would be no silly boolean to check, which i sorta feel like is
+			// "against" "good" "OO practices" (but what are rules and guidelines for if not being broken,
+			// i mean really?)
+		if (selectedLocation != 0 && doesLocationMatter()) {
 			// modify search query to only show results from selected location
 			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
 			
@@ -46,7 +51,7 @@ public abstract class DbObject {
 					+ " AND storeLocation.locationId = " + selectedLocation);
 //			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
 			searchQuery = searchQueryWithLoc.toString();
-		} else if (selectedLocation != 0 && (this instanceof ProjectSite)) {
+		} else if (selectedLocation != 0 && isLocationThroughCustomer()) {
 			// modify search query to only show results from selected location
 			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
 			
