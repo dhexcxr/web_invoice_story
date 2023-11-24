@@ -21,7 +21,6 @@ import gui.Splash;
 import objects.Account;
 import objects.AccountTransaction;
 import objects.Customer;
-import objects.DbObjectSavable;
 import objects.DbObjectSearchable;
 import objects.Employee;
 import objects.Invoice;
@@ -114,49 +113,50 @@ public class DbServices {
 	// END General DB methods
 	
 	// START Object Save/Update DB methods
-	public static int deleteObject(DbObjectSavable dbObject) {
+	public static int deleteObject(DbObjectSearchable dbObjectSearchable) {
 		if (!isConnected()) {
 			connectToDb();
 		}
-		if (dbObject == null) {
+		if (dbObjectSearchable == null) {
 			return 0;		// no object passed in, so no object deleted
 		}
 		StringBuilder queryString = new StringBuilder();		// TODO this query (below) is potentially dangerous, i'm not sanitizing getDbPk() with PrepareStatement
-		queryString.append("DELETE FROM web_invoice_story." + dbObject.getTableName() + " WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk());
+		queryString.append("DELETE FROM web_invoice_story." + dbObjectSearchable.getTableName() + " WHERE " + dbObjectSearchable.getPkName() + " = " + dbObjectSearchable.getDbPk());
 		return sendQueryToDb(queryString);
 	}
 	
-	public static void saveObject(DbObjectSavable dbObject) {
+	public static void saveObject(DbObjectSearchable dbObjectSearchable) {
 		// TODO have saveObject also return updateCount from sendQueryToDb
 		if (!isConnected()) {
 			connectToDb();
 		}
 
-		if (dbObject == null) {
+		if (dbObjectSearchable == null) {
 			return;
 		}
 		StringBuilder queryString = new StringBuilder();
-		boolean creatingNewObject = (dbObject.getDbPk() == -1);
+		boolean creatingNewObject = (dbObjectSearchable.getDbPk() == -1);
 		// start building query string
 		if (creatingNewObject) {
-			queryString.append("INSERT INTO web_invoice_story." + dbObject.getTableName() + " () VALUES ();" );
+			queryString.append("INSERT INTO web_invoice_story." + dbObjectSearchable.getTableName() + " () VALUES ();" );
+//			if (Application.getSettings().getCurrentLocation() == 0 && )
 		} else {
-			queryString.append("UPDATE web_invoice_story." + dbObject.getTableName() + " SET WHERE " + dbObject.getPkName() + " = " + dbObject.getDbPk() + ";");
+			queryString.append("UPDATE web_invoice_story." + dbObjectSearchable.getTableName() + " SET WHERE " + dbObjectSearchable.getPkName() + " = " + dbObjectSearchable.getDbPk() + ";");
 		}
 		// check which object data is present and add those fields to query string
-		List<String> dbFields = insertFieldsIntoQuery(queryString, dbObject, creatingNewObject);
+		List<String> dbFields = insertFieldsIntoQuery(queryString, dbObjectSearchable, creatingNewObject);
 
 		// build query Statement and fill parameters
 		sendQueryToDb(queryString, dbFields);
 		
 		if (creatingNewObject) {
 			// get latest dbObject.Table.dbPk, set dbObject.setPk
-			dbObject.setDbPk(getLastSavedDbObjectPk(dbObject));
+			dbObjectSearchable.setDbPk(getLastSavedDbObjectPk(dbObjectSearchable));
 		}
 		
-		if (dbObject instanceof Invoice) {		// TODO turn off auto commit until all invoice queries have completed
-			saveInvoiceLineItems(dbObject);
-		} else if (dbObject instanceof Project thisRo) {
+		if (dbObjectSearchable instanceof Invoice) {		// TODO turn off auto commit until all invoice queries have completed
+			saveInvoiceLineItems(dbObjectSearchable);
+		} else if (dbObjectSearchable instanceof Project thisRo) {
 			if (thisRo.getDbPk() == -1 ) {
 				thisRo.setDbPk(getLastRoNum());
 			}
@@ -164,20 +164,20 @@ public class DbServices {
 			if (thisRo.getClosedDate() != null) {
 				sellRoPartsOutOfInventory(thisRo.getProjectId());
 			}
-		} else if (dbObject instanceof Job) {
-			if (dbObject.getDbPk() == -1 ) {
-				dbObject.setDbPk(getLastJobId());
+		} else if (dbObjectSearchable instanceof Job) {
+			if (dbObjectSearchable.getDbPk() == -1 ) {
+				dbObjectSearchable.setDbPk(getLastJobId());
 			}
-			saveJobParts(dbObject);
-			saveJobLabor(dbObject);
+			saveJobParts(dbObjectSearchable);
+			saveJobLabor(dbObjectSearchable);
 		}
 	}
 	
-	private static long getLastSavedDbObjectPk(DbObjectSavable dbObject) {
+	private static long getLastSavedDbObjectPk(DbObjectSearchable dbObjectSearchable) {
 		// get primary key of last object saved into dbObject's database table
 		ResultSet results = null;
 		try (PreparedStatement lastDbObjectPkStatement = DbServices.getDbConnection().prepareStatement(
-									"SELECT MAX(" + dbObject.getPkName() + ") FROM web_invoice_story." + dbObject.getTableName() + ";")) {
+									"SELECT MAX(" + dbObjectSearchable.getPkName() + ") FROM web_invoice_story." + dbObjectSearchable.getTableName() + ";")) {
 			results = lastDbObjectPkStatement.executeQuery();
 			while (results.next()) {
 				return results.getLong(1);		// we should always return here
@@ -235,7 +235,7 @@ public class DbServices {
 		return SQL_FAILURE;
 	}
 
-	private static void saveInvoiceLineItems(DbObjectSavable dbObject) {
+	private static void saveInvoiceLineItems(DbObjectSearchable dbObject) {
 		long invoiceNumber = getLastSavedDbObjectPk(dbObject);	// NOTE it looks like I set the Invoice PK right before I call this
 		// insert individual part invoice line items into invoicepart table		// we probably don;t need this func call
 		// update onHand of part table
@@ -251,7 +251,7 @@ public class DbServices {
 		sellInvoicePartsOutOfInventory(invoiceNumber);
 	}
 	
-	private static void saveRoJobs(DbObjectSavable dbObject ) {
+	private static void saveRoJobs(DbObjectSearchable dbObject ) {
 		long roNum = dbObject.getDbPk();
 		if (roNum == -1) {
 			roNum = getLastRoNum();
@@ -263,19 +263,19 @@ public class DbServices {
 		}
 	}
 	
-	private static void saveJobParts(DbObjectSavable dbObject) {
-		long jobId = dbObject.getDbPk();
+	private static void saveJobParts(DbObjectSearchable dbObjectSearchable) {
+		long jobId = dbObjectSearchable.getDbPk();
 		if (jobId == -1) {
 			jobId = getLastJobId();
 		}
-		List<JobPart> jobParts  = ((Job) dbObject).getJobParts();
+		List<JobPart> jobParts  = ((Job) dbObjectSearchable).getJobParts();
 		for (JobPart jobPart : jobParts) {
 			jobPart.getDataMap().put("jobid", Long.toString(jobId));
 			DbServices.saveObject(jobPart);
 		}
 	}
 	
-	private static void saveJobLabor(DbObjectSavable dbObject) {
+	private static void saveJobLabor(DbObjectSearchable dbObject) {
 		long jobId = dbObject.getDbPk();
 		if (jobId == -1) {
 			jobId = getLastJobId();
@@ -331,10 +331,10 @@ public class DbServices {
 		return updateCount;		// return number of database table rows that were saved or updated
 	}
 	
-	private static List<String> insertFieldsIntoQuery(StringBuilder queryString, DbObjectSavable dbObject, boolean creatingNewObject) {
+	private static List<String> insertFieldsIntoQuery(StringBuilder queryString, DbObjectSearchable dbObjectSearchable, boolean creatingNewObject) {
 		// insert into the SQL query only the fields where we have data we need to save 
 		List<String> results = new ArrayList<>();
-		for (Map.Entry<String, String> entry : dbObject.getDataMap().entrySet()) {
+		for (Map.Entry<String, String> entry : dbObjectSearchable.getDataMap().entrySet()) {
 			if (entry.getValue() != null) {
 				if (creatingNewObject) {
 					insertQueryHelper(queryString, entry.getKey(), "?");
