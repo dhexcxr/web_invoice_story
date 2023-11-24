@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InvoicePart extends DbObjectSearchable implements DbObjectSavable {
+public class InvoicePart extends DbObjectSearchable {
 	
 	// invoicepart Database Table
 	private Map<String, String> dataMap = new HashMap<>();

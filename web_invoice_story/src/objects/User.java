@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class User extends DbObjectSearchable implements DbObjectSavable {
+public class User extends DbObjectSearchable {
 	
 	// might not need this
 	private long userId = -1;

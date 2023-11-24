@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import web_invoice_story.DbServices;
 
-public class Invoice extends DbObjectSearchable implements DbObjectSavable {
+public class Invoice extends DbObjectSearchable {
 
 	private long invoiceNum = -1;
 	private long customerId;

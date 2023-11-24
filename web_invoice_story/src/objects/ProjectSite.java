@@ -7,7 +7,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class ProjectSite extends DbObjectSearchable implements DbObjectSavable{
+public class ProjectSite extends DbObjectSearchable {
 	
 	// might not need this
 	private long projectSiteId = -1;

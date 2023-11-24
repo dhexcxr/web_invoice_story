@@ -9,7 +9,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Project extends DbObjectSearchable implements DbObjectSavable{
+public class Project extends DbObjectSearchable {
 	
 	// TODO make a 1 line invoice when cashiering Projects
 	

@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class AccountTransaction extends DbObjectSearchable implements DbObjectSavable {
+public class AccountTransaction extends DbObjectSearchable {
 	
 	// might not need this
 	private long transactionId = -1;

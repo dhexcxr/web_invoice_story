@@ -8,7 +8,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class JobLabor extends DbObjectSearchable implements DbObjectSavable {
+public class JobLabor extends DbObjectSearchable {
 	
 	// joblabor Database Table
 	
