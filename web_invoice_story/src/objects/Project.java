@@ -36,6 +36,7 @@ public class Project extends DbObject {
 	
 	
 	public Project() {
+		this.setLocationMatters(true);
 	}
 	
 	@Override

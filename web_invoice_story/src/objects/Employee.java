@@ -27,7 +27,7 @@ public class Employee extends DbObject {
 	private static final String INTERNATIONAL_PHONE = "$1-$2-$3-$4";
 	
 	public Employee() {
-		// empty default constructor
+		this.setLocationMatters(true);
 	}
 	
 	public long getDbPk() {

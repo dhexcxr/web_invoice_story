@@ -21,6 +21,8 @@ public class ProjectSite extends DbObject {
 	private String owner;
 	
 	public ProjectSite() {
+		this.setLocationMatters(false);
+		this.setLocationThroughCustomer(true);
 	}
 	
 	public long getDbPk() {

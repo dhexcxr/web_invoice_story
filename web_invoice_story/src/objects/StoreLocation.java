@@ -27,7 +27,7 @@ public class StoreLocation extends DbObject {
 	private static final String INTERNATIONAL_PHONE = "$1-$2-$3-$4";
 	
 	public StoreLocation() {
-		// empty default constructor
+		this.setLocationMatters(false);
 	}
 	
 	// TODO maybe make a method to make an All Locations objects

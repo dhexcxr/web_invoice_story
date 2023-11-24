@@ -23,7 +23,7 @@ public class AccountTransaction extends DbObject {
 
 	
 	public AccountTransaction() {
-		// empty default constructor
+		this.setLocationMatters(false);
 	}
 	
 	public long getDbPk() {

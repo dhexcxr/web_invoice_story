@@ -21,7 +21,7 @@ public class AccountBalanceHx extends DbObject {
 
 	
 	public AccountBalanceHx() {
-		// empty default constructor
+		this.setLocationMatters(false);
 	}
 	
 	public long getDbPk() {

@@ -39,7 +39,7 @@ public class Invoice extends DbObject {
 	}
 	
 	public Invoice() {
-		// empty default constructor
+		this.setLocationMatters(true);
 	}
 	
 	@Override

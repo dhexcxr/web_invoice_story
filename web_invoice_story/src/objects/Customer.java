@@ -35,7 +35,7 @@ public class Customer extends DbObject {
 	private static final String INTERNATIONAL_PHONE = "$1-$2-$3-$4";
 	
 	public Customer() {
-		// empty default constructor
+		this.setLocationMatters(true);
 	}
 	
 	public long getDbPk() {

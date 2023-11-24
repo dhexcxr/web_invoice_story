@@ -24,7 +24,7 @@ public class Job extends DbObject {
 	private Map<String, String> dataMap = new HashMap<>();
 
 	public Job() {
-		// TODO Auto-generated constructor stub
+		this.setLocationMatters(false);
 	}
 
 	public Job(String jobName, String description, String resolution, String reccomendations, List<Part> parts,

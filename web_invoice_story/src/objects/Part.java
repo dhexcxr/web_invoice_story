@@ -20,7 +20,7 @@ public class Part extends DbObject {
 	private int onHand = -1;
 	
 	public Part() {
-		// empty default constructor
+		this.setLocationMatters(true);
 	}
 	
 	public long getDbPk() {

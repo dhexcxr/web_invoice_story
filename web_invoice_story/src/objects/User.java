@@ -19,7 +19,7 @@ public class User extends DbObject {
 	private String passwordHash;
 	
 	public User() {
-		// empty default constructor
+		this.setLocationMatters(false);
 	}
 	
 	public long getDbPk() {
