@@ -19,7 +19,6 @@ public class User extends DbObject {
 	private String passwordHash;
 	
 	public User() {
-		this.setLocationMatters(false);
 	}
 	
 	public long getDbPk() {

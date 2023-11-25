@@ -29,8 +29,6 @@ public class Account extends DbObject {
 
 	
 	public Account() {
-		// TODO look into calling this function on "this" vs "super"
-		this.setLocationMatters(false);
 	}
 	
 	public long getDbPk() {

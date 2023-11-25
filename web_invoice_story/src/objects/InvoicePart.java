@@ -21,7 +21,6 @@ public class InvoicePart extends DbObject {
 	private static final String FOREIGN_KEY = "invoicenum";
 	
 	public InvoicePart() {
-		this.setLocationMatters(false);
 	}
 	
 	public InvoicePart(Part part) {

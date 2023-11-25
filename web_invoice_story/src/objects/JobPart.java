@@ -26,7 +26,6 @@ public class JobPart extends InvoicePart {
 
 	public JobPart() {
 		this("", "", 1, BigDecimal.valueOf(0));
-		this.setLocationMatters(false);
 	}
 	
 	public JobPart(Part part) {

@@ -24,7 +24,6 @@ public class Job extends DbObject {
 	private Map<String, String> dataMap = new HashMap<>();
 
 	public Job() {
-		this.setLocationMatters(false);
 	}
 
 	public Job(String jobName, String description, String resolution, String reccomendations, List<Part> parts,

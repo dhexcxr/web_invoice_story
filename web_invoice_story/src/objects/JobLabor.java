@@ -23,7 +23,6 @@ public class JobLabor extends DbObject {
 	
 	public JobLabor() {
 		this("", "", BigDecimal.valueOf(0), BigDecimal.valueOf(100));
-		this.setLocationMatters(false);
 	}
 
 	public JobLabor(String installer, String description, BigDecimal hours, BigDecimal laborRate) {
