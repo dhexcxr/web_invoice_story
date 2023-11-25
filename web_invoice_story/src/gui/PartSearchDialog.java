@@ -66,8 +66,8 @@ public class PartSearchDialog extends Dialog{
 		return result;
 	}
 
-	private void createContents() {
-		shlPartSearch = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
+	private void createContents() {		// TODO add check box to show parts from all locations, and also location column in tabl
+		shlPartSearch = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);	// if currentLocation = 0 show column or if checkbox selected, otherwise dont show column
 		shlPartSearch.setText("Part Search");
 		
 		int width = 946;

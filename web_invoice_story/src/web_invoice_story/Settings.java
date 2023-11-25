@@ -42,7 +42,7 @@ public class Settings {
 			database = prop.getProperty("database");
 			skipCancelConfirm = Boolean.parseBoolean(prop.getProperty("skipCancelConfirm"));
 			skipCloseConfirm = Boolean.parseBoolean(prop.getProperty("skipCloseConfirm"));	
-			currentLocation = Integer.parseInt(prop.getProperty("currentLocation"));
+			currentLocation = Integer.parseInt(prop.getProperty("currentLocation"));		// TODO turn this into a long
 			
 			inputStream.close();
 		} catch (Exception e) {
