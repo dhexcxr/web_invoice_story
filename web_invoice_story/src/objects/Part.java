@@ -125,16 +125,17 @@ public class Part extends DbObjectWithLocation {
 		Map<String, String> dataMap = new HashMap<>();
 		
 		if (partId != -1) {
-			dataMap.put("partId", Long.toString(partId));
+			dataMap.put("partId", Long.toString(getPartId()));
 		}
-		dataMap.put("partNumber", partNumber);
-		dataMap.put("supplier", supplier);
-		dataMap.put("category", category);
-		dataMap.put("description", description);
-		dataMap.put("notes", notes);
-		dataMap.put("cost", cost.toString());
-		dataMap.put("retail", retail.toString());
-		dataMap.put("onHand", Integer.toString(onHand));
+		dataMap.put("partNumber", getPartNumber());
+		dataMap.put("locationId", Long.toString(getLocationId()));
+		dataMap.put("supplier", getSupplier());
+		dataMap.put("category", getCategory());
+		dataMap.put("description", getDescription());
+		dataMap.put("notes", getNotes());
+		dataMap.put("cost", getCost().toString());
+		dataMap.put("retail", getRetail().toString());
+		dataMap.put("onHand", Integer.toString(getOnHand()));
 		
 		return dataMap;
 	}
@@ -142,7 +143,7 @@ public class Part extends DbObjectWithLocation {
 	@Override
 	public List<Part> search(String searchString) {
 		// search for a Part from the database using a search string
-		super.searchString = searchString;
+		super.searchString = searchString;		// NOTE TODO why does this query NOT have locationId, Customer, Employee and Project do
 		super.searchQuery = """
 				SELECT part.partId, part.partNumber, part.supplier, part.category, part.description, part.notes, part.cost, part.retail, part.onHand
 				FROM web_invoice_story.part

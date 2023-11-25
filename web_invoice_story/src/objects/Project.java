@@ -232,29 +232,29 @@ public class Project extends DbObjectWithLocation {
 	public Map<String, String> getDataMap() {
 		Map<String, String> dataMap = new HashMap<>();
 		if (projectId != -1) {
-			dataMap.put("projectId", Long.toString(projectId));
+			dataMap.put("projectId", Long.toString(getProjectId()));
 		}
-		dataMap.put("locationId", Long.toString(locationId));
-		dataMap.put("customerid", Long.toString(customerId));
-		dataMap.put("customerdata", customerData);
-		dataMap.put("projectSiteId", Long.toString(projectSiteId));
+		dataMap.put("locationId", Long.toString(getLocationId()));
+		dataMap.put("customerid", Long.toString(getCustomerId()));
+		dataMap.put("customerdata", getCustomerData());
+		dataMap.put("projectSiteId", Long.toString(getProjectSiteId()));
 		
 		if (createdDate != null) {
-			dataMap.put("createdTime", createdDate.toString());
+			dataMap.put("createdTime", getCreatedDate().toString());
 		}
 		
 		if (closedDate != null) {
-			dataMap.put("closedTime", closedDate.toString());
+			dataMap.put("closedTime", getClosedDate().toString());
 		}
 		
-		dataMap.put("tax", tax.toString());
-		dataMap.put("total", total.toString());
+		dataMap.put("tax", getTax().toString());
+		dataMap.put("total", getTotal().toString());
 		return dataMap;
 	}
 
 	@Override
 	public List<Project> search(String searchString) {
-		super.searchString = searchString;
+		super.searchString = searchString;		// NOTE TODO why does this query have locationId
 		super.searchQuery = """
 				SELECT project.projectId, project.customerId, project.locationId,
 				customer.firstname, customer.lastname, customer.address, customer.city, customer.state, customer.zipcode, customer.homephone, customer.cellphone, customer.email,

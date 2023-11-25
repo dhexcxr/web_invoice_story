@@ -189,22 +189,22 @@ public class Invoice extends DbObjectWithLocation {
 		// return helper data for saving and updating Invoice objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (invoiceNum != -1) {
-			dataMap.put("invoicenum", Long.toString(invoiceNum));
+			dataMap.put("invoicenum", Long.toString(getInvoiceNum()));
 		}
-		dataMap.put("customerid", Long.toString(customerId));
-		dataMap.put("customerdata", customerData);
-		dataMap.put("locationId", Long.toString(locationId));
-		dataMap.put("notes", notes);
-		dataMap.put("tax", tax.toString());
-		dataMap.put("cashiereddate", cashiereDateTime.toString());
-		dataMap.put("cashiered", cashiered ? "1" : "0");
+		dataMap.put("customerid", Long.toString(getCustomerId()));
+		dataMap.put("customerdata", getCustomerData());
+		dataMap.put("locationId", Long.toString(getLocationId()));
+		dataMap.put("notes", getNotes());
+		dataMap.put("tax", getTax().toString());
+		dataMap.put("cashiereddate", getCashiereDateTime().toString());
+		dataMap.put("cashiered", isCashiered() ? "1" : "0");
 		return dataMap;
 	}
 	
 	@Override
 	public List<Invoice> search(String searchString) {
 		// search for a Invoice from the database using a search string
-		super.searchString = searchString;
+		super.searchString = searchString;		// NOTE TODO why does this query NOT have locationId, Customer, Employee and Project do
 		super.searchQuery = """
 				SELECT invoice.invoicenum, invoice.customerid, customer.lastname, customer.firstname,
 				customer.address, customer.city, customer.state, customer.zipcode,

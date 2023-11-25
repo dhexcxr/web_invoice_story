@@ -105,13 +105,13 @@ public class Employee extends DbObjectWithLocation {
 		// return helper data for saving and updating Employee objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (employeeId != -1) {
-			dataMap.put("employeeId", Long.toString(employeeId));
+			dataMap.put("employeeId", Long.toString(getEmployeeId()));
 		}
-		dataMap.put("locationId", Long.toString(locationId));
-		dataMap.put("firstName", firstName);
-		dataMap.put("lastName", lastName);
-		dataMap.put("jobTitle", jobTitle);
-		dataMap.put("payRate", payRate.toString());
+		dataMap.put("locationId", Long.toString(getLocationId()));
+		dataMap.put("firstName", getFirstName());
+		dataMap.put("lastName", getLastName());
+		dataMap.put("jobTitle", getJobTitle());
+		dataMap.put("payRate", getPayRate().toString());
 
 		return dataMap;
 	}
