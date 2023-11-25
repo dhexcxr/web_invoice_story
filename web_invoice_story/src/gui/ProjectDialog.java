@@ -671,7 +671,7 @@ public class ProjectDialog extends Dialog {
 		
 		txtProjectSiteProject = new MyText(shlProject, SWT.BORDER | SWT.WRAP);
 		txtProjectSiteProject.setEditable(false);
-		txtProjectSiteProject.setText("ProjectSite...");
+		txtProjectSiteProject.setText("Project Site...");
 		txtProjectSiteProject.setBackground(SWTResourceManager.getColor(255, 102, 102));		// RED
 		// END Customer Data
 
@@ -957,7 +957,7 @@ public class ProjectDialog extends Dialog {
 		
 		shlProject.addListener(SWT.Close, new ProjectCloseListener(this));
 
-		btnCancel.addMouseListener(new ProjectCancelListener(this));
+		btnCancel.addMouseListener(new ProjectCancelListener(this));	// NOTE Customer and Project Site boxes do not get original text when Project is canceled back to new/blank 
 		
 		btnSaveRo.addMouseListener(new MouseAdapter() {
 			@Override

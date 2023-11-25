@@ -87,6 +87,8 @@ public class Gui extends Composite {
 	private MyText textSupplierInvoice;
 	private MyText textPartNotesInvoice;
 	private InvoicePartTable invoicePartsTable;
+	
+	private StoreLocationCombo comboCurrentLocation;
 
 	public Gui(Composite parent, int style) {
 		super(parent, style);
@@ -1223,7 +1225,7 @@ public class Gui extends Composite {
 		fd_grpCurrentLocation.top = new FormAttachment(grpResetConfirmDialog);
 		grpCurrentLocation.setLayoutData(fd_grpCurrentLocation);
 		
-		StoreLocationCombo comboCurrentLocation = new StoreLocationCombo(new StoreLocation().getAllStoreLocations(), grpCurrentLocation, SWT.DROP_DOWN | SWT.READ_ONLY);
+		comboCurrentLocation = new StoreLocationCombo(new StoreLocation().getAllStoreLocations(), grpCurrentLocation, SWT.DROP_DOWN | SWT.READ_ONLY);
 		comboCurrentLocation.select(Application.getSettings().getCurrentLocation());		// TODO decide how to make sure currentSelection always == locationID
 		FormData fd_comboCurrentLocation = new FormData();
 		fd_comboCurrentLocation.height = 24;
@@ -1237,7 +1239,7 @@ public class Gui extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				int newLocationSelection = comboCurrentLocation.getSelectedLocationId();
 				Application.getSettings().setCurrentLocation(newLocationSelection);		// TODO make sure we save this to settings on close
-				Application.getSettings().save();
+				Application.getSettings().save();	// TODO clear all search results and search text boxes when CurrentLocation changes
 			}
 		});
 		
@@ -1271,5 +1273,9 @@ public class Gui extends Composite {
 		Point parentCenter = new Point(parentRec.x + parentRec.width / 2, parentRec.y + parentRec.height / 2);
 		dialogShell.setLocation(parentCenter.x - dialogShell.getBounds().width / 2,
 				parentCenter.y - dialogShell.getBounds().height / 2);
+	}
+	
+	public void setLocationInUi(int newLocation) {
+		comboCurrentLocation.select(newLocation);
 	}
 }

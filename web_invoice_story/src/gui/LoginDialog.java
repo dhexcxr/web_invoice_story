@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import objects.Employee;
+import objects.LoginResponse;
 import objects.User;
 import web_invoice_story.Secure;
 
@@ -37,13 +38,14 @@ public class LoginDialog extends Dialog{
 	private Button btnCancel;
 	
 	
-	private boolean response = false;
+//	private boolean response = false;
+	private LoginResponse loginResponse = new LoginResponse();
 
 	public LoginDialog(Shell parent, int style) {
 		super(parent, style);
 	}
 
-	public boolean open() {
+	public LoginResponse open() {
 		createContents();
 
 		shlLogin.open();
@@ -55,7 +57,7 @@ public class LoginDialog extends Dialog{
 				display.sleep();
 			}
 		}
-		return response;
+		return loginResponse;
 	}
 	
 	private void createContents() {
@@ -143,12 +145,15 @@ public class LoginDialog extends Dialog{
 				if (!passHashPassed) {	// bad password
 					badUserNameOrPass();
 					return;
-				} else {
-					response = true;		// maybe return another custom object that holds a bool and the user
-												// if true, get employee via user.getEmployeeId, greet them, and set their location
+				} else if (passHashPassed && user.getUserId() == 0) {	// root user, this doesn't have a corresponding employee in DB
+					loginResponse.setMatchingHash(passHashPassed);		// TODO this looks like junk
+					shlLogin.close();										// make it so I don't check passHashPassed 3 times
+				} else if (passHashPassed){									// but also still allow for root, but make sure root types in correct password
+					loginResponse.setMatchingHash(passHashPassed);
+					loginResponse.setLoginEmployee(new Employee().searchByPk(user.getEmployeeId()));
+					shlLogin.close();
 				}
 
-				shlLogin.close();
 			}
 		});
 		
@@ -167,7 +172,7 @@ public class LoginDialog extends Dialog{
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// close dialog
-				response = false;
+				loginResponse.setMatchingHash(false);
 				shlLogin.close();
 			}
 		});

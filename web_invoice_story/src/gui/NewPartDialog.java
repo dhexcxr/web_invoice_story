@@ -26,7 +26,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 
-public class NewPartDialog extends Dialog {
+public class NewPartDialog extends Dialog {		// NOTE does not have correcet spacing 
 
 	protected Object result;
 	protected Shell shlAddPart;
