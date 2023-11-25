@@ -957,7 +957,7 @@ public class Gui extends Composite {
 		tblclmnMileageUnit.addSelectionListener(new TableColumnSortListener(tblclmnMileageUnit));
 
 		// Delete right click menu
-		setupRightClickMenu(projectSiteTable, "ProjectSite");
+		setupRightClickMenu(projectSiteTable, "Project Site");
 		
 		Button btnNewProjectSite = new Button(projectSiteComposite, SWT.NONE);
 		FormData fd_btnNewProjectSite = new FormData();
