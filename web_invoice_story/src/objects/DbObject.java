@@ -3,7 +3,6 @@ package objects;
 import java.util.List;
 import java.util.Map;
 
-import web_invoice_story.Application;
 import web_invoice_story.DbServices;
 
 public abstract class DbObject {
@@ -12,9 +11,6 @@ public abstract class DbObject {
 	protected String searchQuery;
 	protected String outerSearchQueryAppendix;
 	protected int[] querySubStringIndices = new int[2];
-	
-	private boolean locationMatters = false;
-	private boolean locationThroughCustomer = false;
 
 	public String getSearchString() {
 		return searchString;
@@ -31,38 +27,6 @@ public abstract class DbObject {
 
 	public String getSearchQuery() {
 		// return subclass's correct DB search query 
-		int selectedLocation = Application.getSettings().getCurrentLocation();
-		
-		// TODO these location queries probably need to go in the DbObjects themselves
-			// with an if(currentLocation != 0) {[add this to query]} or something like that
-			// there would be a copy of the query in each Object (potentially duplicating code)
-			// but some objects, like ProjectSite, need their own special version of the locationId code
-			// /and/ there would be no silly boolean to check, which i sorta feel like is
-			// "against" "good" "OO practices" (but what are rules and guidelines for if not being broken,
-			// i mean really?)
-		if (selectedLocation != 0 && doesLocationMatter()) {
-			// modify search query to only show results from selected location
-			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
-			
-			// add location details
-			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf("WHERE") - 1,
-					"\nINNER JOIN web_invoice_story.storeLocation on storeLocation.locationId = "
-					+ this.getTableName() + ".locationId"
-					+ " AND storeLocation.locationId = " + selectedLocation);
-//			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
-			searchQuery = searchQueryWithLoc.toString();
-		} else if (selectedLocation != 0 && isLocationThroughCustomer()) {
-			// modify search query to only show results from selected location
-			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
-			
-			// add location details
-			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf("WHERE") - 1,
-					"\nINNER JOIN web_invoice_story.storeLocation on storeLocation.locationId = customer.locationId"
-					+ " AND storeLocation.locationId = " + selectedLocation);
-//			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);
-			searchQuery = searchQueryWithLoc.toString();
-		}
-		
 		StringBuilder innserSearchQuery = new StringBuilder(searchQuery);
 		for (int i = 1; i < getWordsFromSearchString().length; i++) {
 			innserSearchQuery.delete(querySubStringIndices[0], querySubStringIndices[1]);
@@ -81,22 +45,6 @@ public abstract class DbObject {
 	}
 	
 	// TODO see about making a castDown() function that automatically casts a DbObjectSaveable to its true subtype
-	
-	public boolean doesLocationMatter() {
-		return locationMatters;
-	}
-
-	public void setLocationMatters(boolean locationMatters) {
-		this.locationMatters = locationMatters;
-	}
-
-	public boolean isLocationThroughCustomer() {
-		return locationThroughCustomer;
-	}
-
-	public void setLocationThroughCustomer(boolean locationThroughCustomer) {
-		this.locationThroughCustomer = locationThroughCustomer;
-	}
 
 	public abstract List<? extends DbObject> search(String searchString);
 	
@@ -110,6 +58,9 @@ public abstract class DbObject {
 	
 	public abstract String getTableName();
 	
+	// TODO make this a concrete method, do this by making ArrayList of fields in the concrete subclasses that can get pulled
+		// into this map, then also an ArrayList of the methods/functions to get the string values to insert, or maybe
+		// just a function that returns an ArrayList of the string values
 	public abstract Map<String, String> getDataMap();
 	
 	public int delete() {
