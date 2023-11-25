@@ -147,10 +147,10 @@ public class Part extends DbObjectWithLocation {
 		super.searchQuery = """
 				SELECT part.partId, part.partNumber, part.supplier, part.category, part.description, part.notes, part.cost, part.retail, part.onHand
 				FROM web_invoice_story.part
-				WHERE part.partNumber LIKE ? OR part.supplier LIKE ? OR part.category LIKE ? OR part.description LIKE ?;""";
+				WHERE (lower(part.partNumber) LIKE ? OR lower(part.supplier) LIKE ? OR lower(part.category) LIKE ? OR lower(part.description) LIKE ?);""";
 		super.outerSearchQueryAppendix = " AND part.partId IN (";
-		super.querySubStringIndices[0] = 13;
-		super.querySubStringIndices[1] = 87;
+		super.querySubStringIndices[0] = 18;
+		super.querySubStringIndices[1] = 160;
 
 //		return packObjects(DbServices.searchForObject(this));
 		return packObjects(DbServices.searchForObject(this));
