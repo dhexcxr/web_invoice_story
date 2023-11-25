@@ -211,13 +211,13 @@ public class Customer extends DbObjectWithLocation {
 		super.searchString = searchString;
 		super.searchQuery = """
 				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode,
-				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId, customer.locationId
+				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.locationId, customer.customerId
 				FROM web_invoice_story.customer
-				WHERE customer.firstName LIKE ? OR customer.homePhone LIKE ? OR customer.lastName LIKE ? OR customer.workPhone LIKE ? OR customer.address LIKE ? OR customer.cellPhone LIKE ?
-				OR customer.city LIKE ? OR customer.zipcode LIKE ? OR customer.state LIKE ?;""";
+				WHERE (lower(customer.firstName) LIKE ? OR customer.homePhone LIKE ? OR lower(customer.lastName) LIKE ? OR customer.workPhone LIKE ? OR customer.address LIKE ? OR customer.cellPhone LIKE ?
+				OR lower(customer.city) LIKE ? OR customer.zipcode LIKE ? OR lower(customer.state) LIKE ?);""";
 		super.outerSearchQueryAppendix = " AND customer.customerId IN (";
 		super.querySubStringIndices[0] = 7;
-		super.querySubStringIndices[1] = 99;
+		super.querySubStringIndices[1] = 210;
 
 		return packObjects(DbServices.searchForObject(this));
 	}
@@ -228,7 +228,7 @@ public class Customer extends DbObjectWithLocation {
 		super.searchString = Long.toString(customerId);
 		super.searchQuery = """
 				SELECT customer.firstName, customer.lastName, customer.address, customer.city, customer.state, customer.zipcode,
-				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.customerId, customer.locationId
+				customer.homePhone, customer.workPhone, customer.cellPhone, customer.email, customer.locationId, customer.customerId
 				FROM web_invoice_story.customer
 				WHERE customer.customerId = ?;""";
 		super.outerSearchQueryAppendix = "";

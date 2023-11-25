@@ -531,8 +531,8 @@ public class DbServices {
 			customer.setWorkPhone(queryResultSet.getString(8));
 			customer.setCellPhone(queryResultSet.getString(9));
 			customer.setEmail(queryResultSet.getString(10));
-			customer.setCustomerId(queryResultSet.getLong(11));
-			customer.setLocationId(queryResultSet.getLong(12));
+			customer.setLocationId(queryResultSet.getLong(11));
+			customer.setCustomerId(queryResultSet.getLong(12));
 
 			results.add(i, customer);
 			i++;
