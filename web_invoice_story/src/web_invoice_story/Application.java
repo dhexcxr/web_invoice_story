@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 import gui.Gui;
 import gui.LoginDialog;
 import gui.Splash;
+import objects.Employee;
 import objects.LoginResponse;
 
 import org.eclipse.swt.layout.FormLayout;
@@ -80,6 +81,11 @@ public class Application /* implements IApplication */ implements EntryPoint {
 			loginCanceled.open();
 			shell.close();
 			return 0;
+		} else if (loginResponse.isMatchingHash()) {
+			Employee loginEmployee = loginResponse.getLoginEmployee();
+			int locationFromLoginEmployee = (int) (loginEmployee == null ? 0 : loginEmployee.getLocationId());
+			Application.getSettings().setCurrentLocation(locationFromLoginEmployee);
+			gui.setLocationInUi(locationFromLoginEmployee);
 		}
 		
 		splash.close();
