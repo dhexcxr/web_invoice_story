@@ -48,12 +48,9 @@ public abstract class DbObjectWithLocation extends DbObject {
 			// modify search query to only show results from selected location		// isLocationThroughCustomer() query below
 			StringBuilder searchQueryWithLoc = new StringBuilder(searchQuery);
 			
-			// add location details
-			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf("WHERE") - 1,	// NOTE TODO why am I joining the entire storeLocation table on here?
-					"\nINNER JOIN web_invoice_story.storeLocation on storeLocation.locationId = "
-					+ this.getTableName() + ".locationId"
-					+ " AND storeLocation.locationId = " + selectedLocation);
-//			searchQueryWithLoc.insert(searchQueryWithLoc.indexOf(";"), " AND sl.locationId = " + selectedLocation);	// CONT i tried this at first
+			// add location details			
+			searchQueryWithLoc.insert(searchQueryWithLoc.lastIndexOf(";"),
+					"\nAND " + this.getTableName() + ".locationId = " + selectedLocation);
 			searchQuery = searchQueryWithLoc.toString();
 		} else if (selectedLocation != 0 && isLocationThroughCustomer()) {
 			// modify search query to only show results from selected location
