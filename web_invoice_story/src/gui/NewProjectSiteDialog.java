@@ -136,7 +136,7 @@ public class NewProjectSiteDialog extends Dialog {
 		txtOwner = new MyText(shlNewProjectSite, SWT.BORDER);
 		FormData fd_txtOwner = new FormData();
 		fd_txtOwner.bottom = new FormAttachment(0, 62);
-		fd_txtOwner.right = new FormAttachment(0, 582);
+		fd_txtOwner.right = new FormAttachment(100, -10);
 		fd_txtOwner.top = new FormAttachment(0, 36);
 		fd_txtOwner.left = new FormAttachment(0, 10);
 		txtOwner.setLayoutData(fd_txtOwner);
@@ -268,7 +268,7 @@ public class NewProjectSiteDialog extends Dialog {
 		fd_txtNotes.top = new FormAttachment(lblNotes, 6);
 		fd_txtNotes.left = new FormAttachment(lblOwner, 0, SWT.LEFT);
 		fd_txtNotes.bottom = new FormAttachment(0, 296);
-		fd_txtNotes.right = new FormAttachment(0, 582);
+		fd_txtNotes.right = new FormAttachment(100, -10);
 		txtNotes.setLayoutData(fd_txtNotes);
 		
 		// ProjectSite dialog controls
