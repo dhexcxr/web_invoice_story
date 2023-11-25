@@ -73,6 +73,7 @@ public class AmountDueDialog extends Dialog{
 		shlAmountDue.setTabList(new Control[]{txtFinalTotal, txtAmountTendered, btnChargeRemainderToAcct, txtAmountCharged, btnCancel, btnCashier});
 		if (new BigDecimal(finalTotal.replaceAll("[^-.0-9]", "")).compareTo(BigDecimal.valueOf(0)) < 0) {
 			txtAmountTendered.setText("$0");
+			txtAmountTendered.setEditable(false);		// if we're issuing a refund, don't allow any edit of Amount Tendered
 		}
 		shlAmountDue.open();
 		shlAmountDue.layout();
