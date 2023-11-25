@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 
 import gui.Splash;
 import objects.Account;
@@ -239,12 +240,12 @@ public class DbServices {
 		long invoiceNumber = getLastSavedDbObjectPk(dbObject);	// NOTE it looks like I set the Invoice PK right before I call this
 		// insert individual part invoice line items into invoicepart table		// we probably don;t need this func call
 		// update onHand of part table
-		Part[] invoiceLineParts = ((Invoice) dbObject).getParts();
-		for (Part invoiceLinePart : invoiceLineParts) {
-			if (invoiceLinePart == null) {
-				break;
-			}
-			InvoicePart invoicePart = new InvoicePart(invoiceLinePart);
+		TableItem[] invoiceLineItems = ((Invoice) dbObject).getTableLineItems();
+		for (TableItem invoiceLineItem : invoiceLineItems) {		// NOTE at some point I changed this to Part[], and that broke selling more than 1 part per line item
+			if (invoiceLineItem.getData() == null) {		// I don't think I did the same thing to jobParts. I may, once I get Estimates working, want to change
+				break;									// this to how jobPart saving works (currently in ProjectDialog.saveJob()), which checkes if the jobPartList
+			}										// already contains the current part before adding it to the list, this will be useful when saving and re-opening
+			InvoicePart invoicePart = (InvoicePart) invoiceLineItem.getData();											// estimates
 			invoicePart.getDataMap().put("invoicenum", Long.toString(invoiceNumber));
 			saveObject(invoicePart);	// TODO this needs to be invoicePart.save()
 		}
