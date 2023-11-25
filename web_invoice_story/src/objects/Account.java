@@ -156,8 +156,10 @@ public class Account extends DbObject {
 		newTransaction.setAmount(cashieredInvoice.getAmountCharged());
 		if (cashieredInvoice instanceof AccountPayment) {
 			newTransaction.setDescription("Payment");
+			setLastPayment(cashieredInvoice.getCashiereDateTime() + ": " + cashieredInvoice.getAmountCharged());
 		} else {
 			newTransaction.setDescription("Invoice");
+			setLastCharge(cashieredInvoice.getCashiereDateTime() + ": " + cashieredInvoice.getAmountCharged());
 		}
 		chargeNewTransaction(newTransaction);
 	}
