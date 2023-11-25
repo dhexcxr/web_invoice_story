@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -365,7 +366,8 @@ public class Gui extends Composite {
 		txtCustomerInvoice.setEditable(false);
 		txtCustomerInvoice.setBackground(SWTResourceManager.getColor(255, 102, 102));
 		txtCustomerInvoice.addModifyListener(new RequiredTextBoxModifyListener(txtCustomerInvoice));
-		txtCustomerInvoice.addMouseListener(new CustomerSearchListener(txtCustomerInvoice));
+		CustomerSearchListener customerSearchListener = new CustomerSearchListener(txtCustomerInvoice);
+		txtCustomerInvoice.addMouseListener(customerSearchListener);
 		
 		txtInvoiceNotes = new MyText(invoiceComposite, SWT.BORDER | SWT.WRAP);
 		FormData fd_txtInvoiceNotes = new FormData();
@@ -376,7 +378,8 @@ public class Gui extends Composite {
 		txtInvoiceNotes.setLayoutData(fd_txtInvoiceNotes);
 		txtInvoiceNotes.setText("Invoice Notes...");
 		txtInvoiceNotes.addModifyListener(new InfoTextBoxModifyListener(txtInvoiceNotes));
-		txtInvoiceNotes.addFocusListener(new TextBoxFocusListener(txtInvoiceNotes));
+		TextBoxFocusListener invoiceNotesTextBoxFocusListener = new TextBoxFocusListener(txtInvoiceNotes);
+		txtInvoiceNotes.addFocusListener(invoiceNotesTextBoxFocusListener);
 		
 		Group grpTotals = new Group(invoiceComposite, SWT.NONE);
 		FormLayout fl_grpTotals = new FormLayout();
@@ -551,7 +554,8 @@ public class Gui extends Composite {
 		invoiceDetailText.add(textCategoryInvoice);
 		invoiceDetailText.add(textSupplierInvoice);
 		invoiceDetailText.add(textPartNotesInvoice);
-	    invoicePartsTable.addListener(SWT.MouseDown, new InvoicePartTableListener(invoicePartsTable, invoiceDetailText, shell));
+		InvoicePartTableListener invoicePartTableListener = new InvoicePartTableListener(invoicePartsTable, invoiceDetailText, shell);
+	    invoicePartsTable.addListener(SWT.MouseDown, invoicePartTableListener);
 	    
 		invoicePartsTable.setLinesVisible(true);
 		invoicePartsTable.setHeaderVisible(true);
@@ -584,28 +588,13 @@ public class Gui extends Composite {
 		tblclmnExtendedPriceInvoice.setWidth(114);
 		tblclmnExtendedPriceInvoice.setText("Extended Price");
 
-		Button btnCancel = new Button(invoiceComposite, SWT.NONE);
-		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.height = 48;
-		fd_btnCancel.width = 128;
-		fd_btnCancel.right = new FormAttachment(grpTotals);
-		fd_btnCancel.bottom = new FormAttachment(100);
-		btnCancel.setLayoutData(fd_btnCancel);
-		btnCancel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				clearInvoiceGui();
-			}
-		});
-		btnCancel.setText("Cancel");
-
 		Button btnCashier = new Button(invoiceComposite, SWT.NONE);
 		FormData fd_btnCashier = new FormData();
-		fd_btnCashier.width = 128;
-		fd_btnCashier.top = new FormAttachment(grpTotals, 0, SWT.TOP);
-		fd_btnCashier.right = new FormAttachment(grpTotals);
-		fd_btnCashier.bottom = new FormAttachment(btnCancel);
-		btnCashier.setLayoutData(fd_btnCashier);
+//		fd_btnCashier.width = 128;
+//		fd_btnCashier.top = new FormAttachment(grpTotals, 0, SWT.TOP);
+//		fd_btnCashier.right = new FormAttachment(grpTotals);
+//		fd_btnCashier.bottom = new FormAttachment(btnCancel);
+//		btnCashier.setLayoutData(fd_btnCashier);
 		btnCashier.addMouseListener(new MouseAdapter() {	// NOTE this needs to be its own class so we can add this listener to this
 			@Override											// the RO cashier button, and the AccountPayment button
 			public void mouseDown(MouseEvent e) {
@@ -677,6 +666,37 @@ public class Gui extends Composite {
 		});
 		btnCashier.setText("Cashier");
 		
+		Button btnCancel = new Button(invoiceComposite, SWT.NONE);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.height = 48;
+		fd_btnCancel.width = 128;
+		fd_btnCancel.right = new FormAttachment(grpTotals);
+		fd_btnCancel.bottom = new FormAttachment(100);
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				clearInvoiceGui();
+				// re-enable stuff if we were viewing a cashiered invoice
+				// if (cashieredInvoice) {
+				txtCustomerInvoice.setEditable(true);
+				txtCustomerInvoice.addMouseListener(customerSearchListener);
+				txtInvoiceNotes.setEditable(true);
+				txtInvoiceNotes.addFocusListener(invoiceNotesTextBoxFocusListener);
+				invoicePartsTable.addListener(SWT.MouseDown, invoicePartTableListener);
+				btnDeleteLineItem.setEnabled(true);
+				btnCashier.setEnabled(true);
+				//}
+			}
+		});
+		btnCancel.setText("Cancel");
+
+		fd_btnCashier.width = 128;
+		fd_btnCashier.top = new FormAttachment(grpTotals, 0, SWT.TOP);
+		fd_btnCashier.right = new FormAttachment(grpTotals);
+		fd_btnCashier.bottom = new FormAttachment(btnCancel);
+		btnCashier.setLayoutData(fd_btnCashier);
+		
 		btnDeleteLineItem.addMouseListener(new InvoicePartDeleteLineItemListener(
 				invoicePartsTable, txtPartsTotalInvoice, txtTaxInvoice, txtFinalTotal));
 		
@@ -695,6 +715,31 @@ public class Gui extends Composite {
 				@SuppressWarnings("unused")
 				Invoice invoiceToEdit = (Invoice) invoiceSearchDialog.open();		// TODO check all casts
 				// populate all invoice tab fields with data from invoice to edit
+				txtCustomerInvoice.setData(new Customer().searchByPk(invoiceToEdit.getCustomerId()));
+//				cashieredInvoice.setCustomerId(((Customer) txtCustomerInvoice.getData()).getCustomerId());
+				txtCustomerInvoice.setText(invoiceToEdit.getCustomerData());
+				txtInvoiceNotes.setText(invoiceToEdit.getNotes());
+				txtTaxInvoice.setText("$" + invoiceToEdit.getTax());
+				// TODO maybe make a Cashiered DateTime text box
+//				txtCashieredDateTime.setText(invoiceToEdit.getCashiereDateTime());
+				// TOD maybe make a cashiered flag in UI that automatically disables all relevant UI components,
+					// kinda like Project Dialog does // invoiceToEdit.getCashiered();
+				
+				// TODO actually do this correctly, probably need a paint that takes TableItem[]
+				invoicePartsTable.paint(new ArrayList<Part>(Arrays.asList(invoiceToEdit.getParts())));
+				
+				// NOTE this will require building out buildInvoice (currently in DbServices) to actually build all Parts
+					// and/or InvoiceTableLineItems or InvoiceLineItems or something so they can be passed to the UI
+					// and totals can be calc'd again
+				
+				// disable all controls except Cancel button
+				txtCustomerInvoice.setEditable(false);
+				txtCustomerInvoice.removeMouseListener(customerSearchListener);
+				txtInvoiceNotes.setEditable(false);
+				txtInvoiceNotes.removeFocusListener(invoiceNotesTextBoxFocusListener);
+				invoicePartsTable.removeListener(SWT.MouseDown, invoicePartTableListener);
+				btnDeleteLineItem.setEnabled(false);
+				btnCashier.setEnabled(false);
 			}
 		});
 		btnSearchForInvoice.setText("Invoice Search");
@@ -707,6 +752,10 @@ public class Gui extends Composite {
 		Composite orderComposite = new Composite(tabFolderParts, SWT.NONE);
 		tbtmOrder.setControl(orderComposite);
 		orderComposite.setLayout(new FormLayout());
+		
+		Label lblNotImplimentedYet = new Label(orderComposite, SWT.NONE);
+		lblNotImplimentedYet.setText("Not Implimented Yet...");
+		lblNotImplimentedYet.setBounds(10, 10, 147, 20);
 		// END Order Tab
 	}
 	
