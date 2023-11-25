@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import gui.Splash;
 import objects.Account;
+import objects.AccountPayment;
 import objects.AccountTransaction;
 import objects.Customer;
 import objects.DbObject;
@@ -155,7 +156,7 @@ public class DbServices {
 			dbObject.setDbPk(getLastSavedDbObjectPk(dbObject));
 		}
 		
-		if (dbObject instanceof Invoice) {		// TODO turn off auto commit until all invoice queries have completed
+		if (dbObject instanceof Invoice && !(dbObject instanceof AccountPayment)) {		// TODO turn off auto commit until all invoice queries have completed
 			saveInvoiceLineItems(dbObject);
 		} else if (dbObject instanceof Project thisRo) {
 			if (thisRo.getDbPk() == -1 ) {
