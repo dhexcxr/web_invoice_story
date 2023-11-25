@@ -10,11 +10,10 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class Employee extends DbObject {
+public class Employee extends DbObjectWithLocation {
 	
 	// might not need this
 	private long employeeId = -1;
-	private long locationId;
 	private String firstName;
 	private String lastName;
 	private String jobTitle;
@@ -55,14 +54,6 @@ public class Employee extends DbObject {
 	
 	public long getEmployeeId() {
 		return employeeId;
-	}
-
-	public long getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(long locationId) {		// TODO need to set locationId when saving new employee
-		this.locationId = locationId;
 	}
 
 	public void setEmployeeId(long employeeId) {

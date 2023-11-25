@@ -9,14 +9,13 @@ import org.eclipse.swt.widgets.Table;
 
 import web_invoice_story.DbServices;
 
-public class Customer extends DbObject {
+public class Customer extends DbObjectWithLocation {
 	
 	// TODO saving customer when a location is selected, get current location and save to table
 		// if current location is 0 - All, save it with 1 - Phoenix (the home office)
 	
 	// might not need this
 	private long customerId = -1;
-	private long locationId;
 	private String firstName;
 	private String lastName;
 	private String address;
@@ -35,6 +34,7 @@ public class Customer extends DbObject {
 	private static final String INTERNATIONAL_PHONE = "$1-$2-$3-$4";
 	
 	public Customer() {
+		// TODO look into calling this function on "this" vs "super"
 		this.setLocationMatters(true);
 	}
 	
@@ -63,15 +63,6 @@ public class Customer extends DbObject {
 	
 	public long getCustomerId() {
 		return customerId;
-	}
-
-	public long getLocationId() {
-		// if location is set to 0 (i.e. we started saving this object when set to All Locations) save to Home Location (locationId = 1)
-		return locationId == 0 ? 1 : locationId;
-	}
-
-	public void setLocationId(long locationId) {		// TODO need to set locationId when saving new customer
-		this.locationId = locationId;
 	}
 
 	public void setCustomerId(long customerId) {

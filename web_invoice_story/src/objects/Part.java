@@ -8,7 +8,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Part extends DbObject {
+public class Part extends DbObjectWithLocation {
 	private long partId = -1;
 	private String partNumber;
 	private String supplier;

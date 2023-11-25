@@ -7,7 +7,7 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class ProjectSite extends DbObject {
+public class ProjectSite extends DbObjectWithLocation {
 	
 	// might not need this
 	private long projectSiteId = -1;
@@ -22,7 +22,7 @@ public class ProjectSite extends DbObject {
 	
 	public ProjectSite() {
 		this.setLocationMatters(false);
-		this.setLocationThroughCustomer(true);
+		this.setLocationThroughCustomer(true);		// TODO work to remove both of these booleans
 	}
 	
 	public long getDbPk() {

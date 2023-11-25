@@ -9,12 +9,11 @@ import java.util.Map;
 
 import web_invoice_story.DbServices;
 
-public class Project extends DbObject {
+public class Project extends DbObjectWithLocation {
 	
 	// TODO make a 1 line invoice when cashiering Projects
 	
 	private long projectId = -1;
-	private long locationId;
 	private long customerId;
 	private Customer customer;
 	private String customerName;
@@ -65,14 +64,6 @@ public class Project extends DbObject {
 
 	public void setProjectId(long repairOrderId) {
 		this.projectId = repairOrderId;
-	}
-
-	public long getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(long locationId) {
-		this.locationId = locationId;
 	}
 
 	public long getCustomerId() {

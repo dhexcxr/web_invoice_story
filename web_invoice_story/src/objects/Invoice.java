@@ -12,13 +12,12 @@ import org.eclipse.swt.widgets.TableItem;
 
 import web_invoice_story.DbServices;
 
-public class Invoice extends DbObject {
+public class Invoice extends DbObjectWithLocation {
 
 	private long invoiceNum = -1;
 	private long customerId;
 	private String customerName;
 	private String customerData;
-	private long locationId;
 	private String notes;
 	private Timestamp cashiereDateTime;
 	private BigDecimal tax;
@@ -98,14 +97,6 @@ public class Invoice extends DbObject {
 
 	public void setCustomerData(String customerData) {
 		this.customerData = customerData;
-	}
-
-	public long getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(long locationId) {
-		this.locationId = locationId;
 	}
 
 	public String getNotes() {
