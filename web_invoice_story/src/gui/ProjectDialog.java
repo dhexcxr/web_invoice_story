@@ -715,7 +715,7 @@ public class ProjectDialog extends Dialog {
 		// END Totals
 	}
 
-	public void saveJob() {
+	public void saveJob() {		// TODO maybe rename this to buildJob()
 		Job currentJob = (Job) tabFolderJobsProject.getData();
 
 		for (TableItem currentPartTableItem : jobPartsTable.getItems()) {
@@ -788,7 +788,7 @@ public class ProjectDialog extends Dialog {
 		project.setTotal(new BigDecimal(textFinalTotalProject.getText().replaceAll(ONLY_DECIMALS, "")));
 		
 		// send Project object to DbServices
-		DbServices.saveObject(project);
+		DbServices.saveObject(project);		// TODO call this on project.save()
 		projectId = project.getProjectId();
 		textRoNum.setText(Long.toString(projectId));
 		detailsToDelete = new HashMap<>();

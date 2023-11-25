@@ -28,7 +28,7 @@ public class DeleteObjectListener extends SelectionAdapter {
 		if (linesUpdated == 0) {
 			MessageBox objectDeleteError = new MessageBox(new Shell(), SWT.ERROR);
 			objectDeleteError.setText("Error");
-			objectDeleteError.setMessage("Unable to delete object...");
+			objectDeleteError.setMessage("Unable to delete object...");		// TODO get object name from DbObject (Part, Customer, etc), and put it in there
 			objectDeleteError.open();
 		} else {
 			table.remove(table.getSelectionIndex());

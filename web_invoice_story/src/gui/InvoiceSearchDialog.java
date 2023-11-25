@@ -77,7 +77,7 @@ public class InvoiceSearchDialog extends Dialog {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				if (invoiceTable.getSelection().length > 0) {
-					// return Customer selected from Customer Search Dialog table on double click
+					// return Invoice selected from Customer Search Dialog table on double click
 					result =  invoiceTable.getSelection()[0].getData();
 					shlInvoiceSearch.close();
 				}

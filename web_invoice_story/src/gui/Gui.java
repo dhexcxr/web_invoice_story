@@ -1108,6 +1108,7 @@ public class Gui extends Composite {
 				// Account Payment
 				BigDecimal accountBalance = ((Account) accountTable.getItem(accountTable.getSelectionIndex()).getData()).getBalance();
 				AmountDueDialog amountDueDialog = new AmountDueDialog(shell, getStyle());
+				// TODO give this title text something other than Amount Due when taking an account payment
 				AmountDueResponse response = amountDueDialog.open(accountBalance);
 				
 				if (response.getResult() == Result.PAYMENT) {
