@@ -95,7 +95,10 @@ public class Gui extends Composite {
 		super(parent, style);
 		
 		this.shell = (Shell) parent;
-		setLayout(new FormLayout());
+		FormLayout formLayout = new FormLayout();
+		formLayout.marginHeight = 5;
+		formLayout.marginWidth = 5;
+		setLayout(formLayout);
 
 		// Tab control widget
 		TabFolder tabFolderGui = new TabFolder(this, SWT.NONE);
@@ -126,7 +129,6 @@ public class Gui extends Composite {
 		FormData fd_projectTable = new FormData();
 		fd_projectTable.right = new FormAttachment(100, -10);
 		fd_projectTable.bottom = new FormAttachment(100, -10);
-		fd_projectTable.top = new FormAttachment(0, 74);
 		fd_projectTable.left = new FormAttachment(0, 10);
 		projectTable.setLayoutData(fd_projectTable);
 		projectTable.setHeaderVisible(true);
@@ -174,9 +176,10 @@ public class Gui extends Composite {
 		
 		// RO controls
 		MyText projectSearchBox = new MyText(projectsComposite, SWT.BORDER);
+		fd_projectTable.top = new FormAttachment(projectSearchBox, 6);
 		FormData fd_projectSearchBox = new FormData();
-		fd_projectSearchBox.bottom = new FormAttachment(0, 33);
 		fd_projectSearchBox.left = new FormAttachment(0, 10);
+		fd_projectSearchBox.bottom = new FormAttachment(0, 33);
 		fd_projectSearchBox.top = new FormAttachment(0, 10);
 		projectSearchBox.setLayoutData(fd_projectSearchBox);
 		projectSearchBox.setText("Search...");
@@ -184,9 +187,9 @@ public class Gui extends Composite {
 		projectSearchBox.addFocusListener(new TextBoxFocusListener(projectSearchBox));
 
 		Button btnNewProject = new Button(projectsComposite, SWT.NONE);
-		fd_projectSearchBox.right = new FormAttachment(btnNewProject, -10);
+		fd_projectSearchBox.right = new FormAttachment(100, -171);
 		FormData fd_btnNewProject = new FormData();
-		fd_btnNewProject.left = new FormAttachment(100, -161);
+		fd_btnNewProject.left = new FormAttachment(projectSearchBox, 6);
 		fd_btnNewProject.bottom = new FormAttachment(0, 33);
 		fd_btnNewProject.right = new FormAttachment(100, -10);
 		fd_btnNewProject.top = new FormAttachment(0, 10);
@@ -194,46 +197,31 @@ public class Gui extends Composite {
 		btnNewProject.setText("New Project");
 		btnNewProject.addMouseListener(new CreateNewObjectListener(projectTable, projectSearchBox, shell));
 
-		Button btnNewEstimate = new Button(projectsComposite, SWT.NONE);
-		FormData fd_btnNewEstimate = new FormData();
-		fd_btnNewEstimate.top = new FormAttachment(0, 43);
-		fd_btnNewEstimate.bottom = new FormAttachment(0, 65);
-		fd_btnNewEstimate.left = new FormAttachment(100, -161);
-		fd_btnNewEstimate.right = new FormAttachment(100, -10);
-		
-		btnNewEstimate.setLayoutData(fd_btnNewEstimate);
-		btnNewEstimate.setText("New Estimate");
-
-		Button btnDeleteProject = new Button(projectsComposite, SWT.NONE);
-		FormData fd_btnDeleteProject = new FormData();
-		fd_btnDeleteProject.bottom = new FormAttachment(0, 65);
-		fd_btnDeleteProject.left = new FormAttachment(100, -322);
-		fd_btnDeleteProject.right = new FormAttachment(100, -171);
-		fd_btnDeleteProject.top = new FormAttachment(0, 43);
-		btnDeleteProject.setLayoutData(fd_btnDeleteProject);
-		btnDeleteProject.setText("Delete Project");
-		btnDeleteProject.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// delete Repair Order
-			}
-		});
-
-		Button btnShowCashiered = new Button(projectsComposite, SWT.CHECK);
-		FormData fd_btnShowCashiered = new FormData();
-		fd_btnShowCashiered.bottom = new FormAttachment(0, 65);
-		fd_btnShowCashiered.top = new FormAttachment(0, 43);
-		fd_btnShowCashiered.left = new FormAttachment(0, 10);
-		btnShowCashiered.setLayoutData(fd_btnShowCashiered);
-		btnShowCashiered.setText("Show Cashiered");
-
-		Button btnShowEstimates = new Button(projectsComposite, SWT.CHECK);
-		FormData fd_btnShowEstimates = new FormData();
-		fd_btnShowEstimates.left = new FormAttachment(btnShowCashiered, 10);
-		fd_btnShowEstimates.bottom = new FormAttachment(0, 65);
-		fd_btnShowEstimates.top = new FormAttachment(0, 43);
-		btnShowEstimates.setLayoutData(fd_btnShowEstimates);
-		btnShowEstimates.setText("Show Estimates");
+//		Button btnNewEstimate = new Button(projectsComposite, SWT.NONE);
+//		FormData fd_btnNewEstimate = new FormData();
+//		fd_btnNewEstimate.top = new FormAttachment(0, 43);
+//		fd_btnNewEstimate.bottom = new FormAttachment(0, 65);
+//		fd_btnNewEstimate.left = new FormAttachment(100, -161);
+//		fd_btnNewEstimate.right = new FormAttachment(100, -10);
+//		
+//		btnNewEstimate.setLayoutData(fd_btnNewEstimate);
+//		btnNewEstimate.setText("New Estimate");		// we don't have estimates yet, and we don't hide cashiered projects now
+//
+//		Button btnShowCashiered = new Button(projectsComposite, SWT.CHECK);
+//		FormData fd_btnShowCashiered = new FormData();
+//		fd_btnShowCashiered.bottom = new FormAttachment(0, 65);
+//		fd_btnShowCashiered.top = new FormAttachment(0, 43);
+//		fd_btnShowCashiered.left = new FormAttachment(0, 10);
+//		btnShowCashiered.setLayoutData(fd_btnShowCashiered);
+//		btnShowCashiered.setText("Show Cashiered");
+//
+//		Button btnShowEstimates = new Button(projectsComposite, SWT.CHECK);
+//		FormData fd_btnShowEstimates = new FormData();
+//		fd_btnShowEstimates.left = new FormAttachment(btnShowCashiered, 10);
+//		fd_btnShowEstimates.bottom = new FormAttachment(0, 65);
+//		fd_btnShowEstimates.top = new FormAttachment(0, 43);
+//		btnShowEstimates.setLayoutData(fd_btnShowEstimates);
+//		btnShowEstimates.setText("Show Estimates");
 	}
 	
 	private void partsTab(TabFolder tabFolder) {
@@ -754,6 +742,7 @@ public class Gui extends Composite {
 		orderComposite.setLayout(new FormLayout());
 		
 		Label lblNotImplimentedYet = new Label(orderComposite, SWT.NONE);
+		lblNotImplimentedYet.setLayoutData(new FormData());
 		lblNotImplimentedYet.setText("Not Implimented Yet...");
 		lblNotImplimentedYet.setBounds(10, 10, 147, 20);
 		// END Order Tab
@@ -1228,23 +1217,25 @@ public class Gui extends Composite {
 		Composite settingsComposite = new Composite(tabFolder, SWT.NONE);
 		tbtmSettings.setControl(settingsComposite);
 		FormLayout fl_settingsComposite = new FormLayout();
-		fl_settingsComposite.spacing = 5;
 		fl_settingsComposite.marginWidth = 5;
 		fl_settingsComposite.marginHeight = 5;
 		settingsComposite.setLayout(fl_settingsComposite);
 		
 		Group grpResetConfirmDialog = new Group(settingsComposite, SWT.NONE);
 		FormData fd_grpResetConfirmDialog = new FormData();
-		fd_grpResetConfirmDialog.top = new FormAttachment(0);
-		fd_grpResetConfirmDialog.left = new FormAttachment(0);
+		fd_grpResetConfirmDialog.width = 320;
+//		fd_grpResetConfirmDialog.right = new FormAttachment(100, -659);
+		fd_grpResetConfirmDialog.left = new FormAttachment(0, 10);
+		fd_grpResetConfirmDialog.top = new FormAttachment(0, 5);
 		grpResetConfirmDialog.setLayoutData(fd_grpResetConfirmDialog);
 		grpResetConfirmDialog.setLayout(new FormLayout());
 		
 		Button btnResetConfirmDialog = new Button(grpResetConfirmDialog, SWT.NONE);
 		FormData fd_btnResetConfirmDialog = new FormData();
-		fd_btnResetConfirmDialog.bottom = new FormAttachment(0, 42);
-		fd_btnResetConfirmDialog.right = new FormAttachment(0, 265);
-		fd_btnResetConfirmDialog.top = new FormAttachment(0, 12);
+		fd_btnResetConfirmDialog.height = 32;
+//		fd_btnResetConfirmDialog.bottom = new FormAttachment(0, 42);
+		fd_btnResetConfirmDialog.right = new FormAttachment(100, -5);
+		fd_btnResetConfirmDialog.top = new FormAttachment(0, 5);
 		fd_btnResetConfirmDialog.left = new FormAttachment(0, 5);
 		btnResetConfirmDialog.setLayoutData(fd_btnResetConfirmDialog);
 		btnResetConfirmDialog.setText("Reset Confirmation Dialog Settings");
@@ -1258,30 +1249,40 @@ public class Gui extends Composite {
 		
 		Label lblResetConfirmDialog = new Label(grpResetConfirmDialog, SWT.WRAP);
 		FormData fd_lblResetConfirmDialog = new FormData();
-		fd_lblResetConfirmDialog.bottom = new FormAttachment(0, 90);
-		fd_lblResetConfirmDialog.right = new FormAttachment(0, 315);
-		fd_lblResetConfirmDialog.top = new FormAttachment(0, 48);
+		fd_lblResetConfirmDialog.top = new FormAttachment(btnResetConfirmDialog, 5);
+		fd_lblResetConfirmDialog.bottom = new FormAttachment(100, -5);
+		fd_lblResetConfirmDialog.right = new FormAttachment(100, -5);
 		fd_lblResetConfirmDialog.left = new FormAttachment(0, 5);
 		lblResetConfirmDialog.setLayoutData(fd_lblResetConfirmDialog);
 		lblResetConfirmDialog.setText("This will re-enable the Repair Order Close and Cancel Changes confirmation dialog boxes.");
 		
 		Group grpCurrentLocation = new Group(settingsComposite, SWT.NONE);
 		FormLayout fl_grpCurrentLocation = new FormLayout();
-		fl_grpCurrentLocation.spacing = 5;
-		fl_grpCurrentLocation.marginWidth = 5;
-		fl_grpCurrentLocation.marginHeight = 5;
 		grpCurrentLocation.setLayout(fl_grpCurrentLocation);
 		FormData fd_grpCurrentLocation = new FormData();
-		fd_grpCurrentLocation.top = new FormAttachment(grpResetConfirmDialog);
+		//		fd_grpCurrentLocation.bottom = new FormAttachment(100, -640);
+				fd_grpCurrentLocation.top = new FormAttachment(grpResetConfirmDialog, 5);
+		fd_grpCurrentLocation.right = new FormAttachment(grpResetConfirmDialog, 0, SWT.RIGHT);
+//		fd_grpCurrentLocation.bottom = new FormAttachment(0, 235);
+		fd_grpCurrentLocation.left = new FormAttachment(0, 10);
 		grpCurrentLocation.setLayoutData(fd_grpCurrentLocation);
 		
 		comboCurrentLocation = new StoreLocationCombo(new StoreLocation().getAllStoreLocations(), grpCurrentLocation, SWT.DROP_DOWN | SWT.READ_ONLY);
+		
+		Label lblCurrentLocation = new Label(grpCurrentLocation, SWT.NONE);
+		FormData fd_lblCurrentLocation = new FormData();
+		fd_lblCurrentLocation.left = new FormAttachment(0, 5);
+		fd_lblCurrentLocation.top = new FormAttachment(0, 5);
+		lblCurrentLocation.setLayoutData(fd_lblCurrentLocation);
+		lblCurrentLocation.setText("Select Current Location:");
 		comboCurrentLocation.select(Application.getSettings().getCurrentLocation());		// TODO decide how to make sure currentSelection always == locationID
 		FormData fd_comboCurrentLocation = new FormData();
+		fd_comboCurrentLocation.bottom = new FormAttachment(100, -5);
+		fd_comboCurrentLocation.top = new FormAttachment(lblCurrentLocation, 5);
+		fd_comboCurrentLocation.left = new FormAttachment(0, 5);
+		fd_comboCurrentLocation.right = new FormAttachment(100, -5);
 		fd_comboCurrentLocation.height = 24;
 		fd_comboCurrentLocation.width = 256;
-		fd_comboCurrentLocation.top = new FormAttachment(0, 5);
-		fd_comboCurrentLocation.left = new FormAttachment(0, 5);
 		comboCurrentLocation.setLayoutData(fd_comboCurrentLocation);
 		
 		comboCurrentLocation.addSelectionListener(new SelectionAdapter() {
