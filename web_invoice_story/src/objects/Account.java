@@ -99,7 +99,7 @@ public class Account extends DbObject {
 	}
 
 	public BigDecimal getBalance() {
-		return balance /* == null ? BigDecimal.valueOf(0) : balance */;
+		return balance == null ? BigDecimal.valueOf(0) : balance;
 	}
 	
 	public void setBalance(BigDecimal balance) {
@@ -123,7 +123,7 @@ public class Account extends DbObject {
 	}
 
 	public List<AccountTransaction> getTransactions() {
-		return transactions;
+		return transactions == null ? new ArrayList<AccountTransaction>() : transactions;
 	}
 
 	public void setTransactions(List<AccountTransaction> transactions) {
@@ -204,12 +204,12 @@ public class Account extends DbObject {
 		// return helper data for saving and updating Customer objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (accountId != -1) {
-			dataMap.put("accountId", Long.toString(accountId));
+			dataMap.put("accountId", Long.toString(getAccountId()));
 		}
-		dataMap.put("customerId", Long.toString(customerId));
-		dataMap.put("accountNumber", accountNumber);
-		dataMap.put("accountName", accountName);
-		dataMap.put("balance", balance.toString());
+		dataMap.put("customerId", Long.toString(getCustomerId()));
+		dataMap.put("accountNumber", getAccountNumber());
+		dataMap.put("accountName", getAccountName());
+		dataMap.put("balance", getBalance().toString());
 				
 		return dataMap;
 	}

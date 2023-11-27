@@ -15,7 +15,7 @@ public abstract class DbObject {
 	protected int[] querySubStringIndices = new int[2];
 
 	public String getSearchString() {
-		return searchString;
+		return searchString == null ? "" : searchString;
 	}
 	
 	public void setSearchString(String searchString) {
@@ -24,7 +24,7 @@ public abstract class DbObject {
 
 	public String[] getWordsFromSearchString() {
 		// return each individual word from user's search query string
-		return searchString.replaceAll("[^a-zA-Z0-9 %'-]", "").split(" ");
+		return getSearchString().replaceAll("[^a-zA-Z0-9 %'-]", "").split(" ");
 	}
 
 	public String getSearchQuery() {

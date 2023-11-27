@@ -76,7 +76,7 @@ public class ProjectSite extends DbObjectWithLocation {
 	}
 
 	public String getProjectSiteState() {
-		return stateProjectSite;
+		return stateProjectSite == null ? "" : stateProjectSite;
 	}
 
 	public void setProjectSiteState(String stateProjectSite) {

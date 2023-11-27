@@ -105,17 +105,17 @@ public class AccountTransaction extends DbObject {
 		// return helper data for saving and updating Customer objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (transactionId != -1) {
-			dataMap.put("transactionId", Long.toString(transactionId));
+			dataMap.put("transactionId", Long.toString(getTransactionId()));
 		}
-		dataMap.put("accountId", Long.toString(accountId));
-		dataMap.put("invoiceId", Long.toString(invoiceId));
+		dataMap.put("accountId", Long.toString(getAccountId()));
+		dataMap.put("invoiceId", Long.toString(getInvoiceId()));
 		
 		if (transactionDate != null) {
-			dataMap.put("transactionDate", transactionDate.toString());
+			dataMap.put("transactionDate", getTransactionDate().toString());
 		}
 		
-		dataMap.put("description", description);
-		dataMap.put("amount", amount.toString());
+		dataMap.put("description", getDescription());
+		dataMap.put("amount", getAmount().toString());
 				
 		return dataMap;
 	}

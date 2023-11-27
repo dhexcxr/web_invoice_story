@@ -51,8 +51,8 @@ public class AccountBalanceHx extends DbObject {
 		return balanceHxId;
 	}
 
-	public void setBalanceHxId(long customerId) {
-		this.balanceHxId = customerId;
+	public void setBalanceHxId(long balanceHxId) {
+		this.balanceHxId = balanceHxId;
 	}
 
 	public long getAccountId() {
@@ -87,15 +87,15 @@ public class AccountBalanceHx extends DbObject {
 		// return helper data for saving and updating Customer objects
 		Map<String, String> dataMap = new HashMap<>();
 		if (balanceHxId != -1) {
-			dataMap.put("balanceHxId", Long.toString(balanceHxId));
+			dataMap.put("balanceHxId", Long.toString(getBalanceHxId()));
 		}
-		dataMap.put("accountId", Long.toString(accountId));
+		dataMap.put("accountId", Long.toString(getAccountId()));
 		
 		if (date != null) {
-			dataMap.put("date", date.toString());
+			dataMap.put("date", getDate().toString());
 		}
 
-		dataMap.put("balance", balance.toString());
+		dataMap.put("balance", getBalance().toString());
 				
 		return dataMap;
 	}
