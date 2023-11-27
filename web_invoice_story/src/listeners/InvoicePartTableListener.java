@@ -34,6 +34,11 @@ public class InvoicePartTableListener implements Listener {
 	
 	private boolean editingInvoice;
 	
+	public enum TabDirection {
+		FORWARD,
+		BACKWARD
+	}
+	
 	public InvoicePartTableListener(InvoicePartTable invoicePartTable, List<MyText> invoiceDetailText, Shell parent) {
 		this.invoicePartTable = invoicePartTable;
 		this.invoiceDetailText = invoiceDetailText;
@@ -126,21 +131,35 @@ public class InvoicePartTableListener implements Listener {
 		}
 	}
 	
-	public void tabbed(int currentColumn) {
+	public void tabbed(int currentColumn, TabDirection tabDirection) {
 		Event tabbedEvent = originalEvent;
 		InvoicePartTableItem selectedTableItem = (InvoicePartTableItem) invoicePartTable.getSelection()[0];
 		switch (currentColumn) {
 		case InvoicePartTable.PART_NUMBER_COLUMN:
-			tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.QUANTITY_COLUMN).x + 1;
+			if (tabDirection == TabDirection.FORWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.QUANTITY_COLUMN).x + 1;
+			} else if (tabDirection == TabDirection.BACKWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.PART_PRICE_COLUMN).x + 1;
+				tabbedEvent.y = tabbedEvent.y - selectedTableItem.getBounds().height;
+				invoicePartTable.setSelection(invoicePartTable.getSelectionIndex() - 1);
+				invoicePartTable.notifyListeners(SWT.MouseDown, new Event());
+			}
+			
 			break;
 		case InvoicePartTable.QUANTITY_COLUMN:
-			tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.PART_PRICE_COLUMN).x + 1;
+			tabbedEvent.x = tabDirection == TabDirection.FORWARD ?
+					selectedTableItem.getBounds(InvoicePartTableItem.PART_PRICE_COLUMN).x + 1
+					: selectedTableItem.getBounds(InvoicePartTableItem.PART_NUMBER_COLUMN).x + 1;
 			break;
 		case InvoicePartTable.PART_PRICE_COLUMN:
-			tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.PART_NUMBER_COLUMN).x + 1;
-			tabbedEvent.y = tabbedEvent.y + selectedTableItem.getBounds().height;
-			invoicePartTable.setSelection(invoicePartTable.getSelectionIndex() + 1);
-			invoicePartTable.notifyListeners(SWT.MouseDown, new Event());
+			if (tabDirection == TabDirection.FORWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.PART_NUMBER_COLUMN).x + 1;
+				tabbedEvent.y = tabbedEvent.y + selectedTableItem.getBounds().height;
+				invoicePartTable.setSelection(invoicePartTable.getSelectionIndex() + 1);
+				invoicePartTable.notifyListeners(SWT.MouseDown, new Event());
+			} else if (tabDirection == TabDirection.BACKWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(InvoicePartTableItem.QUANTITY_COLUMN).x + 1;
+			}
 			break;
 		default:
 			return;

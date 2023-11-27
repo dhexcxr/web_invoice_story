@@ -17,6 +17,7 @@ import gui.PartSearchDialog;
 import guiParts.InvoicePartTable;
 import guiParts.InvoicePartTableItem;
 import guiParts.MyText;
+import listeners.InvoicePartTableListener.TabDirection;
 import objects.DbObject;
 import objects.InvoicePart;
 import objects.JobPart;
@@ -93,7 +94,10 @@ public class InvoicePartEditorListener implements Listener {
 			editorTxtBox.dispose();
 		} else if (event.type == SWT.Traverse && event.detail == SWT.TRAVERSE_TAB_NEXT) {
 			setColumnData();
-			invoicePartTableListener.tabbed(selectedColumnIndex);
+			invoicePartTableListener.tabbed(selectedColumnIndex, TabDirection.FORWARD);
+		} else if (event.type == SWT.Traverse && event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+			setColumnData();
+			invoicePartTableListener.tabbed(selectedColumnIndex, TabDirection.BACKWARD);
 		} else if (event.type == SWT.Traverse) {
 			setColumnData();
 		}
