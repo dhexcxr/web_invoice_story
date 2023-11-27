@@ -56,7 +56,7 @@ import listeners.ProjectLaborTableListener;
 import listeners.ProjectPartDeleteLineItemListener;
 import listeners.RequiredTextBoxModifyListener;
 import listeners.TextBoxFocusListener;
-import listeners.UnitSearchListener;
+import listeners.ProjectSiteSearchListener;
 import objects.Account;
 import objects.AmountDueResponse;
 import objects.AmountDueResponse.Result;
@@ -111,7 +111,7 @@ public class ProjectDialog extends Dialog {
 	
 	private MyText textFinalTotalProject;
 	private CustomerSearchListener customerSearchListener;
-	private UnitSearchListener unitSearchListener;
+	private ProjectSiteSearchListener projectSiteSearchListener;
 	private JobNameModifiedListener jobNameModifiedListener;
 	private InvoicePartTableListener projectPartTableListener;
 	private ProjectLaborTableListener projectLaborTableListener;
@@ -794,9 +794,9 @@ public class ProjectDialog extends Dialog {
 		txtCustomerProject.addMouseListener(customerSearchListener);
 		txtCustomerProject.addModifyListener(new RequiredTextBoxModifyListener(txtCustomerProject));
 
-		unitSearchListener = new UnitSearchListener(txtProjectSiteProject, txtCustomerProject);
+		projectSiteSearchListener = new ProjectSiteSearchListener(txtProjectSiteProject, txtCustomerProject);
 			// TODO make sure this doesn't break when there isn't a customer selected already
-		txtProjectSiteProject.addMouseListener(unitSearchListener);
+		txtProjectSiteProject.addMouseListener(projectSiteSearchListener);
 		txtProjectSiteProject.addModifyListener(new RequiredTextBoxModifyListener(txtProjectSiteProject));
 		// END RO Controls
 		
@@ -889,7 +889,7 @@ public class ProjectDialog extends Dialog {
 			// remove listeners from Customer and ProjectSite text box and from Parts and Labor tables
 		cashiered = true;
 		txtCustomerProject.removeMouseListener(customerSearchListener);
-		txtProjectSiteProject.removeMouseListener(unitSearchListener);
+		txtProjectSiteProject.removeMouseListener(projectSiteSearchListener);
 		btnCashierRo.setEnabled(false);
 		btnAddJob.setEnabled(false);
 		btnDeleteJob.setEnabled(false);
