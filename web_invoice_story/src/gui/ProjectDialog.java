@@ -760,10 +760,10 @@ public class ProjectDialog extends Dialog {
 		if (txtProjectSiteProject.getData() != null && ((ProjectSite) txtProjectSiteProject.getData()).getProjectSiteId() != -1) {
 			ProjectSite thisUnit = (ProjectSite) txtProjectSiteProject.getData();
 			project.setProjectSiteId(thisUnit.getProjectSiteId());
-			project.setProjectSiteAddress(thisUnit.getProjectSiteState());
-			project.setProjectSiteCity(thisUnit.getProjectSiteAddress());
-			project.setProjectSiteState(thisUnit.getProjectSiteCity());
-			project.setProjectSiteZip(thisUnit.getProjectSiteNotes());
+			project.setProjectSiteAddress(thisUnit.getProjectSiteAddress());
+			project.setProjectSiteCity(thisUnit.getProjectSiteCity());
+			project.setProjectSiteState(thisUnit.getProjectSiteState());
+			project.setProjectSiteZip(thisUnit.getProjectSiteZipCode());
 		} else {
 			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
 			MessageBox customerRequiredBox = new MessageBox(shlProject, SWT.ICON_INFORMATION);
