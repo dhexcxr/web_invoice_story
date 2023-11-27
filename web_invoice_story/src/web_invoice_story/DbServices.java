@@ -51,13 +51,15 @@ public class DbServices {
 	// START General DB methods
 	public static boolean isConnected() {
 		boolean isConnected = false;
+		
+		if (mainDbConnection == null) {
+			connectToDb();
+		}
+		
 		try {
 			isConnected = mainDbConnection.isValid(5);
 		} catch (SQLException e) {
 			Application.getLogger().log(Level.FINER, "DbServices.isConnected: mainDbConnection SQL Exception");
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			Application.getLogger().log(Level.SEVERE, "DbServices.isConnected: mainDbConnection Null Pointer Exception");
 			e.printStackTrace();
 		}
 		return isConnected;
@@ -78,7 +80,7 @@ public class DbServices {
 		String pass = "test";
 		
 		int i = 0;
-		while (!isConnected() && i < 3) {		// try to connect 3 times
+		do {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
 				mainDbConnection = DriverManager.getConnection(url, user, pass);
@@ -90,7 +92,8 @@ public class DbServices {
 				e.printStackTrace();
 			}
 			i++;
-		}
+		} while (!isConnected() && i < 3);		// try to connect 3 times
+		
 		if (!isConnected()) {
 			Application.getLogger().log(Level.SEVERE, "DB Connection error dialog box");
 			MessageBox dbConnectionError = new MessageBox(new Shell(), SWT.ERROR);
@@ -102,13 +105,14 @@ public class DbServices {
 	
 	public static void disconnectFromDb() {
 		// clean up, close database connection
+		if (mainDbConnection == null) {
+			connectToDb();		// NOTE this is probably stupid 	
+		}
+		
 		try {
 			mainDbConnection.close();
 		} catch (SQLException e) {
 			Application.getLogger().log(Level.FINER, "DbServices.disconnectFromDb: mainDbConnection SQL Exception");
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			Application.getLogger().log(Level.SEVERE, "DbServices.disconnectFromDb: mainDbConnection Null Pointer Exception");
 			e.printStackTrace();
 		}
 	}
