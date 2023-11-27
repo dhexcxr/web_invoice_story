@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -172,23 +173,21 @@ public class AccountBalanceHx extends DbObject {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hash(accountId, balance, balanceHxId, date);
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (!(obj instanceof AccountBalanceHx)) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
 		AccountBalanceHx other = (AccountBalanceHx) obj;
-		if (this.balanceHxId != other.getBalanceHxId())
-			return false;
-		if (this.accountId != other.getAccountId())
-			return false;
-		if (!this.date.equals(other.getDate()))
-			return false;
-		if (!this.balance.equals(other.getBalance()))
-			return false;
-		return true;
+		return accountId == other.accountId && Objects.equals(balance, other.balance)
+				&& balanceHxId == other.balanceHxId && Objects.equals(date, other.date);
 	}
 
 	@Override

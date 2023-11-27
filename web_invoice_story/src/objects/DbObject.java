@@ -1,7 +1,9 @@
 package objects;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -70,5 +72,11 @@ public abstract class DbObject {
 	public void save() {
 		DbServices.saveObject(this);
 	}
+
+	@Override
+	public abstract int hashCode();
+
+	@Override
+	public abstract boolean equals(Object obj);
 
 }

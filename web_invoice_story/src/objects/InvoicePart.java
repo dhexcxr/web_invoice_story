@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class InvoicePart extends DbObject {
 	
@@ -140,6 +141,26 @@ public class InvoicePart extends DbObject {
 	@Override
 	public InvoicePart searchByPk(long invoicePartPrimaryKey) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dataMap, description, invoicePartId, part, partId, partNumber, quantity, soldPrice);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof InvoicePart)) {
+			return false;
+		}
+		InvoicePart other = (InvoicePart) obj;
+		return Objects.equals(dataMap, other.dataMap) && Objects.equals(description, other.description)
+				&& invoicePartId == other.invoicePartId && Objects.equals(part, other.part) && partId == other.partId
+				&& Objects.equals(partNumber, other.partNumber) && quantity == other.quantity
+				&& Objects.equals(soldPrice, other.soldPrice);
 	}
 
 	@Override

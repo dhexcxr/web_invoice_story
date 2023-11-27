@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -145,6 +146,24 @@ public class User extends DbObject {
 				return user;
 			}
 			throw new IllegalArgumentException("objects.User.packObject(): dbObjectSearchable is not a User");
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(employeeId, passwordHash, userId, userName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof User)) {
+			return false;
+		}
+		User other = (User) obj;
+		return employeeId == other.employeeId && Objects.equals(passwordHash, other.passwordHash)
+				&& userId == other.userId && Objects.equals(userName, other.userName);
 	}
 
 	@Override

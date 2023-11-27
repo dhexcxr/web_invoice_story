@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -193,28 +194,25 @@ public class AccountTransaction extends DbObject {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AccountTransaction other = (AccountTransaction) obj;
-		if (this.transactionId != other.getTransactionId())
-			return false;
-		if (this.accountId != other.getAccountId())
-			return false;
-		if (this.invoiceId != other.getInvoiceId())
-			return false;
-		if (!this.transactionDate.equals(other.getTransactionDate()))
-			return false;
-		if (!this.description.equals(other.getDescription()))
-			return false;
-		if (!this.amount.equals(other.getAmount()))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hash(accountId, amount, description, invoiceId, transactionDate, transactionId);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof AccountTransaction)) {
+			return false;
+		}
+		AccountTransaction other = (AccountTransaction) obj;
+		return accountId == other.accountId && Objects.equals(amount, other.amount)
+				&& Objects.equals(description, other.description) && invoiceId == other.invoiceId
+				&& Objects.equals(transactionDate, other.transactionDate) && transactionId == other.transactionId;
+	}
+	
+	
 
 	@Override
 	public String toString() {

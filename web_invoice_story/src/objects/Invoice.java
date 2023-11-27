@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.TableItem;
 
@@ -238,6 +239,33 @@ public class Invoice extends DbObjectWithLocation {
 		}
 		
 		return invoiceSearchResults;
+	}
+
+	@Override
+	public int hashCode() {		// NOTE this doesn't compare TableLineItems because that doesn't implement equals()
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(parts);
+		result = prime * result + Objects.hash(amountCharged, cashiereDateTime, cashiered, customerData, customerId,
+				customerName, invoiceNum, notes, tax, total);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Invoice)) {
+			return false;
+		}
+		Invoice other = (Invoice) obj;
+		return Objects.equals(amountCharged, other.amountCharged)
+				&& Objects.equals(cashiereDateTime, other.cashiereDateTime) && cashiered == other.cashiered
+				&& Objects.equals(customerData, other.customerData) && customerId == other.customerId
+				&& Objects.equals(customerName, other.customerName) && invoiceNum == other.invoiceNum
+				&& Objects.equals(notes, other.notes) && Arrays.equals(parts, other.parts)
+				&& Objects.equals(tax, other.tax) && Objects.equals(total, other.total);
 	}
 
 	@Override

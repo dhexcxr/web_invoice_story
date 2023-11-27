@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -190,6 +191,25 @@ public class Employee extends DbObjectWithLocation {
 				return employee;
 			}
 			throw new IllegalArgumentException("objects.Employee.packObject(): dbObjectSearchable is not a Employee");
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(employeeId, firstName, jobTitle, lastName, payRate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Employee)) {
+			return false;
+		}
+		Employee other = (Employee) obj;
+		return employeeId == other.employeeId && Objects.equals(firstName, other.firstName)
+				&& Objects.equals(jobTitle, other.jobTitle) && Objects.equals(lastName, other.lastName)
+				&& Objects.equals(payRate, other.payRate);
 	}
 
 	@Override

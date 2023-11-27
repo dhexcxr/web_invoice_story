@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -306,5 +307,44 @@ public class Project extends DbObjectWithLocation {
 			return project;
 		}
 		throw new IllegalArgumentException("objects.Project.packObject(): dbObjectSearchable is not a Project");
+	}
+
+	@Override
+	public int hashCode() {	// NOTE this doesn't compare all fields because jobs aren't built by DB query
+		return Objects.hash(amountCharged, closedDate, createdDate, customer, customerData, customerId, customerName,
+				/* jobs, */ projectId, projectSite, projectSiteAddress, projectSiteCity, projectSiteId, projectSiteState,
+				projectSiteZip, tax, total);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Project)) {
+			return false;
+		}
+		Project other = (Project) obj;
+		return Objects.equals(amountCharged, other.amountCharged) && Objects.equals(closedDate, other.closedDate)
+				&& Objects.equals(createdDate, other.createdDate) && Objects.equals(customer, other.customer)
+				&& Objects.equals(customerData, other.customerData) && customerId == other.customerId
+				&& Objects.equals(customerName, other.customerName) /* && Objects.equals(jobs, other.jobs) */
+				&& projectId == other.projectId && Objects.equals(projectSite, other.projectSite)
+				&& Objects.equals(projectSiteAddress, other.projectSiteAddress)
+				&& Objects.equals(projectSiteCity, other.projectSiteCity) && projectSiteId == other.projectSiteId
+				&& Objects.equals(projectSiteState, other.projectSiteState)
+				&& Objects.equals(projectSiteZip, other.projectSiteZip) && Objects.equals(tax, other.tax)
+				&& Objects.equals(total, other.total);
+	}
+
+	@Override
+	public String toString() {
+		return "Project [projectId=" + projectId + ", customerId=" + customerId + ", customer=" + customer
+				+ ", customerName=" + customerName + ", customerData=" + customerData + ", projectSiteId="
+				+ projectSiteId + ", projectSite=" + projectSite + ", projectSiteAddress=" + projectSiteAddress
+				+ ", projectSiteCity=" + projectSiteCity + ", projectSiteState=" + projectSiteState
+				+ ", projectSiteZip=" + projectSiteZip + ", jobs=" + jobs + ", createdDate=" + createdDate
+				+ ", closedDate=" + closedDate + ", tax=" + tax + ", total=" + total + ", amountCharged="
+				+ amountCharged + "]";
 	}
 }

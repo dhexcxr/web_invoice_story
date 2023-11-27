@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -181,5 +182,35 @@ public class ProjectSite extends DbObjectWithLocation {
 			return projectSite;
 		}
 		throw new IllegalArgumentException("objects.ProjectSite.packObject(): dbObjectSearchable is not a ProjectSite");
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(addressProjectSite, cityProjectSite, customerId, notesProjectSite, owner, projectSiteId,
+				stateProjectSite, zipCodeProjectSite);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ProjectSite)) {
+			return false;
+		}
+		ProjectSite other = (ProjectSite) obj;
+		return Objects.equals(addressProjectSite, other.addressProjectSite)
+				&& Objects.equals(cityProjectSite, other.cityProjectSite) && customerId == other.customerId
+				&& Objects.equals(notesProjectSite, other.notesProjectSite) && Objects.equals(owner, other.owner)
+				&& projectSiteId == other.projectSiteId && Objects.equals(stateProjectSite, other.stateProjectSite)
+				&& Objects.equals(zipCodeProjectSite, other.zipCodeProjectSite);
+	}
+
+	@Override
+	public String toString() {
+		return "ProjectSite [projectSiteId=" + projectSiteId + ", customerId=" + customerId + ", addressProjectSite="
+				+ addressProjectSite + ", cityProjectSite=" + cityProjectSite + ", stateProjectSite=" + stateProjectSite
+				+ ", zipCodeProjectSite=" + zipCodeProjectSite + ", notesProjectSite=" + notesProjectSite + ", owner="
+				+ owner + "]";
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -222,6 +223,38 @@ public class Job extends DbObject {
 		}
 		
 		return jobSearchResults;
+	}
+
+	@Override
+	public int hashCode() {		// NOTE this doesn't compare parts, jobParts, or labor because they aren't built by the DB query
+		return Objects.hash(dataMap, description, jobId, jobName,
+				/* jobParts, labor, parts, */ projectId, reccomendations,
+				resolution);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Job)) {
+			return false;
+		}
+		Job other = (Job) obj;
+		return Objects.equals(dataMap, other.dataMap) && Objects.equals(description, other.description)
+				&& jobId == other.jobId && Objects.equals(jobName, other.jobName)
+				&& /*
+					 * Objects.equals(jobParts, other.jobParts) && Objects.equals(labor,
+					 * other.labor) && Objects.equals(parts, other.parts) &&
+					 */ projectId == other.projectId
+				&& Objects.equals(reccomendations, other.reccomendations)
+				&& Objects.equals(resolution, other.resolution);
+	}
+
+	@Override
+	public String toString() {
+		return "Job [jobId=" + jobId + ", projectId=" + projectId + ", jobName=" + jobName + ", description="
+				+ description + ", resolution=" + resolution + ", reccomendations=" + reccomendations + "]";
 	}
 	
 }

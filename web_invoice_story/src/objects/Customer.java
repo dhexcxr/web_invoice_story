@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -258,6 +259,29 @@ public class Customer extends DbObjectWithLocation {
 				return customer;
 			}
 			throw new IllegalArgumentException("objects.Customer.packObject(): dbObjectSearchable is not a Customer");
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(address, cellPhone, city, customerId, email, firstName, homePhone, lastName, state,
+				workPhone, zipCode);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Customer)) {
+			return false;
+		}
+		Customer other = (Customer) obj;
+		return Objects.equals(address, other.address) && Objects.equals(cellPhone, other.cellPhone)
+				&& Objects.equals(city, other.city) && customerId == other.customerId
+				&& Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
+				&& Objects.equals(homePhone, other.homePhone) && Objects.equals(lastName, other.lastName)
+				&& Objects.equals(state, other.state) && Objects.equals(workPhone, other.workPhone)
+				&& Objects.equals(zipCode, other.zipCode);
 	}
 
 	@Override

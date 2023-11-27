@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -199,6 +200,40 @@ public class JobPart extends InvoicePart {
 		}
 		
 		return jobPartSearchResults;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(dataMap, description, jobId, jobPartId, part, partId, partNumber, quantity, soldPrice);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof JobPart)) {
+			return false;
+		}
+		JobPart other = (JobPart) obj;
+		return Objects.equals(dataMap, other.dataMap) && Objects.equals(description, other.description)
+				&& jobId == other.jobId && jobPartId == other.jobPartId && Objects.equals(part, other.part)
+				&& partId == other.partId && Objects.equals(partNumber, other.partNumber) && quantity == other.quantity
+				&& Objects.equals(soldPrice, other.soldPrice);
+	}
+
+	@Override
+	public String toString() {
+		return "JobPart [jobPartId=" + jobPartId + ", partId=" + partId + ", jobId=" + jobId + ", partNumber="
+				+ partNumber + ", description=" + description + ", quantity=" + quantity + ", soldPrice=" + soldPrice
+				+ ", part=" + part + "]";
 	}
 
 }

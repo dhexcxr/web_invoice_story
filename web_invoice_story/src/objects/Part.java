@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -187,6 +188,26 @@ public class Part extends DbObjectWithLocation {
 				return part;
 			}
 			throw new IllegalArgumentException("objects.Part.packObject(): dbObjectSearchable is not a Part");
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(category, cost, description, notes, onHand, partId, partNumber, retail, supplier);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Part)) {
+			return false;
+		}
+		Part other = (Part) obj;
+		return Objects.equals(category, other.category) && Objects.equals(cost, other.cost)
+				&& Objects.equals(description, other.description) && Objects.equals(notes, other.notes)
+				&& onHand == other.onHand && partId == other.partId && Objects.equals(partNumber, other.partNumber)
+				&& Objects.equals(retail, other.retail) && Objects.equals(supplier, other.supplier);
 	}
 
 	@Override

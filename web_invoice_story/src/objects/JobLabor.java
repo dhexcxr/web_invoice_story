@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import web_invoice_story.DbServices;
 
@@ -144,6 +145,31 @@ public class JobLabor extends DbObject {
 		}
 		
 		return jobLaborSearchResults;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dataMap, description, hours, installer, jobId, jobLaborId, laborRate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof JobLabor)) {
+			return false;
+		}
+		JobLabor other = (JobLabor) obj;
+		return Objects.equals(dataMap, other.dataMap) && Objects.equals(description, other.description)
+				&& Objects.equals(hours, other.hours) && Objects.equals(installer, other.installer)
+				&& jobId == other.jobId && jobLaborId == other.jobLaborId && Objects.equals(laborRate, other.laborRate);
+	}
+
+	@Override
+	public String toString() {
+		return "JobLabor [jobLaborId=" + jobLaborId + ", jobId=" + jobId + ", installer=" + installer + ", description="
+				+ description + ", hours=" + hours + ", laborRate=" + laborRate + "]";
 	}
 
 }

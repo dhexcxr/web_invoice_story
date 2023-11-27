@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -222,6 +223,26 @@ public class StoreLocation extends DbObject {
 			throw new IllegalArgumentException("objects.Customer.packObject(): dbObjectSearchable is not a StoreLocation");
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(addressStore, cityStore, locationId, nameStore, phoneStore, stateStore, zipCodeStore);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof StoreLocation)) {
+			return false;
+		}
+		StoreLocation other = (StoreLocation) obj;
+		return Objects.equals(addressStore, other.addressStore) && Objects.equals(cityStore, other.cityStore)
+				&& locationId == other.locationId && Objects.equals(nameStore, other.nameStore)
+				&& Objects.equals(phoneStore, other.phoneStore) && Objects.equals(stateStore, other.stateStore)
+				&& Objects.equals(zipCodeStore, other.zipCodeStore);
+	}
+	
 	@Override
 	public String toString() {
 		return "Customer [customerId=" + locationId + ", firstName=" + nameStore + ", addressStore=" + addressStore

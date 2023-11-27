@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Table;
 
@@ -290,6 +291,25 @@ public class Account extends DbObject {
 				return account;
 			}
 			throw new IllegalArgumentException("objects.Account.packObject(): dbObjectSearchable is not an Account");
+	}
+
+	@Override
+	public int hashCode() {		// NOTE this doesn't check all object fields, we need to actually build the entire object from DB in order to compare all fields
+		return Objects.hash(accountHolder, accountId, accountName, accountNumber, customerId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Account)) {
+			return false;
+		}
+		Account other = (Account) obj;
+		return Objects.equals(accountHolder, other.accountHolder) && accountId == other.accountId
+				&& Objects.equals(accountName, other.accountName) && Objects.equals(accountNumber, other.accountNumber)
+				&& customerId == other.customerId;
 	}
 
 	@Override
