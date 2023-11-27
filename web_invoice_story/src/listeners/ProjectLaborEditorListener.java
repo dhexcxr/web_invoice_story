@@ -15,6 +15,7 @@ import guiParts.JobLaborTable;
 import guiParts.JobLaborTableItem;
 import guiParts.ProjectJobTable;
 import guiParts.ProjectJobTableItem;
+import listeners.ProjectLaborTableListener.TabDirection;
 import web_invoice_story.Application;
 
 public class ProjectLaborEditorListener implements Listener {
@@ -26,6 +27,7 @@ public class ProjectLaborEditorListener implements Listener {
 	private ProjectJobTable tableJobsRepairOrder;
 	private int currentJobTableItemIndex;
 	private ProjectDialog projectDialog;
+	private ProjectLaborTableListener projectLaborTableListener;
 
 
 	private static final String ONLY_DECIMALS = "[^0-9.]";		// find a better name
@@ -40,14 +42,23 @@ public class ProjectLaborEditorListener implements Listener {
 		this.tableJobsRepairOrder = tableJobsRepairOrder;
 		this.currentJobTableItemIndex = currentJobTableItemIndex;
 		this.projectDialog = projectDialog;
+		
+		this.projectLaborTableListener = (ProjectLaborTableListener) jobLaborTable.getListeners(SWT.MouseDown)[0];
 	}
 
+	// TODO think about making a table listener SuperClass that implements the shared handleEvent() code, the tabbed() function, TabDirection enum, etc
 	@Override
 	public void handleEvent(Event event) {
 		if (event.type == SWT.FocusOut) {
 			setColumnData();
 		} else if (event.type == SWT.Traverse && event.detail == SWT.TRAVERSE_ESCAPE) {
 			editorTxtBox.dispose();
+		} else if (event.type == SWT.Traverse && event.detail == SWT.TRAVERSE_TAB_NEXT) {
+			setColumnData();
+			projectLaborTableListener.tabbed(selectedColumnIndex, TabDirection.FORWARD);
+		} else if (event.type == SWT.Traverse && event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+			setColumnData();
+			projectLaborTableListener.tabbed(selectedColumnIndex, TabDirection.BACKWARD);
 		} else if (event.type == SWT.Traverse) {
 			setColumnData();
 		}

@@ -10,7 +10,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import gui.ProjectDialog;
+import guiParts.InvoicePartTable;
+import guiParts.InvoicePartTableItem;
 import guiParts.JobLaborTable;
+import guiParts.JobLaborTableItem;
 import guiParts.ProjectJobTable;
 
 public class ProjectLaborTableListener implements Listener {
@@ -19,6 +22,12 @@ public class ProjectLaborTableListener implements Listener {
 	private TableEditor editor;
 	private ProjectJobTable tableJobsRepairOrder;
 	private ProjectDialog projectDialog;
+	private Event originalEvent;
+	
+	public enum TabDirection {
+		FORWARD,
+		BACKWARD
+	}
 
 	public ProjectLaborTableListener(JobLaborTable jobLaborTable, ProjectJobTable tableJobsRepairOrder, ProjectDialog projectDialog) {
 		this.jobLaborTable = jobLaborTable;
@@ -31,6 +40,7 @@ public class ProjectLaborTableListener implements Listener {
 
 	@Override
 	public void handleEvent(Event event) {
+		originalEvent = event;
 		int currentTableItemIndex = jobLaborTable.getSelectionIndex();
         Rectangle tableWidgetArea = jobLaborTable.getClientArea();
         Point clickPoint = new Point(event.x, event.y);
@@ -66,6 +76,46 @@ public class ProjectLaborTableListener implements Listener {
         	currentTableItemIndex++;
         }
 //        tableJobsRepairOrder.notifyListeners(SWT.BUTTON4, new Event());		// save Parts and Labor
+	}
+	
+	public void tabbed(int currentColumn, TabDirection tabDirection) {
+		Event tabbedEvent = originalEvent;
+		JobLaborTableItem selectedTableItem = (JobLaborTableItem) jobLaborTable.getSelection()[0];
+		switch (currentColumn) {
+		case JobLaborTable.TECHNICIAN_COLUMN:
+			if (tabDirection == TabDirection.FORWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(JobLaborTable.DESCRIPTION_COLUMN).x + 1;
+			} else if (tabDirection == TabDirection.BACKWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(JobLaborTable.RATE_COLUMN).x + 1;
+				tabbedEvent.y = tabbedEvent.y - selectedTableItem.getBounds().height;
+				jobLaborTable.setSelection(jobLaborTable.getSelectionIndex() - 1);
+				jobLaborTable.notifyListeners(SWT.MouseDown, new Event());
+			}
+			break;
+		case JobLaborTable.DESCRIPTION_COLUMN:
+			tabbedEvent.x = tabDirection == TabDirection.FORWARD ?
+					selectedTableItem.getBounds(JobLaborTable.HOURS_COLUMN).x + 1
+					: selectedTableItem.getBounds(JobLaborTable.TECHNICIAN_COLUMN).x + 1;
+			break;
+		case JobLaborTable.HOURS_COLUMN:
+			tabbedEvent.x = tabDirection == TabDirection.FORWARD ?
+					selectedTableItem.getBounds(JobLaborTable.RATE_COLUMN).x + 1
+					: selectedTableItem.getBounds(JobLaborTable.DESCRIPTION_COLUMN).x + 1;
+			break;
+		case JobLaborTable.RATE_COLUMN:
+			if (tabDirection == TabDirection.FORWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(JobLaborTable.TECHNICIAN_COLUMN).x + 1;
+				tabbedEvent.y = tabbedEvent.y + selectedTableItem.getBounds().height;
+				jobLaborTable.setSelection(jobLaborTable.getSelectionIndex() + 1);
+				jobLaborTable.notifyListeners(SWT.MouseDown, new Event());
+			} else if (tabDirection == TabDirection.BACKWARD) {
+				tabbedEvent.x = selectedTableItem.getBounds(JobLaborTable.HOURS_COLUMN).x + 1;
+			}
+			break;
+		default:
+			return;
+		}
+		handleEvent(tabbedEvent);
 	}
 
 }
