@@ -2,7 +2,7 @@ package objects;
 
 import java.math.BigDecimal;
 
-public class AmountDueResponse {
+public class AmountDueResponse {		// NOTE TODO this might need to be in the guiParts package
 	
 	private BigDecimal amountCharged = BigDecimal.valueOf(0).setScale(2);
 	private Result result = Result.CANCELED;

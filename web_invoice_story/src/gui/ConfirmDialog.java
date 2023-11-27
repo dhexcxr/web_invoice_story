@@ -98,7 +98,7 @@ public class ConfirmDialog extends Dialog {
 				shlClose.close();
 			}
 		});
-		btnNo.setText("No");
+		btnNo.setText("No");	// TODO figure out how to set focus and have the little dashed lines show up that show the user it is in focus
 		
 		btnDoNotAsk = new Button(shlClose, SWT.CHECK);		
 		btnDoNotAsk.setText("Do not ask again");

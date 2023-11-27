@@ -730,6 +730,11 @@ public class DbServices {
 			job.setResolution(queryResultSet.getString(5));
 			job.setReccomendations(queryResultSet.getString(6));
 			
+			// TODO search and build jobLabors and jobParts here
+				// then we can only search for Projects once, in the initial search, and not also when we open the Project
+					// the other option is to add a jobName property to Project object and search that in initial Project query
+					// then we do the full search and build when opening the Project
+			
 			results.add(i, job);
 			i++;
 		}

@@ -14,7 +14,7 @@ import web_invoice_story.Application;
 
 public class JobLaborTable extends MyTable {
 	
-	public static final int TECHNICIAN_COLUMN = 0;
+	public static final int TECHNICIAN_COLUMN = 0;		// TODO NOTE we might change these to an enum
 	public static final int DESCRIPTION_COLUMN = 1;
 	public static final int HOURS_COLUMN = 2;
 	public static final int RATE_COLUMN = 3;
