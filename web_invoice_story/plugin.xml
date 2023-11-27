@@ -1,26 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-   <extension
-         id="mailapp.entrypoints"
-         point="org.eclipse.rap.ui.entrypoint">
-      <entrypoint
-            brandingId="web_invoice_story.branding"
-            class="web_invoice_story.Application"
-            id="mailapp.entrypoint"
-            path="/web_invoice_story">
-            <!--applicationId="rap_mail_template.mailapp"-->
-      </entrypoint>
-   </extension>
-   <extension
-         point="org.eclipse.rap.ui.branding">
-      <branding
-            favicon="src/resources/icon.ico"
-            id="web_invoice_story.branding"
-            themeId="org.eclipse.rap.design.example.business.theme"
-            title="Web Invoice Story">
-      </branding>
-   </extension>
-
+	<extension
+		id="mailapp.entrypoints"
+		point="org.eclipse.rap.ui.entrypoint">
+		<entrypoint
+			brandingId="web_invoice_story.branding"
+			class="web_invoice_story.Application"
+			id="mailapp.entrypoint"
+			path="/web_invoice_story"
+			applicationId="rap_mail_template.web_invoice_story">
+		</entrypoint>
+	</extension>
+	<extension
+		id="rap_mail_template.web_invoice_story"
+		point="org.eclipse.core.runtime.applications">
+		<application
+			visible="true"
+			cardinality="singleton-global"
+			thread="main">
+			<run
+				class="web_invoice_story.Application">
+			</run>
+		</application>
+	</extension>
+	<extension
+		point="org.eclipse.rap.ui.branding">
+		<branding
+			favicon="src/resources/icon.ico"
+			id="web_invoice_story.branding"
+			themeId="org.eclipse.rap.design.example.business.theme"
+			title="Web Invoice Story">
+		</branding>
+	</extension>
 </plugin>
