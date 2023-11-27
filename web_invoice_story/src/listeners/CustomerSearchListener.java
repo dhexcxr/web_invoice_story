@@ -37,9 +37,7 @@ public class CustomerSearchListener extends MouseAdapter{
 //		if (selectedCustomer instanceof Customer) {
 			// get only last name if there is no first name
 			StringBuilder customerData = new StringBuilder(selectedCustomer.getLastName());
-			if (selectedCustomer.getFirstName() != null) {
-				customerData.append(selectedCustomer.getFirstName().equals("") ? "" :", " + selectedCustomer.getFirstName());
-			}
+			customerData.append(selectedCustomer.getFirstName().equals("") ? "" :", " + selectedCustomer.getFirstName());
 			// TODO we could test for txtBoxStartingText.getEditable
 			if (txtBoxStartingText.equals("")) {		// Owner text box in New ProjectSite dialog
 				txtBox.setText(customerData.toString());

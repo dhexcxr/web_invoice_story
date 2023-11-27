@@ -4,7 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Label;
 import web_invoice_story.DbServices;
 
 import org.eclipse.swt.graphics.Image;
@@ -13,8 +12,6 @@ public class Splash extends Dialog{
 	
 	protected Shell shlSplash;
 	private Display display;
-	Label lblTotalAmountDue;
-	Label lblAmountTendered;
 	
 
 	public Splash(Shell parent, int style) {

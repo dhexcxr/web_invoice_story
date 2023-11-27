@@ -98,14 +98,6 @@ public class ProjectSite extends DbObjectWithLocation {
 	public void setProjectSiteNotes(String notesProjectSite) {
 		this.notesProjectSite = notesProjectSite;
 	}
-
-//	public String getNotes() {
-//		return notes == null ? "" : notes;
-//	}
-//
-//	public void setNotes(String notes) {
-//		this.notes = notes;
-//	}
 	
 	public String getOwner() {
 		return owner == null ? "" : owner;

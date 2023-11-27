@@ -33,11 +33,8 @@ public class NewProjectSiteDialog extends Dialog {
 	protected Shell shlNewProjectSite;
 	private MyText txtOwner;
 	private MyText txtAddress;
-	private MyText txtModelName;
 	private MyText txtState;
-//	private MyText txtNotes;
 	private MyText txtCity;
-	private MyText txtYear;
 	private MyText txtZipCode;
 	private MyText txtNotes;
 	private Button btnSaveUnit;
@@ -69,31 +66,15 @@ public class NewProjectSiteDialog extends Dialog {
 	public Object open(ProjectSite projectSite) {
 		createContents();
 
-		// set txtBoxes when opening a current ProjectSite for editing
-		// TODO remove all these null checks
-			// and make sure projectSite checks for a null in getters with ternaries, i.e. make == null ? "" : make 
-		if (projectSite.getOwner() != null) {
-			txtOwner.setText(projectSite.getOwner());
-			txtOwner.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
-		}
-		if (projectSite.getProjectSiteAddress() != null) {
-			txtAddress.setText(projectSite.getProjectSiteAddress());
-			txtAddress.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
-		}			
-//		if (projectSite.getModelName() != null)
-//			txtModelName.setText(projectSite.getModelName());
-//		if (projectSite.getMileage() != 0)
-//			txtState.setText(Integer.toString(projectSite.getMileage()));
-		if (projectSite.getProjectSiteNotes() != null)
-			txtNotes.setText(projectSite.getProjectSiteNotes());
-		if (projectSite.getProjectSiteCity() != null)
-			txtCity.setText(projectSite.getProjectSiteCity());
-		if (projectSite.getProjectSiteState() != null)
-			txtState.setText(projectSite.getProjectSiteState());
-		if (projectSite.getProjectSiteZipCode() != null)
-			txtZipCode.setText(projectSite.getProjectSiteZipCode());
-//		if (projectSite.getNotes() != null)
-//			txtNotes.setText(projectSite.getNotes());
+		// set txtBoxes when opening a current ProjectSite for editing 
+		txtOwner.setText(projectSite.getOwner());
+		txtOwner.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
+		txtAddress.setText(projectSite.getProjectSiteAddress());
+		txtAddress.setBackground(SWTResourceManager.getColor(255, 255, 255));		// WHITE
+		txtNotes.setText(projectSite.getProjectSiteNotes());
+		txtCity.setText(projectSite.getProjectSiteCity());
+		txtState.setText(projectSite.getProjectSiteState());
+		txtZipCode.setText(projectSite.getProjectSiteZipCode());
 		if (projectSite.getProjectSiteId() != 0)
 			projectSiteId = projectSite.getProjectSiteId();
 		if (projectSite.getCustomerId() != 0)
@@ -176,38 +157,6 @@ public class NewProjectSiteDialog extends Dialog {
 		fd_txtCity.right = new FormAttachment(0, 288);
 		txtCity.setLayoutData(fd_txtCity);
 		
-//		Label lblModelName = new Label(shlNewProjectSite, SWT.NONE);
-//		FormData fd_lblModelName = new FormData();
-//		fd_lblModelName.bottom = new FormAttachment(0, 146);
-//		fd_lblModelName.right = new FormAttachment(0, 100);
-//		fd_lblModelName.top = new FormAttachment(0, 126);
-//		fd_lblModelName.left = new FormAttachment(0, 10);
-//		lblModelName.setLayoutData(fd_lblModelName);
-//		lblModelName.setText("Model Name:");
-//		txtModelName = new MyText(shlNewProjectSite, SWT.BORDER);
-//		FormData fd_txtModelName = new FormData();
-//		fd_txtModelName.bottom = new FormAttachment(0, 178);
-//		fd_txtModelName.right = new FormAttachment(0, 288);
-//		fd_txtModelName.top = new FormAttachment(0, 152);
-//		fd_txtModelName.left = new FormAttachment(0, 10);
-//		txtModelName.setLayoutData(fd_txtModelName);
-		
-//		Label lblYear = new Label(shlNewProjectSite, SWT.NONE);
-//		FormData fd_lblYear = new FormData();
-//		fd_lblYear.top = new FormAttachment(txtCity, 6);
-//		fd_lblYear.right = new FormAttachment(lblCity, 0, SWT.RIGHT);
-//		fd_lblYear.bottom = new FormAttachment(0, 146);
-//		fd_lblYear.left = new FormAttachment(0, 304);
-//		lblYear.setLayoutData(fd_lblYear);
-//		lblYear.setText("Year:");
-//		txtYear = new MyText(shlNewProjectSite, SWT.BORDER);
-//		FormData fd_txtYear = new FormData();
-//		fd_txtYear.bottom = new FormAttachment(0, 178);
-//		fd_txtYear.right = new FormAttachment(0, 582);
-//		fd_txtYear.top = new FormAttachment(0, 152);
-//		fd_txtYear.left = new FormAttachment(0, 304);
-//		txtYear.setLayoutData(fd_txtYear);
-		
 		Label lblState = new Label(shlNewProjectSite, SWT.NONE);
 		FormData fd_lblState = new FormData();
 		fd_lblState.left = new FormAttachment(lblCity, 214);
@@ -237,22 +186,6 @@ public class NewProjectSiteDialog extends Dialog {
 		fd_txZipCode.top = new FormAttachment(0, 146);
 		fd_txZipCode.bottom = new FormAttachment(0, 172);
 		txtZipCode.setLayoutData(fd_txZipCode);
-		
-//		Label lblVinNumber = new Label(shlNewProjectSite, SWT.NONE);
-//		FormData fd_lblVinNumber = new FormData();
-//		fd_lblVinNumber.bottom = new FormAttachment(0, 262);
-//		fd_lblVinNumber.right = new FormAttachment(0, 100);
-//		fd_lblVinNumber.top = new FormAttachment(0, 242);
-//		fd_lblVinNumber.left = new FormAttachment(0, 10);
-//		lblVinNumber.setLayoutData(fd_lblVinNumber);
-//		lblVinNumber.setText("Vin Number:");
-//		txtNotes = new MyText(shlNewProjectSite, SWT.BORDER);
-//		FormData fd_txtVinNumber = new FormData();
-//		fd_txtVinNumber.bottom = new FormAttachment(0, 294);
-//		fd_txtVinNumber.right = new FormAttachment(0, 582);
-//		fd_txtVinNumber.top = new FormAttachment(0, 268);
-//		fd_txtVinNumber.left = new FormAttachment(0, 10);
-//		txtNotes.setLayoutData(fd_txtVinNumber);
 				
 		Label lblNotes = new Label(shlNewProjectSite, SWT.NONE);
 		fd_txtCity.bottom = new FormAttachment(lblNotes, -6);
@@ -306,11 +239,8 @@ public class NewProjectSiteDialog extends Dialog {
 		txtOwner.addMouseListener(new CustomerSearchListener(txtOwner));
 		txtAddress.addModifyListener(new RequiredTextBoxModifyListener(txtAddress));
 		txtCity.addModifyListener(new InfoTextBoxModifyListener(txtCity));
-//		txtModelName.addModifyListener(new InfoTextBoxModifyListener(txtModelName));
-//		txtYear.addModifyListener(new InfoTextBoxModifyListener(txtYear));
 		txtState.addModifyListener(new InfoTextBoxModifyListener(txtState));
 		txtZipCode.addModifyListener(new InfoTextBoxModifyListener(txtZipCode));
-//		txtNotes.addModifyListener(new VinModifyListener(txtNotes));		// note needed for general notes
 		txtNotes.addModifyListener(new InfoTextBoxModifyListener(txtNotes));
 		
 		btnSaveUnit.addMouseListener(new MouseAdapter() {		// in-line listener
@@ -365,8 +295,6 @@ public class NewProjectSiteDialog extends Dialog {
 			return;
 		}
 		
-//		projectSite.setModelName(txtModelName.getText());
-		
 		if (txtState.isModified()) {
 			try {
 				projectSite.setProjectSiteState(txtState.getText());
@@ -379,19 +307,7 @@ public class NewProjectSiteDialog extends Dialog {
 
 		projectSite.setProjectSiteCity(txtCity.getText());
 
-//		if (txtYear.isModified()) {
-//			try {
-//				projectSite.setStateProjectSite(txtYear.getText());
-//			} catch (Exception e) {
-//				Application.getLogger().log(Level.FINER, e.getMessage(), e);
-//			}
-//		}
-
 		projectSite.setProjectSiteZipCode(txtZipCode.getText());
-
-//		if (txtNotes.isModified()) {
-//			projectSite.setNotes(txtNotes.getText());
-//		}
 		
 		DbServices.saveObject(projectSite);
 		result = projectSite;

@@ -15,9 +15,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import guiParts.MyText;
 import objects.AmountDueResponse;
 import objects.AmountDueResponse.Result;
-import objects.Invoice;
-import objects.Invoice.InvoiceResult;
-
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
@@ -33,7 +30,6 @@ import org.eclipse.swt.widgets.Control;
 
 public class AmountDueDialog extends Dialog{
 	
-	protected boolean cashiered;
 	protected Shell shlAmountDue;
 	private Text txtFinalTotal;
 	private Text txtAmountTendered;
