@@ -45,7 +45,7 @@ public class Settings {
 			currentLocation = Integer.parseInt(prop.getProperty("currentLocation"));		// TODO turn this into a long
 			
 			inputStream.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Application.getLogger().log(Level.SEVERE, "Exception {0}", e.toString());
 		}
 	}
