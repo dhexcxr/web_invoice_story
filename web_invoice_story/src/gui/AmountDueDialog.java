@@ -297,6 +297,7 @@ public class AmountDueDialog extends Dialog{
 				shlAmountDue.close();
 //				result = InvoiceResult.CANCELED;
 //				response.setResult(Result.CANCELED);
+				response.setResult(Result.CANCELED);
 			}
 		});
 		btnCancel.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.NORMAL));
