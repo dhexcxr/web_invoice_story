@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Control;
 public class AmountDueDialog extends Dialog{
 	
 	protected boolean cashiered;
-	protected Invoice.InvoiceResult result;
 	protected Shell shlAmountDue;
 	private Text txtFinalTotal;
 	private Text txtAmountTendered;
@@ -263,16 +262,13 @@ public class AmountDueDialog extends Dialog{
 							// NOTE this is an absolutely, beautifully terrible hack way to return the amount charged back to the Gui
 							// now we can use it to set the AcountTransaction.ammount
 							response.setAmountCharged(new BigDecimal(txtAmountCharged.getText().replaceAll("[^-.0-9]", "")));
-							result = InvoiceResult.CHARGED;
 							response.setResult(Result.CHARGED);
 						} else {
-							result = InvoiceResult.NOCHANGE;
 							response.setResult(Result.NOCHANGE);
 						}
 					} else if (chageDue.compareTo(BigDecimal.valueOf(0)) < 0) {
 						changeDueMessageBox.setText("Change Due");
 						changeDueMessageBox.setMessage("Change due to Customer: $" + chageDue.toString().replace("-", ""));
-						result = InvoiceResult.WITHCHANGE;
 						response.setResult(Result.WITHCHANGE);
 					}
 				}
@@ -295,8 +291,6 @@ public class AmountDueDialog extends Dialog{
 			public void mouseDown(MouseEvent e) {
 				// close dialog
 				shlAmountDue.close();
-//				result = InvoiceResult.CANCELED;
-//				response.setResult(Result.CANCELED);
 				response.setResult(Result.CANCELED);
 			}
 		});
