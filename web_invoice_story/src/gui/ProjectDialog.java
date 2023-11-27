@@ -139,133 +139,6 @@ public class ProjectDialog extends Dialog {
 	// TODO create isModified variable in this ProjectDialog object to track if ANYTHING in the underlying project has been modified
 		// so we can ask the user if they want to save before closing ProjectDialog
 	
-	public ProjectDialog(Shell parent, int style) {
-		super(parent, style);		// TODO set customer name or RO number in setText
-		setText("Project Details");
-	}
-	
-	public void addDetailsToDelete(String table, Long primaryKey) {
-		detailsToDelete.computeIfAbsent(table, t -> new ArrayList<>()).add(primaryKey);
-	}
-	
-	public void calcRoTotal() {
-		BigDecimal total = BigDecimal.valueOf(0);
-		for (TableItem currentItem: tableJobsProject.getItems()) {
-			String totalString = currentItem.getText(ProjectJobTable.JOB_TOTAL_COLUMN).replaceAll(ONLY_DECIMALS, "");
-			total = total.add(new BigDecimal(totalString));
-		}
-		txtSubTotalProject.setText("$" + total.setScale(2, RoundingMode.CEILING).toString());
-		BigDecimal tax = total.multiply(BigDecimal.valueOf(0.065));
-		textTaxProject.setText("$" + tax.setScale(2, RoundingMode.CEILING).toString());
-		textFinalTotalProject.setText("$" + total.add(tax).setScale(2, RoundingMode.CEILING).toString());
-	}
-
-	public boolean cashiered() {
-		return cashiered;
-	}
-	// END RO getters
-
-	private void checkPartsOnHand(Job job, List<JobPart> jobParts) {
-		// check each jobPart and see if current jobPart.quantity > jobPart.getPart.getOnHand, if so inform user
-			// with warning dialog and change quantity to onHand
-		boolean partsOnHandChanged = false;
-		Map<String, List<JobPart>> changedParts = new HashMap<>();
-
-		for (JobPart jobPart : jobParts) {
-			if (jobPart.getQuantity() > jobPart.getPart().getOnHand()) {
-				partsOnHandChanged = true;
-				changedParts.computeIfAbsent(job.getJobName(), jp -> new ArrayList<>()).add(jobPart);
-				jobPart.setQuantity(jobPart.getPart().getOnHand());
-			}
-		}
-		if (partsOnHandChanged) {
-			PartQuantityWarning partQuantityWarning = new PartQuantityWarning(shlProject, getStyle());
-			partQuantityWarning.setParts(changedParts);
-			partQuantityWarning.open();
-		}		
-	}
-	
-	private void createContents() {
-		shlProject = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shlProject.setText(getText());
-		
-		int width = 992;
-		int height = 736;
-		shlProject.setSize(width, height);
-		shlProject.addListener(SWT.Resize, new Listener() {
-			
-			@Override
-			public void handleEvent(Event event) {
-				if (shlProject.getSize().x < new Point(width, height).x
-						|| shlProject.getSize().y < new Point(width, height).y) {
-					shlProject.setSize(width, height);	// set a minimum shell size
-				}
-				
-			}
-		});
-		
-		FormLayout fl_shlProject = new FormLayout();
-		fl_shlProject.spacing = 5;
-		fl_shlProject.marginWidth = 5;
-		fl_shlProject.marginHeight = 5;
-		shlProject.setLayout(fl_shlProject);
-				
-		Gui.setDialogAtCenter(shlProject);
-		
-//		roDetails();
-
-		roControls();
-		
-		jobTabs();
-		
-		roDetails();
-		
-		setLayout();
-	}
-	
-	public void disableJobTabs() {
-		txtJobName.setEnabled(false);
-		txtJobName.setText("Job Name...");
-		txtComplaints.setEnabled(false);
-		txtComplaints.setText("Complaints...");
-		txtResolution.setEnabled(false);
-		txtResolution.setText("Resolution...");
-		txtReccomendations.setEnabled(false);
-		txtReccomendations.setText("Reccomendations...");
-		jobPartsTable.setEnabled(false);
-		jobPartsTable.removeAll();
-		jobLaborTable.setEnabled(false);
-		jobLaborTable.removeAll();
-		btnDeleteLineItem.setEnabled(false);
-		btnAddLaborLine.setEnabled(false);
-		btnDeleteLaborLine.setEnabled(false);
-	}
-	
-	private void disableRoControls() {
-		// disable editing of text boxes, disable buttons
-			// remove listeners from Customer and ProjectSite text box and from Parts and Labor tables
-		cashiered = true;
-		txtCustomerProject.removeMouseListener(customerSearchListener);
-		txtProjectSiteProject.removeMouseListener(unitSearchListener);
-		btnCashierRo.setEnabled(false);
-		btnAddJob.setEnabled(false);
-		btnDeleteJob.setEnabled(false);
-		btnCancel.setEnabled(false);
-		btnSaveRo.setEnabled(false);
-		btnDeleteLineItem.setEnabled(false);
-		btnAddLaborLine.setEnabled(false);
-		btnDeleteLaborLine.setEnabled(false);
-		txtJobName.setEditable(false);
-		txtJobName.removeFocusListener(jobNameFocusListener);
-		txtComplaints.setEditable(false);
-		txtComplaints.removeFocusListener(complaintsFocusListener);
-		txtResolution.setEditable(false);
-		txtResolution.removeFocusListener(resolutionFocusListener);
-		txtReccomendations.setEditable(false);
-		txtReccomendations.removeFocusListener(reccomendationsFocusListener);
-		jobPartsTable.removeListener(SWT.MouseDown, projectPartTableListener);
-		jobLaborTable.removeListener(SWT.MouseDown, projectLaborTableListener);		
-	}
 	
 	public Map<String, List<Long>> getDetailsToDelete() {
 		return detailsToDelete;
@@ -318,6 +191,140 @@ public class ProjectDialog extends Dialog {
 
 	public MyText getTxtProjectSiteProject() {
 		return txtProjectSiteProject;
+	}
+	
+	public ProjectDialog(Shell parent, int style) {
+		super(parent, style);		// TODO set customer name or RO number in setText
+		setText("Project Details");
+	}
+
+	public boolean cashiered() {
+		return cashiered;
+	}
+	// END RO getters
+	
+	public void addDetailsToDelete(String table, Long primaryKey) {
+		detailsToDelete.computeIfAbsent(table, t -> new ArrayList<>()).add(primaryKey);
+	}
+	
+	public void setDetailsToDelete(Map<String, List<Long>> newDetailsToDelete) {
+		detailsToDelete = newDetailsToDelete;
+	}
+	
+	
+	public Object open() {
+		createContents();
+		setupListeners();
+		shlProject.open();
+		shlProject.layout();
+		Display display = getParent().getDisplay();
+		while (!shlProject.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+	
+	public Object open(Project project) {
+		createContents();
+		setupListeners();
+		
+		loadRoFromDb(project);
+		
+		shlProject.open();
+		shlProject.layout();
+		Display display = getParent().getDisplay();
+		while (!shlProject.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+	
+	private void createContents() {
+		shlProject = new Shell(getParent(), SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
+		shlProject.setText(getText());
+		
+		int width = 992;
+		int height = 736;
+		shlProject.setSize(width, height);
+		shlProject.addListener(SWT.Resize, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (shlProject.getSize().x < new Point(width, height).x
+						|| shlProject.getSize().y < new Point(width, height).y) {
+					shlProject.setSize(width, height);	// set a minimum shell size
+				}
+				
+			}
+		});
+		
+		FormLayout fl_shlProject = new FormLayout();
+		fl_shlProject.spacing = 5;
+		fl_shlProject.marginWidth = 5;
+		fl_shlProject.marginHeight = 5;
+		shlProject.setLayout(fl_shlProject);
+				
+		Gui.setDialogAtCenter(shlProject);
+		
+		
+		roControls();
+		
+		jobTabs();
+		
+		roDetails();
+		
+		setLayout();
+	}
+
+	private void roControls() {
+		// Jobs table
+		tableJobsProject = new ProjectJobTable(shlProject, SWT.BORDER | SWT.FULL_SELECTION);
+		fd_tableJobsProject = new FormData();
+		fd_tableJobsProject.right = new FormAttachment(68);
+		fd_tableJobsProject.left = new FormAttachment(0, 5);
+		fd_tableJobsProject.top = new FormAttachment(0, 144);
+		tableJobsProject.setLayoutData(fd_tableJobsProject);
+		tableJobsProject.setHeaderVisible(true);
+		tableJobsProject.setLinesVisible(true);
+		tableJobsProject.setFocus();
+
+		TableColumn tblclmnJobName = new TableColumn(tableJobsProject, SWT.NONE);
+		tblclmnJobName.setWidth(330);
+		tblclmnJobName.setText("Job Name");
+
+		TableColumn tblclmnPartsTotal = new TableColumn(tableJobsProject, SWT.NONE);
+		tblclmnPartsTotal.setWidth(100);
+		tblclmnPartsTotal.setText("Parts Total");
+
+		TableColumn tblclmnLaborTotal = new TableColumn(tableJobsProject, SWT.NONE);
+		tblclmnLaborTotal.setWidth(100);
+		tblclmnLaborTotal.setText("Labor Total");
+
+		TableColumn tblclmnJobTotal = new TableColumn(tableJobsProject, SWT.NONE);
+		tblclmnJobTotal.setWidth(111);
+		tblclmnJobTotal.setText("Job Total");
+		// END Jobs table
+
+		// RO Controls
+		btnCashierRo = new Button(shlProject, SWT.NONE);
+		btnCashierRo.setSize(128,  128);
+		fd_btnCashierRo = new FormData();
+		fd_btnCashierRo.top = new FormAttachment(0, 10);
+		btnCashierRo.setLayoutData(fd_btnCashierRo);
+		btnCashierRo.setText("Cashier");
+		
+		btnClose = new Button(shlProject, SWT.NONE);
+		fd_btnCashierRo.right = new FormAttachment(btnClose, -5);
+		fd_btnClose = new FormData();
+		fd_btnClose.top = new FormAttachment(0, 10);
+		fd_btnClose.width = 64;
+		btnClose.setLayoutData(fd_btnClose);
+		btnClose.setText("Close");
+		// END RO controls
 	}
 	
 	private void jobTabs() {
@@ -499,150 +506,6 @@ public class ProjectDialog extends Dialog {
 		// END Job Tabs Buttons
 	}
 	
-	private void loadRoFromDb(Project project) {
-		// set Dialog boxes and stuff from project fields
-		if (project != null) {
-			currentProject = project;
-			projectId = project.getProjectId();
-			textRoNum.setText(Long.toString(projectId));
-			
-			textCreatedDate.setText(project.getCreatedDate().toString());
-			textCashieredDate.setText(project.getClosedDate() == null ? "" : project.getClosedDate().toString());
-			
-			if (!textCashieredDate.getText().equals("")) {
-				disableRoControls();
-			}
-			
-			if (project.getCustomerId() != 0) {
-				txtCustomerProject.setData(new Customer().searchByPk(project.getCustomerId()));
-				txtCustomerProject.setText(project.getCustomerName() + "\n" + project.getCustomerData());
-			}
-
-			if (project.getProjectSiteId() != 0) {
-				ProjectSite roUnit = new ProjectSite().searchByPk(project.getProjectSiteId());
-				txtProjectSiteProject.setData(roUnit);
-				txtProjectSiteProject.setText(roUnit.getProjectSiteState() + " " + roUnit.getProjectSiteAddress() + "\n" +
-						roUnit.getProjectSiteCity() + "\nVin: " + roUnit.getProjectSiteNotes() + "\nColor: " +
-						roUnit.getProjectSiteZipCode());
-			}
-
-			List<Job> roJobs = loadRoJobsFromDb();
-			project.setJobs(roJobs);
-			tableJobsProject.setSelection(0);
-			tableJobsProject.notifyListeners(SWT.Selection, new Event());
-			this.calcRoTotal();
-		}
-	}
-	
-	private List<Job> loadRoJobsFromDb() {
-		List<Job> roJobs = new ArrayList<>();
-		
-		for (Job job : new Job().searchForJobsByProjectId(projectId)) {
-			
-			long jobId = job.getJobId();
-		
-			// setup table item to hold RO Job
-			ProjectJobTableItem jobTableItem = new ProjectJobTableItem(tableJobsProject, getStyle());
-
-			// find and build labor
-			job.setLabor(new JobLabor().searchJobLaborByProjectId(jobId));
-
-			// find and build Parts
-			List<JobPart> listOfJobParts = new JobPart().searchJobLaborByJobId(jobId);
-			
-			if (!cashiered) {
-				checkPartsOnHand(job, listOfJobParts);
-			}
-
-			job.setJobParts(listOfJobParts);
-			roJobs.add(job);
-			jobTableItem.setData(job);
-		}
-		return roJobs;
-	}
-	
-	public Object open() {
-		createContents();
-		setupListeners();
-		shlProject.open();
-		shlProject.layout();
-		Display display = getParent().getDisplay();
-		while (!shlProject.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-	
-	public Object open(Project project) {
-		createContents();
-		setupListeners();
-		
-		loadRoFromDb(project);
-		
-		shlProject.open();
-		shlProject.layout();
-		Display display = getParent().getDisplay();
-		while (!shlProject.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-	
-	public void reloadRo() {
-		loadRoFromDb(currentProject);
-	}
-
-	private void roControls() {
-		// Jobs table
-		tableJobsProject = new ProjectJobTable(shlProject, SWT.BORDER | SWT.FULL_SELECTION);
-		fd_tableJobsProject = new FormData();
-		fd_tableJobsProject.right = new FormAttachment(68);
-		fd_tableJobsProject.left = new FormAttachment(0, 5);
-		fd_tableJobsProject.top = new FormAttachment(0, 144);
-		tableJobsProject.setLayoutData(fd_tableJobsProject);
-		tableJobsProject.setHeaderVisible(true);
-		tableJobsProject.setLinesVisible(true);
-		tableJobsProject.setFocus();
-
-		TableColumn tblclmnJobName = new TableColumn(tableJobsProject, SWT.NONE);
-		tblclmnJobName.setWidth(330);
-		tblclmnJobName.setText("Job Name");
-
-		TableColumn tblclmnPartsTotal = new TableColumn(tableJobsProject, SWT.NONE);
-		tblclmnPartsTotal.setWidth(100);
-		tblclmnPartsTotal.setText("Parts Total");
-
-		TableColumn tblclmnLaborTotal = new TableColumn(tableJobsProject, SWT.NONE);
-		tblclmnLaborTotal.setWidth(100);
-		tblclmnLaborTotal.setText("Labor Total");
-
-		TableColumn tblclmnJobTotal = new TableColumn(tableJobsProject, SWT.NONE);
-		tblclmnJobTotal.setWidth(111);
-		tblclmnJobTotal.setText("Job Total");
-		// END Jobs table
-
-		// RO Controls
-		btnCashierRo = new Button(shlProject, SWT.NONE);
-		btnCashierRo.setSize(128,  128);
-		fd_btnCashierRo = new FormData();
-		fd_btnCashierRo.top = new FormAttachment(0, 10);
-		btnCashierRo.setLayoutData(fd_btnCashierRo);
-		btnCashierRo.setText("Cashier");
-		
-		btnClose = new Button(shlProject, SWT.NONE);
-		fd_btnCashierRo.right = new FormAttachment(btnClose, -5);
-		fd_btnClose = new FormData();
-		fd_btnClose.top = new FormAttachment(0, 10);
-		fd_btnClose.width = 64;
-		btnClose.setLayoutData(fd_btnClose);
-		btnClose.setText("Close");
-		// END RO controls
-	}
-	
 	private void roDetails() {
 		
 		grpProjectNum = new Group(shlProject, SWT.NONE);
@@ -713,91 +576,6 @@ public class ProjectDialog extends Dialog {
 		btnSaveRo = new Button(roButtonsComposite, SWT.NONE);
 		btnSaveRo.setText("Save");
 		// END Totals
-	}
-
-	public void saveJob() {		// TODO maybe rename this to buildJob()
-		Job currentJob = (Job) tabFolderJobsProject.getData();
-
-		for (TableItem currentPartTableItem : jobPartsTable.getItems()) {
-			JobPart currentTIPart = (JobPart) currentPartTableItem.getData();
-			List<JobPart> currentParts = currentJob.getJobParts();
-			if (currentTIPart != null && !currentParts.contains(currentTIPart)) {
-				currentJob.addJobPart((JobPart) currentPartTableItem.getData());
-			}
-		}
-
-		for (TableItem currentLaborTableItem : jobLaborTable.getItems()) {
-			if (!currentJob.getLabor().contains(currentLaborTableItem.getData()))
-				currentJob.addLabor((JobLabor) currentLaborTableItem.getData());
-		}
-	}
-
-	private void saveNewRo() {
-		Project project = new Project();
-//		project.setLocationId(Application.getSettings().getCurrentLocation());
-		long currentLocationId = Application.getSettings().getCurrentLocation();
-		long locationId = currentLocationId != 0 ? currentLocationId : ((Customer) txtCustomerProject.getData()).getLocationId();
-		project.setLocationId(locationId);
-		project.setCreatedDate(Timestamp.from(Instant.now()));
-		textCreatedDate.setText(project.getCreatedDate().toString());
-		saveRo(project);
-	}
-	
-	private void saveRo(Project project) {
-		if (txtCustomerProject.getData() != null && ((Customer) txtCustomerProject.getData()).getCustomerId() != -1) {
-			project.setCustomerId(((Customer) txtCustomerProject.getData()).getCustomerId());
-			project.setCustomerName(txtCustomerProject.getText(0, txtCustomerProject.getText().indexOf('\n')).split(","));
-			project.setCustomerData(txtCustomerProject.getText().substring(txtCustomerProject.getText().indexOf('\n')));
-		} else {
-			// if we haven't selected a Customer, complain - an RO Customer is required
-			MessageBox customerRequiredBox = new MessageBox(shlProject, SWT.ICON_INFORMATION);
-			customerRequiredBox.setText("Notice");
-			customerRequiredBox.setMessage("Please select a Customer");
-			customerRequiredBox.open();
-			return;
-		}
-		
-		if (txtProjectSiteProject.getData() != null && ((ProjectSite) txtProjectSiteProject.getData()).getProjectSiteId() != -1) {
-			ProjectSite thisUnit = (ProjectSite) txtProjectSiteProject.getData();
-			project.setProjectSiteId(thisUnit.getProjectSiteId());
-			project.setProjectSiteAddress(thisUnit.getProjectSiteAddress());
-			project.setProjectSiteCity(thisUnit.getProjectSiteCity());
-			project.setProjectSiteState(thisUnit.getProjectSiteState());
-			project.setProjectSiteZip(thisUnit.getProjectSiteZipCode());
-		} else {
-			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
-			MessageBox customerRequiredBox = new MessageBox(shlProject, SWT.ICON_INFORMATION);
-			customerRequiredBox.setText("Notice");
-			customerRequiredBox.setMessage("Please select a ProjectSite");
-			customerRequiredBox.open();
-			return;
-		}
-		
-		// TODO do something with the returned updateCount
-		DbServices.deleteDetailsFromRo(detailsToDelete);
-		
-		if (tableJobsProject.getItemCount() > 0) {
-			for (TableItem jobTableItem : tableJobsProject.getItems()) {
-				if (!project.getJobs().contains(jobTableItem.getData())) {		// maybe use HashSet here
-					project.addJob((Job) jobTableItem.getData());
-				}
-			}
-		}
-		
-		project.setTax(new BigDecimal(textTaxProject.getText().replaceAll(ONLY_DECIMALS, "")));
-		project.setTotal(new BigDecimal(textFinalTotalProject.getText().replaceAll(ONLY_DECIMALS, "")));
-		
-		// send Project object to DbServices
-		DbServices.saveObject(project);		// TODO call this on project.save()
-		projectId = project.getProjectId();
-		textRoNum.setText(Long.toString(projectId));
-		detailsToDelete = new HashMap<>();
-		currentProject = project;
-		result = project;
-	}
-	
-	public void setDetailsToDelete(Map<String, List<Long>> newDetailsToDelete) {
-		detailsToDelete = newDetailsToDelete;
 	}
 	
 	private void setLayout() {
@@ -1085,4 +863,231 @@ public class ProjectDialog extends Dialog {
 		
 		// END LISTENERS
 	}
+	
+	
+	
+	public void disableJobTabs() {
+		txtJobName.setEnabled(false);
+		txtJobName.setText("Job Name...");
+		txtComplaints.setEnabled(false);
+		txtComplaints.setText("Complaints...");
+		txtResolution.setEnabled(false);
+		txtResolution.setText("Resolution...");
+		txtReccomendations.setEnabled(false);
+		txtReccomendations.setText("Reccomendations...");
+		jobPartsTable.setEnabled(false);
+		jobPartsTable.removeAll();
+		jobLaborTable.setEnabled(false);
+		jobLaborTable.removeAll();
+		btnDeleteLineItem.setEnabled(false);
+		btnAddLaborLine.setEnabled(false);
+		btnDeleteLaborLine.setEnabled(false);
+	}
+	
+	private void disableRoControls() {
+		// disable editing of text boxes, disable buttons
+			// remove listeners from Customer and ProjectSite text box and from Parts and Labor tables
+		cashiered = true;
+		txtCustomerProject.removeMouseListener(customerSearchListener);
+		txtProjectSiteProject.removeMouseListener(unitSearchListener);
+		btnCashierRo.setEnabled(false);
+		btnAddJob.setEnabled(false);
+		btnDeleteJob.setEnabled(false);
+		btnCancel.setEnabled(false);
+		btnSaveRo.setEnabled(false);
+		btnDeleteLineItem.setEnabled(false);
+		btnAddLaborLine.setEnabled(false);
+		btnDeleteLaborLine.setEnabled(false);
+		txtJobName.setEditable(false);
+		txtJobName.removeFocusListener(jobNameFocusListener);
+		txtComplaints.setEditable(false);
+		txtComplaints.removeFocusListener(complaintsFocusListener);
+		txtResolution.setEditable(false);
+		txtResolution.removeFocusListener(resolutionFocusListener);
+		txtReccomendations.setEditable(false);
+		txtReccomendations.removeFocusListener(reccomendationsFocusListener);
+		jobPartsTable.removeListener(SWT.MouseDown, projectPartTableListener);
+		jobLaborTable.removeListener(SWT.MouseDown, projectLaborTableListener);		
+	}
+	
+	private void loadRoFromDb(Project project) {
+		// set Dialog boxes and stuff from project fields
+		if (project != null) {
+			currentProject = project;
+			projectId = project.getProjectId();
+			textRoNum.setText(Long.toString(projectId));
+			
+			textCreatedDate.setText(project.getCreatedDate().toString());
+			textCashieredDate.setText(project.getClosedDate() == null ? "" : project.getClosedDate().toString());
+			
+			if (!textCashieredDate.getText().equals("")) {
+				disableRoControls();
+			}
+			
+			if (project.getCustomerId() != 0) {
+				txtCustomerProject.setData(new Customer().searchByPk(project.getCustomerId()));
+				txtCustomerProject.setText("Customer:\n" + project.getCustomerName() + "\n" + project.getCustomerData());
+			}
+
+			if (project.getProjectSiteId() != 0) {
+				ProjectSite roUnit = new ProjectSite().searchByPk(project.getProjectSiteId());
+				txtProjectSiteProject.setData(roUnit);
+				txtProjectSiteProject.setText("Project Site:\n" +
+						roUnit.getProjectSiteAddress() + "\n" + roUnit.getProjectSiteCity() + " " +
+						roUnit.getProjectSiteState() + ",  " + roUnit.getProjectSiteZipCode() +
+						(roUnit.getProjectSiteNotes().length() == 0 ? "" : "\nNotes:\n " + roUnit.getProjectSiteNotes()));
+			}
+
+			List<Job> roJobs = loadRoJobsFromDb();
+			project.setJobs(roJobs);
+			tableJobsProject.setSelection(0);
+			tableJobsProject.notifyListeners(SWT.Selection, new Event());
+			this.calcRoTotal();
+		}
+	}
+	
+	private List<Job> loadRoJobsFromDb() {
+		List<Job> roJobs = new ArrayList<>();
+		
+		for (Job job : new Job().searchForJobsByProjectId(projectId)) {
+			
+			long jobId = job.getJobId();
+		
+			// setup table item to hold RO Job
+			ProjectJobTableItem jobTableItem = new ProjectJobTableItem(tableJobsProject, getStyle());
+
+			// find and build labor
+			job.setLabor(new JobLabor().searchJobLaborByProjectId(jobId));
+
+			// find and build Parts
+			List<JobPart> listOfJobParts = new JobPart().searchJobLaborByJobId(jobId);
+			
+			if (!cashiered) {
+				checkPartsOnHand(job, listOfJobParts);
+			}
+
+			job.setJobParts(listOfJobParts);
+			roJobs.add(job);
+			jobTableItem.setData(job);
+		}
+		return roJobs;
+	}	
+
+	private void checkPartsOnHand(Job job, List<JobPart> jobParts) {
+		// check each jobPart and see if current jobPart.quantity > jobPart.getPart.getOnHand, if so inform user
+			// with warning dialog and change quantity to onHand
+		boolean partsOnHandChanged = false;
+		Map<String, List<JobPart>> changedParts = new HashMap<>();
+
+		for (JobPart jobPart : jobParts) {
+			if (jobPart.getQuantity() > jobPart.getPart().getOnHand()) {
+				partsOnHandChanged = true;
+				changedParts.computeIfAbsent(job.getJobName(), jp -> new ArrayList<>()).add(jobPart);
+				jobPart.setQuantity(jobPart.getPart().getOnHand());
+			}
+		}
+		if (partsOnHandChanged) {
+			PartQuantityWarning partQuantityWarning = new PartQuantityWarning(shlProject, getStyle());
+			partQuantityWarning.setParts(changedParts);
+			partQuantityWarning.open();
+		}		
+	}
+	
+	public void calcRoTotal() {
+		BigDecimal total = BigDecimal.valueOf(0);
+		for (TableItem currentItem: tableJobsProject.getItems()) {
+			String totalString = currentItem.getText(ProjectJobTable.JOB_TOTAL_COLUMN).replaceAll(ONLY_DECIMALS, "");
+			total = total.add(new BigDecimal(totalString));
+		}
+		txtSubTotalProject.setText("$" + total.setScale(2, RoundingMode.CEILING).toString());
+		BigDecimal tax = total.multiply(BigDecimal.valueOf(0.065));
+		textTaxProject.setText("$" + tax.setScale(2, RoundingMode.CEILING).toString());
+		textFinalTotalProject.setText("$" + total.add(tax).setScale(2, RoundingMode.CEILING).toString());
+	}
+	
+	public void reloadRo() {
+		loadRoFromDb(currentProject);
+	}
+
+	public void saveJob() {		// TODO maybe rename this to buildJob()
+		Job currentJob = (Job) tabFolderJobsProject.getData();
+
+		for (TableItem currentPartTableItem : jobPartsTable.getItems()) {
+			JobPart currentTIPart = (JobPart) currentPartTableItem.getData();
+			List<JobPart> currentParts = currentJob.getJobParts();
+			if (currentTIPart != null && !currentParts.contains(currentTIPart)) {
+				currentJob.addJobPart((JobPart) currentPartTableItem.getData());
+			}
+		}
+
+		for (TableItem currentLaborTableItem : jobLaborTable.getItems()) {
+			if (!currentJob.getLabor().contains(currentLaborTableItem.getData()))
+				currentJob.addLabor((JobLabor) currentLaborTableItem.getData());
+		}
+	}
+
+	private void saveNewRo() {
+		Project project = new Project();
+//		project.setLocationId(Application.getSettings().getCurrentLocation());
+		long currentLocationId = Application.getSettings().getCurrentLocation();
+		long locationId = currentLocationId != 0 ? currentLocationId : ((Customer) txtCustomerProject.getData()).getLocationId();
+		project.setLocationId(locationId);
+		project.setCreatedDate(Timestamp.from(Instant.now()));
+		textCreatedDate.setText(project.getCreatedDate().toString());
+		saveRo(project);
+	}
+	
+	private void saveRo(Project project) {
+		if (txtCustomerProject.getData() != null && ((Customer) txtCustomerProject.getData()).getCustomerId() != -1) {
+			project.setCustomerId(((Customer) txtCustomerProject.getData()).getCustomerId());
+			project.setCustomerName(txtCustomerProject.getText(0, txtCustomerProject.getText().indexOf('\n')).split(","));
+			project.setCustomerData(txtCustomerProject.getText().substring(txtCustomerProject.getText().indexOf('\n')));
+		} else {
+			// if we haven't selected a Customer, complain - an RO Customer is required
+			MessageBox customerRequiredBox = new MessageBox(shlProject, SWT.ICON_INFORMATION);
+			customerRequiredBox.setText("Notice");
+			customerRequiredBox.setMessage("Please select a Customer");
+			customerRequiredBox.open();
+			return;
+		}
+		
+		if (txtProjectSiteProject.getData() != null && ((ProjectSite) txtProjectSiteProject.getData()).getProjectSiteId() != -1) {
+			ProjectSite thisUnit = (ProjectSite) txtProjectSiteProject.getData();
+			project.setProjectSiteId(thisUnit.getProjectSiteId());
+			project.setProjectSiteAddress(thisUnit.getProjectSiteAddress());
+			project.setProjectSiteCity(thisUnit.getProjectSiteCity());
+			project.setProjectSiteState(thisUnit.getProjectSiteState());
+			project.setProjectSiteZip(thisUnit.getProjectSiteZipCode());
+		} else {
+			// if we haven't selected a ProjectSite, complain - an RO ProjectSite is required
+			MessageBox customerRequiredBox = new MessageBox(shlProject, SWT.ICON_INFORMATION);
+			customerRequiredBox.setText("Notice");
+			customerRequiredBox.setMessage("Please select a ProjectSite");
+			customerRequiredBox.open();
+			return;
+		}
+		
+		// TODO do something with the returned updateCount
+		DbServices.deleteDetailsFromRo(detailsToDelete);
+		
+		if (tableJobsProject.getItemCount() > 0) {
+			for (TableItem jobTableItem : tableJobsProject.getItems()) {
+				if (!project.getJobs().contains(jobTableItem.getData())) {		// maybe use HashSet here
+					project.addJob((Job) jobTableItem.getData());
+				}
+			}
+		}
+		
+		project.setTax(new BigDecimal(textTaxProject.getText().replaceAll(ONLY_DECIMALS, "")));
+		project.setTotal(new BigDecimal(textFinalTotalProject.getText().replaceAll(ONLY_DECIMALS, "")));
+		
+		// send Project object to DbServices
+		DbServices.saveObject(project);		// TODO call this on project.save()
+		projectId = project.getProjectId();
+		textRoNum.setText(Long.toString(projectId));
+		detailsToDelete = new HashMap<>();
+		currentProject = project;
+		result = project;
+	}
+	
 }
