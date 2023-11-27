@@ -24,8 +24,8 @@ import org.eclipse.swt.layout.FormAttachment;
 public class Application /* implements IApplication */ implements EntryPoint {
 	
 	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	private static Display display;
-	private static Shell shell;
+	private static Display display = new Display();;
+	private static Shell shell = new Shell(display, SWT.NO_TRIM);
 	private static final Settings settings = new Settings();
 
 //	public Object start(IApplicationContext context) throws Exception {
@@ -40,8 +40,6 @@ public class Application /* implements IApplication */ implements EntryPoint {
 	 * @wbp.parser.entryPoint
 	 */
 	public int createUI() {
-		display = new Display();
-		shell = new Shell(display, SWT.NO_TRIM);
 		
 		shell.setText("Web Invoice Story");
 		shell.setLayout(new FormLayout());

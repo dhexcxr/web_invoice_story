@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.FormAttachment;
 
 public class PartQuantityWarning extends Dialog {
 
-	protected Object result;
+	protected Object result = null;
 	protected Shell shlSellQuantityMore;
 	private String affectedPartsList = "";
 

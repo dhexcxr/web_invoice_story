@@ -30,12 +30,12 @@ import org.eclipse.swt.widgets.Control;
 
 public class AmountDueDialog extends Dialog{
 	
-	protected Shell shlAmountDue;
+	private Shell shlAmountDue;
 	private Text txtFinalTotal;
 	private Text txtAmountTendered;
 	private Text txtAmountCharged;
-	Label lblTotalAmountDue;
-	Label lblAmountTendered;
+	private Label lblTotalAmountDue;
+	private Label lblAmountTendered;
 	
 	private BigDecimal amountCharged;
 	

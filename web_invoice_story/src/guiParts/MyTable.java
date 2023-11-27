@@ -13,7 +13,7 @@ public abstract class MyTable extends Table {
 	
 	public static final int DELETE_MENU_ITEM = 0;
 	
-	protected static Collator collator = Collator.getInstance(Locale.getDefault());
+	protected static final Collator collator = Collator.getInstance(Locale.getDefault());
 
 	protected MyTable(Composite parent, int style) {
 		super(parent, style);
