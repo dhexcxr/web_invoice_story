@@ -139,7 +139,7 @@ public class ProjectSite extends DbObjectWithLocation {
 				SELECT projectSite.projectSiteId, projectSite.customerId, projectSite.address, projectSite.city, projectSite.state, projectSite.zipCode, projectSite.notes, customer.lastName, customer.firstName
 				FROM web_invoice_story.projectSite
 				JOIN web_invoice_story.customer ON projectSite.customerId = customer.customerId 
-				WHERE customer.firstName LIKE ? OR customer.lastName LIKE ? OR projectSite.address LIKE ? OR projectSite.city LIKE ? OR projectSite.state LIKE ? OR projectSite.zipCode LIKE ?;""";
+				WHERE (customer.firstName LIKE ? OR customer.lastName LIKE ? OR projectSite.address LIKE ? OR projectSite.city LIKE ? OR projectSite.state LIKE ? OR projectSite.zipCode LIKE ?);""";
 		super.outerSearchQueryAppendix = " AND projectSite.projectSiteId IN (";
 		super.querySubStringIndices[0] = 32;
 		super.querySubStringIndices[1] = 193;
